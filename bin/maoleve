@@ -102,6 +102,21 @@ require_version() {
   esac
 }
 
+require_caveman_plugin() {
+  local expected="$1"
+  local file="$HOME/.config/opencode/plugins/caveman/package.json"
+  local actual=""
+  if [[ ! -f "$file" ]]; then
+    printf 'miss caveman-plugin %s\n' "$file" >&2
+    return 1
+  fi
+  actual="$(grep -oE '"version":"[^"]+"' "$file" | head -n1 | cut -d'"' -f4)"
+  if [[ "$actual" != "$expected" ]]; then
+    printf 'drift caveman-plugin expected %s got %s\n' "$expected" "$actual" >&2
+    return 1
+  fi
+}
+
 enforce_versions() {
   source_versions
   local failed=0
@@ -112,6 +127,7 @@ enforce_versions() {
   [[ -n "${MAOLEVE_CURSOR_AGENT_VERSION:-}" ]] && require_version cursor-agent "$MAOLEVE_CURSOR_AGENT_VERSION" || failed=1
   [[ -n "${MAOLEVE_CURSOR_BINARY:-}" ]] && require_version cursor "$MAOLEVE_CURSOR_BINARY" || failed=1
   [[ -n "${MAOLEVE_TOKENSAVE_VERSION:-}" ]] && require_version tokensave "$MAOLEVE_TOKENSAVE_VERSION" || failed=1
+  [[ -n "${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-}" ]] && require_caveman_plugin "$MAOLEVE_CAVEMAN_PLUGIN_VERSION" || failed=1
   if (( failed )); then
     printf '%s\n' "Maoleve version drift detected. Refusing to run." >&2
     exit 1
