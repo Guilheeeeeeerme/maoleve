@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONFIG_DIR="${MAOLEVE_CONFIG_DIR:-$HOME/.config/maoleve}"
+STATE_DIR="${MAOLEVE_STATE_DIR:-$HOME/.local/share/maoleve}"
+
+source_env() {
+  if [[ -f "$CONFIG_DIR/config.env" ]]; then
+    # shellcheck disable=SC1090
+    set -a
+    . "$CONFIG_DIR/config.env"
+    set +a
+  fi
+}
+
+source_versions() {
+  # shellcheck disable=SC1090
+  if [[ -f "$ROOT_DIR/versions.env" ]]; then
+    . "$ROOT_DIR/versions.env"
+  fi
+  if [[ -f "$STATE_DIR/versions.env" ]]; then
+    . "$STATE_DIR/versions.env"
+  fi
+}
+
+have() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+need_dir() {
+  mkdir -p "$1"
+}
+
+show_prereqs() {
+  local tools=(
+    bash git curl mkdir ln cp chmod sed awk
+    headroom rtk codex opencode cursor-agent cursor claude serena caveman gh
+  )
+  printf '%s\n' "Maoleve prereqs"
+  printf '%s\n' "---------------"
+  for tool in "${tools[@]}"; do
+    if have "$tool"; then
+      printf 'ok   %s -> %s\n' "$tool" "$(command -v "$tool" 2>/dev/null || true)"
+    else
+      printf 'miss %s\n' "$tool"
+    fi
+  done
+}
+
+show_versions() {
+  source_versions
+  printf '%s\n' "Maoleve locked versions"
+  printf '%s\n' "-----------------------"
+  for item in \
+    "headroom:${MAOLEVE_HEADROOM_VERSION:-unset}" \
+    "rtk:${MAOLEVE_RTK_VERSION:-unset}" \
+    "codex:${MAOLEVE_CODEX_VERSION:-unset}" \
+    "opencode:${MAOLEVE_OPENCODE_VERSION:-unset}" \
+    "cursor-agent:${MAOLEVE_CURSOR_AGENT_VERSION:-unset}" \
+    "cursor-binary:${MAOLEVE_CURSOR_BINARY:-unset}" \
+    "tokensave:${MAOLEVE_TOKENSAVE_VERSION:-unset}" \
+    "caveman-plugin:${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-unset}"; do
+    printf '%s\n' "$item"
+  done
+}
+
+extract_version() {
+  local text="$1"
+  grep -oE '[0-9]+(\.[0-9]+)+([.-][A-Za-z0-9]+)?' <<<"$text" | head -n1
+}
+
+require_version() {
+  local tool="$1"
+  local expected="$2"
+  local actual=""
+  local output=""
+  if ! have "$tool"; then
+    printf 'miss %s\n' "$tool" >&2
+    return 1
+  fi
+  case "$tool" in
+    cursor)
+      actual="$(command -v cursor 2>/dev/null || true)"
+      if [[ "$actual" != "$expected" ]]; then
+        printf 'drift %s expected %s got %s\n' "$tool" "$expected" "$actual" >&2
+        return 1
+      fi
+      ;;
+    *)
+      output="$("$tool" --version 2>/dev/null || true)"
+      actual="$(extract_version "$output")"
+      if [[ -z "$actual" ]]; then
+        printf 'drift %s expected %s got unknown\n' "$tool" "$expected" >&2
+        return 1
+      fi
+      if [[ "$actual" != "$expected" ]]; then
+        printf 'drift %s expected %s got %s\n' "$tool" "$expected" "$actual" >&2
+        return 1
+      fi
+      ;;
+  esac
+}
+
+enforce_versions() {
+  source_versions
+  local failed=0
+  [[ -n "${MAOLEVE_HEADROOM_VERSION:-}" ]] && require_version headroom "$MAOLEVE_HEADROOM_VERSION" || failed=1
+  [[ -n "${MAOLEVE_RTK_VERSION:-}" ]] && require_version rtk "$MAOLEVE_RTK_VERSION" || failed=1
+  [[ -n "${MAOLEVE_CODEX_VERSION:-}" ]] && require_version codex "$MAOLEVE_CODEX_VERSION" || failed=1
+  [[ -n "${MAOLEVE_OPENCODE_VERSION:-}" ]] && require_version opencode "$MAOLEVE_OPENCODE_VERSION" || failed=1
+  [[ -n "${MAOLEVE_CURSOR_AGENT_VERSION:-}" ]] && require_version cursor-agent "$MAOLEVE_CURSOR_AGENT_VERSION" || failed=1
+  [[ -n "${MAOLEVE_CURSOR_BINARY:-}" ]] && require_version cursor "$MAOLEVE_CURSOR_BINARY" || failed=1
+  [[ -n "${MAOLEVE_TOKENSAVE_VERSION:-}" ]] && require_version tokensave "$MAOLEVE_TOKENSAVE_VERSION" || failed=1
+  if (( failed )); then
+    printf '%s\n' "Maoleve version drift detected. Refusing to run." >&2
+    exit 1
+  fi
+}
+
+install_links() {
+  need_dir "$CONFIG_DIR"
+  need_dir "$STATE_DIR"
+  need_dir "$HOME/.local/bin"
+  need_dir "$HOME/.claude"
+  need_dir "$HOME/.codex"
+  need_dir "$HOME/.config/opencode"
+  need_dir "$HOME/.cursor/rules"
+
+  cat >"$CONFIG_DIR/config.env" <<'EOF'
+HEADROOM_SAVINGS_PROFILE=coding
+HEADROOM_TOOL_SEARCH=1
+ENABLE_TOOL_SEARCH=1
+MAOLEVE_NO_TESTS=1
+MAOLEVE_NO_REFACTOR=1
+EOF
+
+  ln -sfn "$ROOT_DIR/AGENTS.md" "$STATE_DIR/AGENTS.md"
+  ln -sfn "$ROOT_DIR/versions.env" "$STATE_DIR/versions.env"
+  ln -sfn "$ROOT_DIR/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+  ln -sfn "$ROOT_DIR/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+  ln -sfn "$ROOT_DIR/templates/cursor/maoleve.mdc" "$HOME/.cursor/rules/maoleve.mdc"
+  ln -sfn "$ROOT_DIR/templates/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+  ln -sfn "$ROOT_DIR/bin/maoleve" "$HOME/.local/bin/maoleve"
+}
+
+doctor() {
+  show_prereqs
+  printf '\n%s\n' "Harness links"
+  printf '%s\n' "-------------"
+  for path in \
+    "$HOME/.claude/CLAUDE.md" \
+    "$HOME/.config/opencode/AGENTS.md" \
+    "$HOME/.cursor/rules/maoleve.mdc" \
+    "$HOME/.local/bin/maoleve"; do
+    if [[ -e "$path" || -L "$path" ]]; then
+      printf 'ok   %s\n' "$path"
+    else
+      printf 'miss %s\n' "$path"
+    fi
+  done
+}
+
+wrap_agent() {
+  local agent="${1:-}"
+  shift || true
+
+  enforce_versions
+  source_env
+  export HEADROOM_SAVINGS_PROFILE="${HEADROOM_SAVINGS_PROFILE:-coding}"
+  export HEADROOM_TOOL_SEARCH="${HEADROOM_TOOL_SEARCH:-1}"
+  export ENABLE_TOOL_SEARCH="${ENABLE_TOOL_SEARCH:-1}"
+  export MAOLEVE_ROOT="$ROOT_DIR"
+
+  case "$agent" in
+    codex|opencode|claude)
+      if have headroom; then
+        exec headroom wrap "$agent" "$@"
+      fi
+      ;;
+    cursor)
+      if have headroom; then
+        exec headroom wrap cursor "$@"
+      fi
+      ;;
+    cursor-agent)
+      if have headroom; then
+        exec headroom wrap codex "$@"
+      fi
+      ;;
+  esac
+
+  case "$agent" in
+    codex) exec codex "$@" ;;
+    opencode) exec opencode "$@" ;;
+    claude) exec claude "$@" ;;
+    cursor) exec cursor "$@" ;;
+    cursor-agent) exec cursor-agent "$@" ;;
+    *)
+      printf 'maoleve: unknown agent: %s\n' "$agent" >&2
+      exit 2
+      ;;
+  esac
+}
+
+setup_cursor() {
+  enforce_versions
+  if have headroom; then
+    headroom wrap cursor
+  else
+    printf '%s\n' "Headroom is not installed."
+    printf '%s\n' "Use the policy in PROMPT.md and set the model base URL manually in Cursor."
+  fi
+}
+
+print_prompt() {
+  cat "$ROOT_DIR/PROMPT.md"
+}
+
+usage() {
+  cat <<'EOF'
+Usage:
+  maoleve prereqs
+  maoleve versions
+  maoleve install
+  maoleve doctor
+  maoleve wrap <codex|opencode|claude|cursor|cursor-agent> [args...]
+  maoleve setup cursor
+  maoleve prompt
+EOF
+}
+
+main() {
+  local cmd="${1:-}"
+  shift || true
+
+  case "$cmd" in
+    prereqs) show_prereqs ;;
+    versions) show_versions ;;
+    install) install_links ;;
+    doctor) doctor ;;
+    wrap) wrap_agent "${1:-}" "${@:2}" ;;
+    setup)
+      case "${1:-}" in
+        cursor) setup_cursor ;;
+        *) usage; exit 2 ;;
+      esac
+      ;;
+    prompt) print_prompt ;;
+    ""|-h|--help|help) usage ;;
+    *)
+      printf 'maoleve: unknown command: %s\n' "$cmd" >&2
+      usage
+      exit 2
+      ;;
+  esac
+}
+
+main "$@"
