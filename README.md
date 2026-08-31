@@ -6,9 +6,30 @@ It is designed to be small, pinned, and boring:
 
 - `Headroom` handles compression and proxying.
 - `RTK` compresses shell output.
-- `Caveman` keeps the agent terse.
+- `Caveman` keeps responses terse.
 - `Serena` stays on-demand for symbol-level work.
 - Exact versions are pinned in `versions.env`.
+- Testing is Ubuntu-only for now.
+
+Product spec:
+
+- [docs/product-spec.md](docs/product-spec.md)
+
+Core policy:
+
+1. Use the cheapest sufficient path.
+2. Prefer targeted reads and exact search.
+3. Avoid broad tests and broad refactors unless explicitly requested.
+4. Overwrite stale config instead of keeping conflicting variants.
+5. Keep all user-facing text in English.
+
+Supported agents:
+
+- Cursor IDE
+- Cursor CLI / `cursor-agent`
+- Codex CLI
+- OpenCode
+- Claude Code
 
 ## What This Repo Configures
 
@@ -40,6 +61,17 @@ These are configured when already installed:
 - `cursor`
 - `cursor-agent`
 - `claude`
+
+These are pinned by `versions.env` and should not drift:
+
+- `headroom`
+- `rtk`
+- `codex`
+- `opencode`
+- `cursor-agent`
+- `tokensave`
+- `serena`
+- `caveman`
 
 ## Manual Only Or External
 
@@ -88,6 +120,25 @@ If you want the wrapper to fail closed on version drift:
 maoleve versions
 maoleve doctor
 ```
+
+## Commands
+
+```bash
+maoleve prereqs
+maoleve versions
+maoleve install
+maoleve apply
+maoleve tools
+maoleve claude
+maoleve doctor
+maoleve wrap codex
+maoleve wrap opencode
+maoleve wrap claude
+maoleve setup cursor
+maoleve prompt
+```
+
+`maoleve wrap cursor` prepares the Headroom Cursor path. `maoleve setup cursor` prints the Cursor-specific guidance if you want to apply settings manually.
 
 ## Required Env
 
@@ -159,32 +210,3 @@ npx -y github:JuliusBrussee/caveman -- --only opencode
 npx -y skills add JuliusBrussee/caveman -a codex --yes
 npx -y skills add JuliusBrussee/caveman -a cursor --with-init --yes
 ```
-
-## Policy
-
-Default operating rules:
-
-1. Use the cheapest sufficient path.
-2. Prefer targeted reads and exact search.
-3. Avoid broad tests and broad refactors unless explicitly requested.
-4. Overwrite stale config instead of keeping conflicting variants.
-5. Keep all user-facing text in English.
-
-## Commands
-
-```bash
-maoleve prereqs
-maoleve versions
-maoleve install
-maoleve apply
-maoleve tools
-maoleve claude
-maoleve doctor
-maoleve wrap codex
-maoleve wrap opencode
-maoleve wrap claude
-maoleve setup cursor
-maoleve prompt
-```
-
-`maoleve wrap cursor` prepares the Headroom Cursor path. `maoleve setup cursor` prints the Cursor-specific guidance if you want to apply settings manually.
