@@ -11,3 +11,4 @@
 - Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
 - Keep all user-facing text in English.
 
+@/home/ferre/.codex/RTK.md

@@ -40,7 +40,13 @@ show_prereqs() {
   printf '%s\n' "Maoleve prereqs"
   printf '%s\n' "---------------"
   for tool in "${tools[@]}"; do
-    if have "$tool"; then
+    if [[ "$tool" == "caveman" ]]; then
+      if [[ -f "$ROOT_DIR/.agents/skills/caveman/SKILL.md" || -f "$HOME/.config/opencode/plugins/caveman/plugin.js" || -f "$HOME/.config/opencode/skills/caveman/SKILL.md" ]]; then
+        printf 'ok   %s -> skill/plugin installed\n' "$tool"
+      else
+        printf 'miss %s\n' "$tool"
+      fi
+    elif have "$tool"; then
       printf 'ok   %s -> %s\n' "$tool" "$(command -v "$tool" 2>/dev/null || true)"
     else
       printf 'miss %s\n' "$tool"
@@ -60,6 +66,7 @@ show_versions() {
     "cursor-agent:${MAOLEVE_CURSOR_AGENT_VERSION:-unset}" \
     "cursor-binary:${MAOLEVE_CURSOR_BINARY:-unset}" \
     "tokensave:${MAOLEVE_TOKENSAVE_VERSION:-unset}" \
+    "serena:${MAOLEVE_SERENA_VERSION:-unset}" \
     "caveman-plugin:${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-unset}"; do
     printf '%s\n' "$item"
   done
@@ -127,6 +134,7 @@ enforce_versions() {
   [[ -n "${MAOLEVE_CURSOR_AGENT_VERSION:-}" ]] && require_version cursor-agent "$MAOLEVE_CURSOR_AGENT_VERSION" || failed=1
   [[ -n "${MAOLEVE_CURSOR_BINARY:-}" ]] && require_version cursor "$MAOLEVE_CURSOR_BINARY" || failed=1
   [[ -n "${MAOLEVE_TOKENSAVE_VERSION:-}" ]] && require_version tokensave "$MAOLEVE_TOKENSAVE_VERSION" || failed=1
+  [[ -n "${MAOLEVE_SERENA_VERSION:-}" ]] && require_version serena "$MAOLEVE_SERENA_VERSION" || failed=1
   [[ -n "${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-}" ]] && require_caveman_plugin "$MAOLEVE_CAVEMAN_PLUGIN_VERSION" || failed=1
   if (( failed )); then
     printf '%s\n' "Maoleve version drift detected. Refusing to run." >&2
@@ -160,6 +168,282 @@ EOF
   ln -sfn "$ROOT_DIR/bin/maoleve" "$HOME/.local/bin/maoleve"
 }
 
+write_env_files() {
+  need_dir "$CONFIG_DIR"
+
+  cat >"$CONFIG_DIR/env.sh" <<'EOF'
+# Maoleve shell defaults.
+# Fill secrets in ~/.config/maoleve/env.local if you want them outside your shell history.
+export HEADROOM_PROJECT="${HEADROOM_PROJECT:-Code}"
+export HEADROOM_MODE="${HEADROOM_MODE:-token}"
+export HEADROOM_TOOL_SEARCH="${HEADROOM_TOOL_SEARCH:-1}"
+export ENABLE_TOOL_SEARCH="${ENABLE_TOOL_SEARCH:-1}"
+export MAOLEVE_NO_TESTS="${MAOLEVE_NO_TESTS:-1}"
+export MAOLEVE_NO_REFACTOR="${MAOLEVE_NO_REFACTOR:-1}"
+
+if [ -f "$HOME/.config/maoleve/env.local" ]; then
+  . "$HOME/.config/maoleve/env.local"
+fi
+EOF
+
+  cat >"$CONFIG_DIR/env.local.example" <<'EOF'
+# Maoleve secret placeholders.
+# Copy this to ~/.config/maoleve/env.local and fill the values you use.
+# export OPENAI_API_KEY="..."
+# export ANTHROPIC_API_KEY="..."
+# export CONTEXT7_API_KEY="..."
+# export FIRECRAWL_API_KEY="..."
+# export HEADROOM_PROJECT="Code"
+EOF
+
+  if ! rg -q "BEGIN MAOLEVE" "$HOME/.bashrc" 2>/dev/null; then
+    cat >>"$HOME/.bashrc" <<'EOF'
+
+# BEGIN MAOLEVE
+# Maoleve shell policy.
+# export OPENAI_API_KEY="..."
+# export ANTHROPIC_API_KEY="..."
+# export CONTEXT7_API_KEY="..."
+# export FIRECRAWL_API_KEY="..."
+# export HEADROOM_PROJECT="Code"
+if [ -f "$HOME/.config/maoleve/env.sh" ]; then
+  . "$HOME/.config/maoleve/env.sh"
+fi
+# END MAOLEVE
+EOF
+  fi
+}
+
+write_cursor_mcp() {
+  need_dir "$HOME/.cursor"
+  cat >"$HOME/.cursor/mcp.json" <<EOF
+{
+  "mcpServers": {
+    "headroom": {
+      "command": "$HOME/.local/bin/headroom",
+      "args": ["mcp", "serve"]
+    },
+    "serena": {
+      "command": "$HOME/.local/bin/uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "ide"]
+    },
+    "tokensave": {
+      "command": "$HOME/.local/bin/tokensave",
+      "args": ["serve"]
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY:-}"
+      }
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY:-}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}
+EOF
+}
+
+write_codex_config() {
+  need_dir "$HOME/.codex"
+  cat >"$HOME/.codex/config.toml" <<EOF
+model_provider = "headroom"
+openai_base_url = "http://127.0.0.1:8787/v1"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+
+[features]
+hooks = true
+
+[hooks.state."$HOME/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:0c98f208c54fd07b84210d0a0182a9fdd8c3c49d99938a50f87391493beae239"
+
+[hooks.state."$HOME/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:c22e07f85f1edc842b84caef85684c1e77815e408b2b68c600a57f45d1caaee4"
+
+[mcp_servers.headroom]
+command = "$HOME/.local/bin/headroom"
+args = ["mcp", "serve"]
+
+[mcp_servers.serena]
+command = "$HOME/.local/bin/uvx"
+args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "codex"]
+
+[mcp_servers.tokensave]
+command = "$HOME/.local/bin/tokensave"
+args = ["serve"]
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+
+[mcp_servers.context7.http_headers]
+CONTEXT7_API_KEY = "${CONTEXT7_API_KEY:-}"
+
+[mcp_servers.firecrawl]
+command = "npx"
+args = ["-y", "firecrawl-mcp"]
+
+[mcp_servers.firecrawl.env]
+FIRECRAWL_API_KEY = "${FIRECRAWL_API_KEY:-}"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+
+[model_providers.headroom]
+base_url = "http://127.0.0.1:8787/v1"
+name = "OpenAI via Headroom proxy"
+requires_openai_auth = true
+supports_websockets = true
+
+[projects."$HOME"]
+trust_level = "trusted"
+EOF
+}
+
+write_opencode_config() {
+  need_dir "$HOME/.config/opencode"
+  mkdir -p "$HOME/.config/opencode/plugins/caveman"
+  cat >"$HOME/.config/opencode/opencode.json" <<EOF
+{
+  "\$schema": "https://opencode.ai/config.json",
+  "plugin": ["./plugins/caveman/plugin.js"],
+  "mcp": {
+    "headroom": {
+      "type": "local",
+      "command": ["$HOME/.local/bin/headroom", "mcp", "serve"],
+      "enabled": true
+    },
+    "tokensave": {
+      "type": "local",
+      "command": ["$HOME/.local/bin/tokensave", "serve"]
+    },
+    "serena": {
+      "type": "local",
+      "command": ["$HOME/.local/bin/uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "agent"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true,
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY:-}"
+      }
+    },
+    "firecrawl": {
+      "type": "local",
+      "command": ["npx", "-y", "firecrawl-mcp"],
+      "enabled": true,
+      "environment": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY:-}"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    }
+  },
+  "instructions": ["$HOME/.config/opencode/AGENTS.md"]
+}
+EOF
+}
+
+write_claude_policy() {
+  need_dir "$HOME/.claude"
+  cat >"$HOME/.claude/CLAUDE.md" <<'EOF'
+# Maoleve Policy
+
+- Keep the harness Linux-only and shell-first.
+- Prefer the smallest sufficient tool chain.
+- Use Headroom for context compression and proxying when available.
+- Use RTK for shell output compression when available.
+- Use Caveman for terse model output, compact reviews, and commit text.
+- Use Serena only when symbol-level navigation or memory is needed.
+- Do not run broad tests or broad refactors unless explicitly requested.
+- Start with targeted reads and exact searches before anything larger.
+- Treat `versions.env` as the lock file; refuse drift instead of upgrading blindly.
+- Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
+- Keep all user-facing text in English.
+EOF
+}
+
+apply_configs() {
+  install_links
+  write_env_files
+  write_cursor_mcp
+  write_codex_config
+  write_opencode_config
+  write_claude_policy
+  if have rtk; then
+    rtk init --global || true
+    rtk init --global --agent cursor || true
+    rtk init --global --codex || true
+    rtk init --global --opencode || true
+  fi
+  printf '%s\n' "Maoleve configs written."
+  printf '%s\n' "If Claude Code is installed, run the Claude setup commands from README or maoleve claude."
+}
+
+install_optional_tools() {
+  source_versions
+  if ! have uv; then
+    printf '%s\n' "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  fi
+
+  if ! have headroom; then
+    printf '%s\n' "Installing headroom..."
+    uv tool install "headroom-ai[all]==${MAOLEVE_HEADROOM_VERSION}"
+  fi
+
+  if ! have serena; then
+    printf '%s\n' "Installing serena..."
+    uv tool install -p 3.13 "serena-agent==${MAOLEVE_SERENA_VERSION}" || true
+  fi
+
+  if ! have rtk; then
+    printf '%s\n' "Installing rtk..."
+    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh
+  fi
+
+  if have npx; then
+    npx -y github:JuliusBrussee/caveman -- --only opencode || true
+    npx -y skills add JuliusBrussee/caveman -a codex --yes || true
+    npx -y skills add JuliusBrussee/caveman -a cursor --with-init --yes || true
+  fi
+}
+
+setup_claude() {
+  if ! have claude; then
+    printf '%s\n' "Claude Code is not installed. Install it first, then rerun maoleve claude."
+    printf '%s\n' "Suggested: npm install -g @anthropic-ai/claude-code"
+    return 0
+  fi
+
+  if have headroom; then
+    headroom mcp install --force || true
+  fi
+
+  claude install-plugin JuliusBrussee/caveman-marketplace caveman || true
+  claude mcp add --scope user headroom -- "$HOME/.local/bin/headroom" mcp serve || true
+  claude mcp add --scope user serena -- "$HOME/.local/bin/uvx" --from git+https://github.com/oraios/serena serena start-mcp-server --project-from-cwd --context claude-code || true
+  claude mcp add --scope user tokensave -- "$HOME/.local/bin/tokensave" serve || true
+  claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest || true
+  claude mcp add --scope user firecrawl -- npx -y firecrawl-mcp || true
+  claude mcp add --scope user playwright -- npx @playwright/mcp@latest || true
+}
+
 doctor() {
   show_prereqs
   printf '\n%s\n' "Harness links"
@@ -168,6 +452,10 @@ doctor() {
     "$HOME/.claude/CLAUDE.md" \
     "$HOME/.config/opencode/AGENTS.md" \
     "$HOME/.cursor/rules/maoleve.mdc" \
+    "$HOME/.cursor/mcp.json" \
+    "$HOME/.codex/config.toml" \
+    "$HOME/.config/opencode/opencode.json" \
+    "$HOME/.config/maoleve/env.sh" \
     "$HOME/.local/bin/maoleve"; do
     if [[ -e "$path" || -L "$path" ]]; then
       printf 'ok   %s\n' "$path"
@@ -239,6 +527,9 @@ Usage:
   maoleve prereqs
   maoleve versions
   maoleve install
+  maoleve apply
+  maoleve tools
+  maoleve claude
   maoleve doctor
   maoleve wrap <codex|opencode|claude|cursor|cursor-agent> [args...]
   maoleve setup cursor
@@ -254,6 +545,9 @@ main() {
     prereqs) show_prereqs ;;
     versions) show_versions ;;
     install) install_links ;;
+    apply) apply_configs ;;
+    tools) install_optional_tools ;;
+    claude) setup_claude ;;
     doctor) doctor ;;
     wrap) wrap_agent "${1:-}" "${@:2}" ;;
     setup)
