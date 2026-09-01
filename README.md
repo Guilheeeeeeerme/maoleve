@@ -1,6 +1,6 @@
 # Mão leve
 
-<img src="assets/maoleve-mark.svg" alt="Mão leve mark" width="96">
+<img src="assets/maoleve-mark.svg?v=2" alt="Mão leve mark" width="96">
 
 `maoleve` (*mow-LEH-vee*) is Portuguese for *mão leve* — literally, “light
 hand.” It describes a delicate, skillful touch: doing more with less, removing
