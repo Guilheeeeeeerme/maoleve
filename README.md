@@ -65,8 +65,8 @@ Set up Mão leve in supervised mode.
 This prompt is self-contained. The complete operational rules live in
 [`PROMPT.md`](PROMPT.md).
 
-> **Version lock:** `versions.env` is authoritative. Setup must refuse
-> pinned-version drift instead of silently upgrading a dependency.
+> **Supported versions:** `versions.env` is authoritative. Setup warns when
+> installed versions may contain breaking changes, then continues.
 
 ## What it supports
 

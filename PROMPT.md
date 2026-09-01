@@ -24,8 +24,8 @@ report installed, reused, skipped, manual, and failed items at the end.
    - if checkout exists, inspect its status and update it only after confirming
      that the update will not discard user changes.
    Never use `git reset --hard`, `git checkout --`, or equivalent destructive
-   cleanup. Treat `versions.env` as the version lock file; refuse drift instead
-   of upgrading pinned versions blindly.
+   cleanup. Treat `versions.env` as the supported-version baseline; warn on
+   semver-breaking drift instead of refusing to run or upgrading blindly.
 4. Read this prompt and the detailed repository documentation before making
    changes. At minimum, read `README.md`, `docs/README.md`,
    `docs/product-spec.md`, and `versions.env` when present. Use the

@@ -10,8 +10,8 @@ not complete.
 
 For current setup instructions, this guide and the repository's
 [operational prompt](../PROMPT.md) take precedence over older product-planning
-material. `versions.env` is the version lock: setup must refuse version drift
-rather than silently upgrading a pinned dependency.
+material. `versions.env` is the supported-version baseline: setup warns on
+semver-breaking drift instead of refusing to run or silently upgrading a dependency.
 
 ## Start with a supported agent
 
