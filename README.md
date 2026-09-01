@@ -68,6 +68,51 @@ This prompt is self-contained. The complete operational rules live in
 > **Supported versions:** `versions.env` is authoritative. Setup warns when
 > installed versions may contain breaking changes, then continues.
 
+## Initial post-install verification
+
+After setup, paste this prompt into the active coding agent to produce a
+quick, comparable installation report:
+
+```text
+Create a concise Mão leve post-install report.
+
+1. Identify the platform, shell, checkout path, and installed supported agents.
+2. Run `maoleve doctor` and `maoleve versions`.
+3. Compare installed versions with `versions.env`. Mark each as ok, outdated,
+   missing, or newer.
+4. Check Mão leve-managed links and selected integrations without printing
+   credential values.
+5. Report preserved credentials as yes/no only. Do not expose secrets.
+
+Use exactly this shape:
+
+Mão leve post-install report
+Platform:
+Shell:
+Checkout:
+Supported agents:
+  Codex: installed/reused/missing
+  OpenCode: installed/reused/missing
+  Cursor Agents: installed/reused/missing
+  Cursor IDE: installed/reused/missing
+  Claude Code: installed/reused/missing
+Core:
+  maoleve launcher:
+  doctor:
+Versions:
+  tool | supported | installed | status
+Integrations:
+  installed/reused/skipped/failed
+Configuration:
+  managed surfaces:
+  credentials preserved: yes/no
+Manual actions:
+Failures:
+```
+
+Save the report or compare it with a previous run to spot missing agents,
+version drift, broken managed links, and incomplete integrations.
+
 ## What it supports
 
 Mão leve writes an additive, clearly marked layer into the native surface of
