@@ -539,9 +539,7 @@ wrap_agent() {
       fi
       ;;
     cursor-agent)
-      if have headroom; then
-        exec headroom wrap codex "$@"
-      fi
+      exec cursor-agent "$@"
       ;;
   esac
 
