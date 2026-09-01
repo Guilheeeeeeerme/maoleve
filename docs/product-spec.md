@@ -26,9 +26,9 @@ The human remains responsible for approval of optional integrations,
 cross-agent discovery, credential-bearing sources, ambiguous merges,
 destructive operations, and recovery actions.
 
-Mão leve must retain its version-lock policy: `versions.env` is the lock file.
-Setup must refuse pinned-version drift rather than silently upgrading a
-dependency or adopting `latest`.
+Mão leve must retain its supported-version policy: `versions.env` is the
+authoritative baseline. Setup must warn on semver-breaking drift and continue
+rather than silently upgrading a dependency or adopting `latest`.
 
 ## 3. Product Principles
 

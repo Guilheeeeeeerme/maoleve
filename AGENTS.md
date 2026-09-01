@@ -8,7 +8,7 @@
 - Use Serena only when symbol-level navigation or memory is needed.
 - Do not run broad tests or broad refactors unless explicitly requested.
 - Start with targeted reads and exact searches before anything larger.
-- Treat `versions.env` as the lock file; refuse drift instead of upgrading blindly.
+- Treat `versions.env` as the supported-version baseline; warn on semver-breaking drift and continue.
 - Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
 - Keep all user-facing text in English.
 
