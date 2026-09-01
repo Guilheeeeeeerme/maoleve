@@ -10,8 +10,9 @@ report installed, reused, skipped, manual, and failed items at the end.
    Cursor Agents (`cursor-agent`), Cursor IDE, and Claude Code. Do not assume
    the active agent from a directory name or environment variable.
 2. Verify that the host is Linux, and record the Ubuntu version when
-   available. Stop and ask the human for direction if the host is outside the
-   Linux/Ubuntu scope.
+   available. Ubuntu is the only guaranteed platform. Stop and ask the human
+   for direction before proceeding on any other Linux distribution or outside
+   the Linux scope.
 3. Ask where Maoleve should live if no user-local checkout is available.
    Clone Maoleve there, or update the existing checkout without discarding
    user changes. Treat `versions.env` as the version lock file; refuse drift
@@ -31,7 +32,11 @@ instructions” are valid answers for every discovery or integration question.
 3. Which specific agents are authorized for discovery? Offer Codex, OpenCode,
    Cursor Agents (`cursor-agent`), Cursor IDE, and Claude Code individually;
    authorization for one agent does not authorize another.
-4. Ask independently whether to select Headroom, RTK, Serena, Caveman,
+4. Separately, before reading credential-bearing files or environment
+   configuration, which exact sources may I read? Name each authorized file,
+   directory, environment configuration, or variable source; discovery
+   consent does not authorize these reads.
+5. Ask independently whether to select Headroom, RTK, Serena, Caveman,
    Spectkit, Superpowers, Firecrawl, and Context7. Do not recommend or enable
    any integration automatically.
 
