@@ -21,9 +21,8 @@ main() {
   mkdir -p "$HOME/.local/bin"
   ln -sfn "$INSTALL_DIR/bin/maoleve" "$HOME/.local/bin/maoleve"
 
-  printf '%s\n' "Maoleve installed into $INSTALL_DIR"
+  printf '%s\n' "Mão leve installed into $INSTALL_DIR"
   printf '%s\n' "Run: maoleve doctor"
 }
 
 main "$@"
-

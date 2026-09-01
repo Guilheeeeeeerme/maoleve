@@ -9,13 +9,13 @@
 ### Recovery boundary
 
 ```bash
-rtk grep -n -F -e "Broader removal is outside Maoleve scope." -e "Maoleve never removes an entire" -e "including after human confirmation." PROMPT.md
+rtk grep -n -F -e "Broader removal is outside Mão leve scope." -e "Mão leve never removes an entire" -e "including after human confirmation." PROMPT.md
 ```
 
 Exit: `0`
 
 ```text
-85:Broader removal is outside Maoleve scope. Maoleve never removes an entire
+85:Broader removal is outside Mão leve scope. Mão leve never removes an entire
 86:agent configuration directory, including after human confirmation. Do not
 ```
 

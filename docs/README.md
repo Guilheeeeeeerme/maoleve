@@ -1,6 +1,6 @@
-# Maoleve guided setup
+# Mão leve guided setup
 
-Maoleve is a cross-platform, supervised setup layer for coding agents. It is
+Mão leve is a cross-platform, supervised setup layer for coding agents. It is
 tested primarily on Ubuntu Linux and aims to work on compatible Linux and
 macOS environments. A human remains in control: the setup agent identifies
 the platform, explains its plan, and asks before it clones or updates the checkout, inspects or
@@ -19,20 +19,20 @@ Paste this prompt into one supported agent. It is plain text for the agent;
 do not run it as a shell command.
 
 ```text
-Set up Maoleve in supervised mode.
+Set up Mão leve in supervised mode.
 
 1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
    (cursor-agent), Cursor IDE, or Claude Code.
 2. Detect the operating system and shell. Ubuntu Linux is the primary tested
    environment; continue on compatible Linux or macOS when possible. If a
    platform-specific limitation appears, explain it and ask me how to proceed.
-3. Explain where Maoleve will live and whether you will clone or update it.
+3. Explain where Mão leve will live and whether you will clone or update it.
    Ask for my approval before changing anything.
 4. After I approve, clone this repository if it is missing:
    https://github.com/Guilheeeeeeerme/maoleve.git
    If it already exists, inspect its status and update it only without
    discarding my changes. Never use destructive cleanup.
-5. Enter the Maoleve checkout and read `PROMPT.md`. Follow that prompt exactly.
+5. Enter the Mão leve checkout and read `PROMPT.md`. Follow that prompt exactly.
    It contains the complete setup questions, merge rules, credential safety,
    supported-agent guidance, optional integrations, repair rules, and final
    report format.
@@ -53,7 +53,7 @@ platform-specific limitation.
 
 ## Supported agents and their native configuration
 
-Maoleve supports these agents. It adds a marked, Maoleve-managed layer in the
+Mão leve supports these agents. It adds a marked, Mão leve-managed layer in the
 native surface of only the agents you authorize; formats and capabilities are
 not interchangeable.
 
@@ -71,7 +71,7 @@ that active agent's harness configuration.
 
 ## Optional integrations
 
-Each integration is independent. Maoleve asks about every item below before
+Each integration is independent. Mão leve asks about every item below before
 installing or configuring it; you may select it, skip it, or request manual
 instructions. No optional integration is enabled merely because it exists.
 
@@ -91,15 +91,15 @@ MCP entries, and only in the authorized agent's native configuration.
 
 ## Complementary configuration, not replacement
 
-Your existing harness wins. Maoleve adds an identifiable owned layer; it does
+Your existing harness wins. Mão leve adds an identifiable owned layer; it does
 not replace your workflow.
 
 - The agent reads existing configuration before proposing an edit.
 - Existing model choices, plugins, rules, commands, hooks, unknown fields,
   formatting, and ordering remain intact whenever possible.
-- It adds only approved Maoleve entries that are absent. On a later run, it
-  updates only entries already marked as Maoleve-managed.
-- A setting that resembles a Maoleve setting is not proof that Maoleve owns
+- It adds only approved Mão leve entries that are absent. On a later run, it
+  updates only entries already marked as Mão leve-managed.
+- A setting that resembles a Mão leve setting is not proof that Mão leve owns
   it. Stable markers or equivalent ownership metadata are required.
 - When a format cannot be merged safely, the agent pauses for human
   confirmation before any backup-and-rewrite flow. It never silently
@@ -123,8 +123,8 @@ The agent never prints secret values, replaces real values with placeholders,
 or copies secrets unnecessarily. It prefers references to existing environment
 variables.
 
-Maoleve must never delete or replace existing credentials. Credentials are
-never Maoleve-owned, and recovery deletion excludes them.
+Mão leve must never delete or replace existing credentials. Credentials are
+never Mão leve-owned, and recovery deletion excludes them.
 
 Discovery is not adoption. Finding a component or credential in an authorized
 source does not authorize its use for a newly selected integration. The agent
@@ -134,20 +134,20 @@ to reveal the secret.
 
 ## Repair and clean reinstall
 
-Recovery applies only to selected Maoleve-managed components. Before repair or
+Recovery applies only to selected Mão leve-managed components. Before repair or
 clean reinstall, the agent creates a recoverable backup and follows this
 order:
 
 1. Diagnose the problem and show non-secret evidence.
-2. Repair the existing Maoleve-managed configuration.
-3. With approval, reinstall the Maoleve-managed package, plugin, or files.
-4. If necessary, remove and recreate only the Maoleve-owned component.
+2. Repair the existing Mão leve-managed configuration.
+3. With approval, reinstall the Mão leve-managed package, plugin, or files.
+4. If necessary, remove and recreate only the Mão leve-owned component.
 5. Re-merge preserved user configuration and validate the result.
 
-**Warning:** Maoleve recovery never removes an entire agent configuration
-directory. Any broader user-led cleanup is outside Maoleve recovery scope and
+**Warning:** Mão leve recovery never removes an entire agent configuration
+directory. Any broader user-led cleanup is outside Mão leve recovery scope and
 requires separate handling, including its own explicit confirmation and
-backup. Maoleve does not modify unrelated tools or global preferences during
+backup. Mão leve does not modify unrelated tools or global preferences during
 repair.
 
 ## What completion looks like

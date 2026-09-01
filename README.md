@@ -1,6 +1,12 @@
-# Maoleve
+# Mão leve
 
-Maoleve is a cross-platform, supervised setup layer for coding agents. It is
+<img src="assets/maoleve-mark.svg" alt="Mão leve mark" width="96">
+
+`maoleve` (*mow-LEH-vee*) is Portuguese for *mão leve* — literally, “light
+hand.” It describes a delicate, skillful touch: doing more with less, removing
+excess without disturbing what matters.
+
+Mão leve is a cross-platform, supervised setup layer for coding agents. It is
 tested primarily on Ubuntu Linux and aims to work on compatible Linux and
 macOS environments without taking control of an existing setup.
 
@@ -9,20 +15,20 @@ macOS environments without taking control of an existing setup.
 Open your coding agent, paste this prompt, and follow its questions:
 
 ```text
-Set up Maoleve in supervised mode.
+Set up Mão leve in supervised mode.
 
 1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
    (cursor-agent), Cursor IDE, or Claude Code.
 2. Detect the operating system and shell. Ubuntu Linux is the primary tested
    environment; continue on compatible Linux or macOS when possible. If a
    platform-specific limitation appears, explain it and ask me how to proceed.
-3. Explain where Maoleve will live and whether you will clone or update it.
+3. Explain where Mão leve will live and whether you will clone or update it.
    Ask for my approval before changing anything.
 4. After I approve, clone this repository if it is missing:
    https://github.com/Guilheeeeeeerme/maoleve.git
    If it already exists, inspect its status and update it only without
    discarding my changes. Never use destructive cleanup.
-5. Enter the Maoleve checkout and read `PROMPT.md`. Follow that prompt exactly.
+5. Enter the Mão leve checkout and read `PROMPT.md`. Follow that prompt exactly.
    It contains the complete setup questions, merge rules, credential safety,
    supported-agent guidance, optional integrations, repair rules, and final
    report format.
@@ -39,7 +45,7 @@ rather than upgrade a dependency silently.
 
 ## Supported agents
 
-Maoleve supports these distinct native surfaces:
+Mão leve supports these distinct native surfaces:
 
 - Codex
 - OpenCode
@@ -54,8 +60,8 @@ configuration policy for each agent.
 
 ## Supervised, complementary setup
 
-Existing harness configuration and credentials remain yours. Maoleve adds an
-identifiable, Maoleve-managed layer only for agents and integrations you
+Existing harness configuration and credentials remain yours. Mão leve adds an
+identifiable, Mão leve-managed layer only for agents and integrations you
 approve.
 
 - It reads relevant existing configuration before proposing an edit.
@@ -63,8 +69,8 @@ approve.
   deleted, replaced, or exposed.
 - It preserves existing model choices, plugins, rules, commands, hooks, and
   unknown fields. It preserves formatting and ordering whenever possible.
-- It adds approved Maoleve entries only when absent, then updates only entries
-  marked as Maoleve-managed on later runs.
+- It adds approved Mão leve entries only when absent, then updates only entries
+  marked as Mão leve-managed on later runs.
 - If safe merging is not possible, it pauses for approval before a recoverable
   backup-and-rewrite flow. It never silently overwrites a configuration file.
 
@@ -73,7 +79,7 @@ an integration or credential does not authorize adopting it.
 
 ## Optional integrations
 
-Every integration is opt-in. Maoleve does not recommend or enable any
+Every integration is opt-in. Mão leve does not recommend or enable any
 integration automatically. The setup agent asks independently about:
 
 - Headroom — context compression and model-call proxying
@@ -86,7 +92,7 @@ integration automatically. The setup agent asks independently about:
 - Context7 — current library and framework documentation
 
 MCP entries follow the same rule: configure only selected entries in the
-authorized agent's native surface. Maoleve does not promise a default MCP
+authorized agent's native surface. Mão leve does not promise a default MCP
 list, automatic plugin install, or a shared configuration format across all
 agents.
 
@@ -108,12 +114,12 @@ Use the [guided setup documentation](docs/README.md) and
 product-planning material or a shell command as authorization to configure all
 agents or integrations automatically.
 
-For a selected Maoleve-managed component, recovery follows this order:
+For a selected Mão leve-managed component, recovery follows this order:
 
 1. Diagnose with non-secret evidence.
 2. Repair managed configuration.
 3. Reinstall the managed package, plugin, or files after approval.
-4. Recreate only the Maoleve-owned component if necessary.
+4. Recreate only the Mão leve-owned component if necessary.
 5. Re-merge preserved user configuration and validate it.
 
 Recovery never deletes an entire agent configuration directory or existing

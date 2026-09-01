@@ -1,4 +1,4 @@
-# Maoleve Policy
+# Mão leve Policy
 
 - Keep the harness Linux-only and shell-first.
 - Prefer the smallest sufficient tool chain.
@@ -10,4 +10,3 @@
 - Start with targeted reads and exact searches before anything larger.
 - Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
 - Keep all user-facing text in English.
-

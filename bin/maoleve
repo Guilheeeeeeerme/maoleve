@@ -37,7 +37,7 @@ show_prereqs() {
     bash git curl mkdir ln cp chmod sed awk
     headroom rtk codex opencode cursor-agent cursor claude serena caveman gh
   )
-  printf '%s\n' "Maoleve prereqs"
+  printf '%s\n' "Mão leve prereqs"
   printf '%s\n' "---------------"
   for tool in "${tools[@]}"; do
     if [[ "$tool" == "caveman" ]]; then
@@ -56,7 +56,7 @@ show_prereqs() {
 
 show_versions() {
   source_versions
-  printf '%s\n' "Maoleve locked versions"
+  printf '%s\n' "Mão leve locked versions"
   printf '%s\n' "-----------------------"
   for item in \
     "headroom:${MAOLEVE_HEADROOM_VERSION:-unset}" \
@@ -137,7 +137,7 @@ enforce_versions() {
   [[ -n "${MAOLEVE_SERENA_VERSION:-}" ]] && require_version serena "$MAOLEVE_SERENA_VERSION" || failed=1
   [[ -n "${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-}" ]] && require_caveman_plugin "$MAOLEVE_CAVEMAN_PLUGIN_VERSION" || failed=1
   if (( failed )); then
-    printf '%s\n' "Maoleve version drift detected. Refusing to run." >&2
+    printf '%s\n' "Mão leve version drift detected. Refusing to run." >&2
     exit 1
   fi
 }
@@ -172,7 +172,7 @@ write_env_files() {
   need_dir "$CONFIG_DIR"
 
   cat >"$CONFIG_DIR/env.sh" <<'EOF'
-# Maoleve shell defaults.
+# Mão leve shell defaults.
 # Fill secrets in ~/.config/maoleve/env.local if you want them outside your shell history.
 export HEADROOM_PROJECT="${HEADROOM_PROJECT:-Code}"
 export HEADROOM_MODE="${HEADROOM_MODE:-token}"
@@ -187,7 +187,7 @@ fi
 EOF
 
   cat >"$CONFIG_DIR/env.local.example" <<'EOF'
-# Maoleve secret placeholders.
+# Mão leve secret placeholders.
 # Copy this to ~/.config/maoleve/env.local and fill the values you use.
 # export OPENAI_API_KEY="..."
 # export ANTHROPIC_API_KEY="..."
@@ -200,7 +200,7 @@ EOF
     cat >>"$HOME/.bashrc" <<'EOF'
 
 # BEGIN MAOLEVE
-# Maoleve shell policy.
+# Mão leve shell policy.
 # export OPENAI_API_KEY="..."
 # export ANTHROPIC_API_KEY="..."
 # export CONTEXT7_API_KEY="..."
@@ -362,7 +362,7 @@ EOF
 write_claude_policy() {
   need_dir "$HOME/.claude"
   cat >"$HOME/.claude/CLAUDE.md" <<'EOF'
-# Maoleve Policy
+# Mão leve Policy
 
 - Keep the harness Linux-only and shell-first.
 - Prefer the smallest sufficient tool chain.
@@ -391,7 +391,7 @@ apply_configs() {
     rtk init --global --codex || true
     rtk init --global --opencode || true
   fi
-  printf '%s\n' "Maoleve configs written."
+  printf '%s\n' "Mão leve configs written."
   printf '%s\n' "If Claude Code is installed, run the Claude setup commands from README or maoleve claude."
 }
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Mão leve mark</title>
+  <desc id="desc">A simple open hand drawn as a continuous, light stroke.</desc>
+  <rect width="160" height="160" rx="36" fill="#14213D"/>
+  <path d="M48 82V55a8 8 0 0 1 16 0v24V43a8 8 0 0 1 16 0v36V36a8 8 0 0 1 16 0v43V48a8 8 0 0 1 16 0v48c0 22-15 36-37 36h-7c-19 0-32-12-32-30V82a8 8 0 0 1 16 0Z" fill="none" stroke="#FCA311" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M47 112c8 8 18 12 30 12h8" fill="none" stroke="#E5E5E5" stroke-width="5" stroke-linecap="round"/>
+</svg>

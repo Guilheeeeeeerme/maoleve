@@ -1,7 +1,7 @@
 # Agent-Guided Setup Documentation Implementation Plan
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Align Maoleve's prompt and documentation with supervised, opt-in,
+**Goal:** Align Mão leve's prompt and documentation with supervised, opt-in,
 non-destructive setup across Codex, OpenCode, Cursor Agents, Cursor IDE, and
 Claude Code.
 
@@ -9,7 +9,7 @@ Claude Code.
 agent. `docs/README.md` is the user-facing onboarding source, while the root
 README provides a concise entry point and `docs/product-spec.md` defines the
 product contract. All documents share the same complementary merge, credential
-preservation, cross-agent authorization, and Maoleve-owned recovery rules.
+preservation, cross-agent authorization, and Mão leve-owned recovery rules.
 
 **Tech Stack:** Markdown, Bash command examples, repository-local links, and
 existing `versions.env` terminology.
@@ -20,11 +20,11 @@ existing `versions.env` terminology.
 
 - Initial supported agents are Codex, OpenCode, Cursor Agents (`cursor-agent`), Cursor IDE, and Claude Code.
 - No integration is recommended or enabled automatically.
-- Maoleve treats the user's existing harness as the primary configuration.
+- Mão leve treats the user's existing harness as the primary configuration.
 - Never delete or replace an existing credential.
 - Ask before reading credential-bearing files or environment configuration in another agent's directory.
 - Clean reinstall never means deleting an entire agent configuration directory.
-- Maoleve remains Linux-first and Ubuntu-only for guaranteed support.
+- Mão leve remains Linux-first and Ubuntu-only for guaranteed support.
 - Version pins remain governed by `versions.env`.
 - User-facing documentation remains in English.
 
@@ -43,7 +43,7 @@ existing `versions.env` terminology.
 - [ ] **Step 1: Replace default-stack instructions with an explicit setup-agent contract**
 
 Write instructions that require the agent to identify the current supported
-agent, verify Linux/Ubuntu scope, clone/update Maoleve, and read the detailed
+agent, verify Linux/Ubuntu scope, clone/update Mão leve, and read the detailed
 repository documentation before making changes.
 
 - [ ] **Step 2: Add the supervised question sequence**
@@ -56,15 +56,15 @@ State that “skip” and “manual instructions” are valid answers.
 - [ ] **Step 3: Add complementary merge and ownership rules**
 
 Require reading existing config first, preserving unknown fields and existing
-credentials, adding stable Maoleve-managed markers, and changing only
-Maoleve-owned entries on future runs. Require a human-visible summary before
+credentials, adding stable Mão leve-managed markers, and changing only
+Mão leve-owned entries on future runs. Require a human-visible summary before
 ambiguous edits.
 
 - [ ] **Step 4: Add credential and recovery safety rules**
 
 State that credentials must not be printed, copied unnecessarily, replaced by
 placeholders, or read from another agent without authorization. Define the
-diagnose → repair → approved Maoleve-only reinstall → validate recovery ladder.
+diagnose → repair → approved Mão leve-only reinstall → validate recovery ladder.
 
 - [ ] **Step 5: Add per-agent token guidance**
 
@@ -105,7 +105,7 @@ rtk git commit -m "docs: define supervised setup prompt"
 - [ ] **Step 1: Add the copy/paste bootstrap prompt**
 
 Provide a short shell-safe prompt that tells the user to paste it into one of
-the five supported agents and tells that agent to clone Maoleve and read
+the five supported agents and tells that agent to clone Mão leve and read
 `PROMPT.md`. Link to the detailed prompt for inspection.
 
 - [ ] **Step 2: Document supported agents and config surfaces**
@@ -116,13 +116,13 @@ agents share one format.
 
 - [ ] **Step 3: Document opt-in integration questions**
 
-Give each optional tool its purpose and state that Maoleve asks before
+Give each optional tool its purpose and state that Mão leve asks before
 installing or configuring it. Remove language implying Headroom, RTK, Serena,
 Caveman, or any MCP is a recommended default.
 
 - [ ] **Step 4: Document complementary merge behavior**
 
-Explain that the user's harness wins, Maoleve adds an owned layer, unknown
+Explain that the user's harness wins, Mão leve adds an owned layer, unknown
 fields and existing settings remain intact, and ambiguous format changes pause
 for human confirmation.
 
@@ -134,7 +134,7 @@ credentials are not adopted until separately approved.
 
 - [ ] **Step 6: Document repair and clean reinstall boundaries**
 
-Describe backups, diagnosis, Maoleve-only repair, and Maoleve-only clean
+Describe backups, diagnosis, Mão leve-only repair, and Mão leve-only clean
 reinstall. Include a warning that an entire agent config directory is never
 removed as part of normal recovery.
 
@@ -181,7 +181,7 @@ Agents. Link users to `docs/README.md` for the bootstrap prompt.
 - [ ] **Step 3: Add the complementary-config summary**
 
 State that existing harness configuration and credentials are preserved and
-that Maoleve changes only approved, Maoleve-managed entries.
+that Mão leve changes only approved, Mão leve-managed entries.
 
 - [ ] **Step 4: Remove contradictory command promises**
 
@@ -208,7 +208,7 @@ rtk git commit -m "docs: align root setup guidance"
 
 - [ ] **Step 1: Rewrite product goal and operating modes around supervised setup**
 
-State that Maoleve complements an existing harness, asks before optional
+State that Mão leve complements an existing harness, asks before optional
 integration changes, and keeps a human responsible for ambiguous operations.
 
 - [ ] **Step 2: Replace the supported-agent section**
@@ -225,7 +225,7 @@ version-lock information where accurate.
 - [ ] **Step 4: Add merge, credential, discovery, and recovery requirements**
 
 Make preservation of unknown fields and secrets, explicit cross-agent access,
-stable ownership markers, backups, and Maoleve-only reinstall behavior product
+stable ownership markers, backups, and Mão leve-only reinstall behavior product
 requirements.
 
 - [ ] **Step 5: Update installation, quality bar, acceptance criteria, and open questions**
@@ -278,11 +278,11 @@ installed or configured without user selection.
 Run:
 
 ```bash
-rtk grep -n -i -e 'credential\|secret\|authorized\|preserve\|merge\|backup\|reinstall\|Maoleve-managed' PROMPT.md README.md docs/README.md docs/product-spec.md
+rtk grep -n -i -e 'credential\|secret\|authorized\|preserve\|merge\|backup\|reinstall\|Mão leve-managed' PROMPT.md README.md docs/README.md docs/product-spec.md
 ```
 
 Confirm every relevant document states preservation, authorization, and
-Maoleve-only recovery boundaries.
+Mão leve-only recovery boundaries.
 
 - [ ] **Step 4: Check Markdown and repository links**
 

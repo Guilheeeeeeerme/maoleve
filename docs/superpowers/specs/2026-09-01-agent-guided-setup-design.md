@@ -1,4 +1,4 @@
-# Agent-Guided Maoleve Setup Design
+# Agent-Guided Mão leve Setup Design
 
 **Date:** 2026-09-01
 **Status:** Design approved in conversation; awaiting written-spec review
@@ -6,7 +6,7 @@
 
 Replace the old automatic-default setup story with a supervised, prompt-driven
 onboarding flow. A human pastes a short bootstrap prompt into one supported
-coding agent. That agent clones Maoleve, reads the detailed operational prompt,
+coding agent. That agent clones Mão leve, reads the detailed operational prompt,
 asks which integrations to use, and applies only complementary, user-approved
 changes.
 
@@ -39,7 +39,7 @@ each integration independently, skip it, or request manual instructions.
 The bootstrap prompt is intentionally short. It instructs the active agent to:
 
 1. identify the current agent and verify Linux/Ubuntu support;
-2. clone or update Maoleve in a user-local directory;
+2. clone or update Mão leve in a user-local directory;
 3. read the repository's detailed setup prompt;
 4. explain the planned actions to the supervising human;
 5. inspect the active agent's existing harness configuration;
@@ -55,8 +55,8 @@ operations, credential reuse, and recovery actions.
 
 ## Complementary Configuration Contract
 
-Maoleve treats the user's existing harness as the primary configuration. It
-adds a clearly identifiable Maoleve-managed layer instead of replacing the
+Mão leve treats the user's existing harness as the primary configuration. It
+adds a clearly identifiable Mão leve-managed layer instead of replacing the
 user's workflow.
 
 For every supported agent, the agent must:
@@ -64,15 +64,15 @@ For every supported agent, the agent must:
 - read existing configuration before proposing changes;
 - preserve existing credentials, model choices, plugins, rules, commands,
   hooks, and unknown fields;
-- add only approved Maoleve entries that are absent;
-- update only entries previously marked as Maoleve-managed;
+- add only approved Mão leve entries that are absent;
+- update only entries previously marked as Mão leve-managed;
 - avoid changing unrelated formatting or ordering when possible;
 - show a diff or concise change summary before ambiguous edits;
 - create a recoverable backup before a repair or clean reinstall.
 
-Maoleve-managed blocks must use stable markers or an equivalent ownership
+Mão leve-managed blocks must use stable markers or an equivalent ownership
 metadata mechanism. The agent must never infer ownership merely because a
-setting resembles a Maoleve setting.
+setting resembles a Mão leve setting.
 
 If a file format cannot be merged safely, the agent must stop and ask the human
 whether to use a backup-and-rewrite flow. It must not silently overwrite the
@@ -103,16 +103,16 @@ selected integration.
 
 ## Installation and Recovery Boundaries
 
-Maoleve may install or repair only components the user selected and only within
-the documented Maoleve-managed scope. It must not modify unrelated tools or
+Mão leve may install or repair only components the user selected and only within
+the documented Mão leve-managed scope. It must not modify unrelated tools or
 global user preferences.
 
-When an approved Maoleve component is missing or broken, the recovery ladder is:
+When an approved Mão leve component is missing or broken, the recovery ladder is:
 
 1. diagnose and show evidence;
-2. repair the existing Maoleve-managed configuration;
-3. reinstall the Maoleve-managed package/plugin/files if the human approves;
-4. remove and recreate only the Maoleve-owned component when a clean reinstall
+2. repair the existing Mão leve-managed configuration;
+3. reinstall the Mão leve-managed package/plugin/files if the human approves;
+4. remove and recreate only the Mão leve-owned component when a clean reinstall
    is necessary;
 5. re-merge preserved user configuration and validate.
 
@@ -121,7 +121,7 @@ Any broader removal requires a separate explicit confirmation and a backup.
 
 ## Agent-Specific Guidance
 
-Each agent receives a native policy layer, written as a Maoleve-managed block:
+Each agent receives a native policy layer, written as a Mão leve-managed block:
 
 - Cursor IDE: Cursor rules file with concise context and shell guidance;
 - Cursor Agents: compatible terminal-facing guidance without assuming IDE-only
@@ -166,7 +166,7 @@ Documentation validation must confirm:
 - no document claims that optional tools are automatically enabled;
 - credential-preservation and cross-agent authorization rules are consistent;
 - complementary merge behavior is described in every relevant entry point;
-- clean reinstall scope is limited to Maoleve-managed components;
+- clean reinstall scope is limited to Mão leve-managed components;
 - Linux/Ubuntu scope and version-lock policy remain explicit;
 - bootstrap prompt points to the detailed prompt in the cloned repository;
 - no stale command or configuration claim contradicts the new supervised flow.
