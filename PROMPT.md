@@ -10,10 +10,11 @@ report installed, reused, skipped, manual, and failed items at the end.
 1. Identify the active supported agent. Supported agents are Codex, OpenCode,
    Cursor Agents (`cursor-agent`), Cursor IDE, and Claude Code. Do not assume
    the active agent from a directory name or environment variable.
-2. Verify that the host is Linux, and record the Ubuntu version when
-   available. Ubuntu is the only guaranteed platform. Stop and ask the human
-   for direction before proceeding on any other Linux distribution or outside
-   the Linux scope.
+2. Detect the host operating system, shell, and relevant package manager.
+   Ubuntu Linux is the primary tested environment, but continue on compatible
+   Linux distributions or macOS when possible. If a command, path, package, or
+   agent integration is platform-specific or unavailable, explain the
+   limitation and ask the human how to proceed.
 3. Ask where Maoleve should live if no user-local checkout is available.
    Identify whether the checkout action will be a clone or update, explain its
    target and planned effects, and obtain human approval before performing

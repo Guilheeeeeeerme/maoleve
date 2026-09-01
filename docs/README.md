@@ -1,8 +1,9 @@
 # Maoleve guided setup
 
-Maoleve is an Ubuntu-supported, supervised setup layer for coding agents. A
-human remains in control: the setup agent identifies the platform, explains
-its plan, and asks before it clones or updates the checkout, inspects or
+Maoleve is a cross-platform, supervised setup layer for coding agents. It is
+tested primarily on Ubuntu Linux and aims to work on compatible Linux and
+macOS environments. A human remains in control: the setup agent identifies
+the platform, explains its plan, and asks before it clones or updates the checkout, inspects or
 changes configuration, installs anything, or reads credentials. It then
 reports what it installed, reused, skipped, left for manual setup, or could
 not complete.
@@ -22,8 +23,9 @@ Set up Maoleve in supervised mode.
 
 1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
    (cursor-agent), Cursor IDE, or Claude Code.
-2. Verify Linux/Ubuntu support. Ubuntu is the only guaranteed platform. Stop
-   and ask me how to proceed on another Linux distribution or outside Linux.
+2. Detect the operating system and shell. Ubuntu Linux is the primary tested
+   environment; continue on compatible Linux or macOS when possible. If a
+   platform-specific limitation appears, explain it and ask me how to proceed.
 3. Explain where Maoleve will live and whether you will clone or update it.
    Ask for my approval before changing anything.
 4. After I approve, clone this repository if it is missing:
@@ -44,8 +46,10 @@ want to review every question and boundary. The setup agent reads that file
 after it clones or updates the repository, along with this guide and the
 repository README.
 
-Ubuntu is the only guaranteed platform. On another Linux distribution or
-outside Linux, the agent must stop and ask how to proceed.
+Ubuntu Linux is the primary tested environment. Other Linux distributions and
+macOS are best-effort targets: the agent should continue when commands and
+configuration surfaces are compatible, and ask before proceeding around a
+platform-specific limitation.
 
 ## Supported agents and their native configuration
 

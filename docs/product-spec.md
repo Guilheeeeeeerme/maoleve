@@ -2,8 +2,10 @@
 
 ## 1. Overview
 
-Maoleve is an Ubuntu-supported, supervised setup layer for coding agents. It
-complements an existing harness: it adds a clearly identifiable,
+Maoleve is a cross-platform, supervised setup layer for coding agents. It is
+tested primarily on Ubuntu Linux and aims to work on compatible Linux and
+macOS environments. It complements an existing harness: it adds a clearly
+identifiable,
 Maoleve-managed layer only where a human approves it. It does not replace a
 user's workflow, credentials, or unrelated configuration.
 
@@ -32,8 +34,9 @@ dependency or adopting `latest`.
 
 - Existing harness configuration is primary; Maoleve is complementary.
 - Prompt-driven supervised setup is the primary user flow.
-- Ubuntu is the only guaranteed platform. On another Linux distribution or
-  outside Linux, setup must stop and ask the human how to proceed.
+- Ubuntu Linux is the primary tested platform. Other Linux distributions and
+  macOS are best-effort targets; setup should continue when compatible and ask
+  the human before proceeding around a platform-specific limitation.
 - All integrations are independent and opt-in. No tool, plugin, MCP entry, or
   policy mode is enabled or recommended automatically.
 - Agent-native formats and capabilities remain separate; shared policy does
@@ -47,7 +50,8 @@ dependency or adopting `latest`.
 
 This is the required onboarding mode. The setup agent:
 
-1. Identifies the active supported agent and verifies Linux/Ubuntu scope.
+1. Identifies the active supported agent and detects the operating system,
+   shell, and relevant package manager.
 2. Identifies whether a Maoleve checkout must be cloned or updated and
    describes that planned checkout action, including that it will use a
    user-local directory without discarding user changes.
@@ -175,8 +179,9 @@ not modify unrelated tools or global user preferences.
 
 Maoleve meets its quality bar when:
 
-- Ubuntu scope and `versions.env` version-lock behavior are explicit and
-  preserved.
+- Ubuntu is identified as the primary tested environment, broader Linux and
+  macOS support is documented as best-effort, and `versions.env` version-lock
+  behavior is explicit and preserved.
 - The five supported agents use the exact names in this spec and receive
   agent-native, additive guidance.
 - Prompt-driven supervised setup is documented as the primary flow.
@@ -198,8 +203,9 @@ setup behavior satisfy all of the following:
 
 - A supported agent can follow the bootstrap prompt to the detailed
   `PROMPT.md` in a user-local checkout.
-- Setup stops for unsupported platform scope and version drift instead of
-  silently proceeding.
+- Setup explains platform limitations and asks before proceeding when a
+  command, path, package, or integration is incompatible; it refuses version
+  drift instead of silently proceeding.
 - The supervising human approves optional integration selection, configuration
   inspection, cross-agent discovery, credential-source reads, ambiguous merges,
   repair, and clean reinstall actions.
@@ -229,7 +235,8 @@ setup instructions.
 
 ## 12. Open Questions
 
-- Which Ubuntu LTS release should become the explicit tested baseline?
+- Which Ubuntu LTS release should become the explicit tested baseline, and
+  which Linux/macOS environments should be added to validation?
 - Which shell-installer actions remain accurate enough to document as an
   optional implementation path?
 - Should legacy TokenSave compatibility remain documented only where an
