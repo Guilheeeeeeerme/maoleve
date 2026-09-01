@@ -1,212 +1,101 @@
 # Maoleve
 
-Maoleve is a Linux-first harness for coding agents.
+Maoleve is an Ubuntu-supported, supervised setup layer for coding agents. It
+helps you add a small, token-efficient harness without taking control of an
+existing setup.
 
-It is designed to be small, pinned, and boring:
+Start by pasting the bootstrap prompt from [docs/README.md](docs/README.md)
+into a supported agent. The agent identifies itself, explains each proposed
+action, and waits for approval before it inspects configuration, reads a
+credential source, installs anything, or makes a change.
 
-- `Headroom` handles compression and proxying.
-- `RTK` compresses shell output.
-- `Caveman` keeps responses terse.
-- `Serena` stays on-demand for symbol-level work.
-- Exact versions are pinned in `versions.env`.
-- Testing is Ubuntu-only for now.
+`versions.env` is the version lock. Setup must refuse pinned-version drift
+rather than upgrade a dependency silently.
 
-Product spec:
+## Supported agents
 
-- [docs/product-spec.md](docs/product-spec.md)
+Maoleve supports these distinct native surfaces:
 
-Core policy:
-
-1. Use the cheapest sufficient path.
-2. Prefer targeted reads and exact search.
-3. Avoid broad tests and broad refactors unless explicitly requested.
-4. Overwrite stale config instead of keeping conflicting variants.
-5. Keep all user-facing text in English.
-
-Supported agents:
-
-- Cursor IDE
-- Cursor CLI / `cursor-agent`
-- Codex CLI
+- Codex
 - OpenCode
+- Cursor Agents (`cursor-agent`)
+- Cursor IDE
 - Claude Code
 
-## What This Repo Configures
+Cursor Agents and Cursor IDE are separate targets. The setup agent never
+assumes that an IDE-only setting applies to terminal-facing Cursor Agents.
+See [docs/README.md](docs/README.md) for the copyable bootstrap prompt and
+the native configuration policy for each agent.
 
-Maoleve writes the following local configuration:
+## Supervised, complementary setup
 
-- `~/.bashrc` Maoleve block with commented secret placeholders and a source line for `~/.config/maoleve/env.sh`
-- `~/.config/maoleve/env.sh` and `~/.config/maoleve/env.local.example`
-- `~/.cursor/mcp.json`
-- `~/.codex/config.toml`
-- `~/.config/opencode/opencode.json`
-- `~/.claude/CLAUDE.md`
-- `~/.codex/AGENTS.md`
-- `~/.config/opencode/AGENTS.md`
-- `~/.cursor/rules/maoleve.mdc`
+Existing harness configuration and credentials remain yours. Maoleve adds an
+identifiable, Maoleve-managed layer only for agents and integrations you
+approve.
 
-## Installable On Linux
+- It reads relevant existing configuration before proposing an edit.
+- It preserves model choices, plugins, rules, commands, hooks, unknown
+  fields, formatting, ordering, and credentials whenever possible.
+- It adds approved Maoleve entries only when absent, then updates only entries
+  marked as Maoleve-managed on later runs.
+- If safe merging is not possible, it pauses for approval before a recoverable
+  backup-and-rewrite flow. It never silently overwrites a configuration file.
 
-These are installed automatically when available:
+Credential discovery requires explicit, source-by-source permission. Finding
+an integration or credential does not authorize adopting it.
 
-- `uv`
-- `headroom`
-- `serena`
-- `rtk`
+## Optional integrations
 
-These are configured when already installed:
+Every integration is opt-in. The setup agent asks independently about:
 
-- `codex`
-- `opencode`
-- `cursor`
-- `cursor-agent`
-- `claude`
+- Headroom — context compression and model-call proxying
+- RTK — compact shell-command output
+- Serena — selective symbol lookup and code navigation
+- Caveman — concise technical responses and workflow style
+- Spectkit — specification workflow support
+- Superpowers — agent workflow skills
+- Firecrawl — web search and structured content retrieval
+- Context7 — current library and framework documentation
 
-These are pinned by `versions.env` and should not drift:
+MCP entries follow the same rule: configure only selected entries in the
+authorized agent's native surface. Maoleve does not promise a default MCP
+list, automatic plugin install, or a shared configuration format across all
+agents.
 
-- `headroom`
-- `rtk`
-- `codex`
-- `opencode`
-- `cursor-agent`
-- `tokensave`
-- `serena`
-- `caveman`
+## Environment and credentials
 
-## Manual Only Or External
+Some selected integrations may need environment variables or account-specific
+setup. Before reading any environment configuration, credential-bearing file,
+directory, or variable source, the setup agent asks which exact source it may
+inspect. It does not print, replace, or copy secret values unnecessarily, and
+prefers references to existing environment variables.
 
-These are not silently installed by Maoleve because they are external GUI apps or depend on your account state:
+If something is missing, the agent reports the exact variable or manual step
+without asking you to disclose a secret.
 
-- `Cursor` IDE and its `cursor-agent` launcher if they are not already present
-- `Claude Code` if you have not installed the CLI yet
-- `Node.js 18+` and `npx` for the Caveman installer and skills-based setups
-- API keys for `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `CONTEXT7_API_KEY`, and `FIRECRAWL_API_KEY`
+## Installation, repair, and validation
 
-If you need `uv`, install it on Linux with the official script:
+Use the [guided setup documentation](docs/README.md) and
+[operational prompt](PROMPT.md) as current instructions. Do not treat older
+product-planning material or a shell command as authorization to configure all
+agents or integrations automatically.
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+For a selected Maoleve-managed component, recovery follows this order:
 
-If `claude` is missing, install Claude Code first:
+1. Diagnose with non-secret evidence.
+2. Repair managed configuration.
+3. Reinstall the managed package, plugin, or files after approval.
+4. Recreate only the Maoleve-owned component if necessary.
+5. Re-merge preserved user configuration and validate it.
 
-```bash
-npm install -g @anthropic-ai/claude-code
-```
+Recovery never deletes an entire agent configuration directory or existing
+credentials. At completion, the agent reports approved agents and
+integrations, what it installed, reused, skipped, left manual, or could not
+complete, and what configuration it preserved.
 
-If `cursor` is missing, install Cursor from the official app for your distro or the downloaded Linux package.
+## Related documentation
 
-If `node`/`npx` is missing and you want Caveman to install for Codex or Cursor, install Node.js 18+ first.
-
-## Bootstrap
-
-From a clone:
-
-```bash
-./install.sh
-```
-
-After install, apply the local harness:
-
-```bash
-maoleve tools
-maoleve apply
-maoleve claude
-```
-
-If you want the wrapper to fail closed on version drift:
-
-```bash
-maoleve versions
-maoleve doctor
-```
-
-## Commands
-
-```bash
-maoleve prereqs
-maoleve versions
-maoleve install
-maoleve apply
-maoleve tools
-maoleve claude
-maoleve doctor
-maoleve wrap codex
-maoleve wrap opencode
-maoleve wrap claude
-maoleve setup cursor
-maoleve prompt
-```
-
-`maoleve wrap cursor` prepares the Headroom Cursor path. `maoleve setup cursor` prints the Cursor-specific guidance if you want to apply settings manually.
-
-## Required Env
-
-These are the variables the harness expects:
-
-- `HEADROOM_PROJECT`
-- `HEADROOM_MODE`
-- `OPENAI_API_KEY`
-- `ANTHROPIC_API_KEY`
-- `CONTEXT7_API_KEY`
-- `FIRECRAWL_API_KEY`
-
-Maoleve writes commented placeholders into `~/.bashrc` and an editable example file at `~/.config/maoleve/env.local.example`.
-
-## Agent Setup
-
-### Cursor IDE And Cursor CLI
-
-Maoleve writes `~/.cursor/mcp.json` with:
-
-- `headroom`
-- `serena`
-- `tokensave`
-- `context7`
-- `firecrawl`
-- `playwright`
-
-Cursor CLI uses the same Cursor config surface as the IDE in this harness, so the same MCP file applies.
-
-### Codex
-
-Maoleve writes `~/.codex/config.toml` with:
-
-- `model_provider = "headroom"`
-- `headroom` as the local proxy
-- `serena`
-- `tokensave`
-- `context7`
-- `firecrawl`
-- `playwright`
-
-### OpenCode
-
-Maoleve writes `~/.config/opencode/opencode.json` with:
-
-- `headroom`
-- `serena`
-- `tokensave`
-- `context7`
-- `firecrawl`
-- `playwright`
-- the `caveman` plugin
-
-### Claude Code
-
-If `claude` is installed, `maoleve claude` will:
-
-- install the `caveman` plugin
-- add the local MCP servers it can manage
-- install the `headroom` MCP path when available
-
-If `claude` is not installed, the command prints the exact install hint instead of failing silently.
-
-If you want the Caveman stack everywhere, the installer uses these official commands under the hood when available:
-
-```bash
-claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman
-npx -y github:JuliusBrussee/caveman -- --only opencode
-npx -y skills add JuliusBrussee/caveman -a codex --yes
-npx -y skills add JuliusBrussee/caveman -a cursor --with-init --yes
-```
+- [Guided setup and bootstrap prompt](docs/README.md)
+- [Operational prompt](PROMPT.md)
+- [Version lock](versions.env)
+- [Product spec (planning reference)](docs/product-spec.md)
