@@ -76,8 +76,8 @@ Your existing harness wins. Maoleve adds an identifiable owned layer; it does
 not replace your workflow.
 
 - The agent reads existing configuration before proposing an edit.
-- Existing credentials, model choices, plugins, rules, commands, hooks,
-  unknown fields, formatting, and ordering remain intact whenever possible.
+- Existing model choices, plugins, rules, commands, hooks, unknown fields,
+  formatting, and ordering remain intact whenever possible.
 - It adds only approved Maoleve entries that are absent. On a later run, it
   updates only entries already marked as Maoleve-managed.
 - A setting that resembles a Maoleve setting is not proof that Maoleve owns
@@ -104,6 +104,9 @@ The agent never prints secret values, replaces real values with placeholders,
 or copies secrets unnecessarily. It prefers references to existing environment
 variables.
 
+Maoleve must never delete or replace existing credentials. Credentials are
+never Maoleve-owned, and recovery deletion excludes them.
+
 Discovery is not adoption. Finding a component or credential in an authorized
 source does not authorize its use for a newly selected integration. The agent
 must obtain separate approval, confirm its source and intended use, and report
@@ -122,8 +125,9 @@ order:
 4. If necessary, remove and recreate only the Maoleve-owned component.
 5. Re-merge preserved user configuration and validate the result.
 
-**Warning:** normal recovery never removes an entire agent configuration
-directory. Any broader removal needs a separate explicit confirmation and a
+**Warning:** Maoleve recovery never removes an entire agent configuration
+directory. Any broader user-led cleanup is outside Maoleve recovery scope and
+requires separate handling, including its own explicit confirmation and
 backup. Maoleve does not modify unrelated tools or global preferences during
 repair.
 
