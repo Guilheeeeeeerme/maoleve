@@ -1,18 +1,41 @@
 # Mão leve
 
-<img src="assets/maoleve-mark.svg?v=2" alt="Mão leve mark" width="96">
+<p align="center">
+  <img src="assets/maoleve-mark.svg?v=2" alt="Mão leve mark" width="128">
+</p>
 
-`maoleve` (*mow-LEH-vee*) is Portuguese for *mão leve* — literally, “light
-hand.” It describes a delicate, skillful touch: doing more with less, removing
-excess without disturbing what matters.
+<h2 align="center">Do more with less.</h2>
+
+<p align="center">
+  <code>maoleve</code> (<i>mow-LEH-vee</i>) is Portuguese for <i>mão leve</i> —
+  literally, “light hand.”
+</p>
+
+<p align="center">
+  A delicate, skillful touch for coding agents: remove excess without
+  disturbing what matters.
+</p>
+
+<p align="center">
+  <a href="#start-here">Start here</a> ·
+  <a href="PROMPT.md">Operational prompt</a> ·
+  <a href="docs/README.md">Full guide</a>
+</p>
 
 Mão leve is a cross-platform, supervised setup layer for coding agents. It is
-tested primarily on Ubuntu Linux and aims to work on compatible Linux and
-macOS environments without taking control of an existing setup.
+tested primarily on Ubuntu Linux and aims to work on compatible Linux and macOS
+environments without taking control of an existing setup.
 
 ## Start here
 
-Open your coding agent, paste this prompt, and follow its questions:
+Open your coding agent, paste the prompt below, and follow its questions.
+
+> [!IMPORTANT]
+> The agent will ask before inspecting configuration, reading credential
+> sources, installing tools, repairing files, or making changes.
+
+<details open>
+<summary><strong>Copy this prompt into your agent</strong></summary>
 
 ```text
 Set up Mão leve in supervised mode.
@@ -37,77 +60,91 @@ Set up Mão leve in supervised mode.
    my approval. Preserve my existing harness and credentials.
 ```
 
-This prompt is self-contained: paste it directly into the agent you want to
-configure. Full operational rules live in [`PROMPT.md`](PROMPT.md).
+</details>
 
-`versions.env` is the version lock. Setup must refuse pinned-version drift
-rather than upgrade a dependency silently.
+This prompt is self-contained. The complete operational rules live in
+[`PROMPT.md`](PROMPT.md).
 
-## Supported agents
+> **Version lock:** `versions.env` is authoritative. Setup must refuse
+> pinned-version drift instead of silently upgrading a dependency.
 
-Mão leve supports these distinct native surfaces:
+## What it supports
 
-- Codex
-- OpenCode
-- Cursor Agents (`cursor-agent`)
-- Cursor IDE
-- Claude Code
+Mão leve writes an additive, clearly marked layer into the native surface of
+the agent you authorize.
 
-Cursor Agents and Cursor IDE are separate targets. The setup agent never
-assumes that an IDE-only setting applies to terminal-facing Cursor Agents.
-See [docs/README.md](docs/README.md) for the same prompt plus the native
-configuration policy for each agent.
+| Coding agent | Native surface |
+| --- | --- |
+| Codex | `AGENTS.md`, Codex configuration |
+| OpenCode | `AGENTS.md`, OpenCode configuration |
+| Cursor Agents | `AGENTS.md`, `cursor-agent` configuration |
+| Cursor IDE | Cursor rules and MCP configuration |
+| Claude Code | `CLAUDE.md`, Claude configuration |
 
-## Supervised, complementary setup
+Cursor Agents and Cursor IDE are separate targets. Mão leve never assumes that
+an IDE-only setting applies to terminal-facing Cursor Agents.
 
-Existing harness configuration and credentials remain yours. Mão leve adds an
-identifiable, Mão leve-managed layer only for agents and integrations you
-approve.
+## The maoleve approach
 
-- It reads relevant existing configuration before proposing an edit.
-- It preserves every existing credential categorically: credentials are never
-  deleted, replaced, or exposed.
-- It preserves existing model choices, plugins, rules, commands, hooks, and
-  unknown fields. It preserves formatting and ordering whenever possible.
-- It adds approved Mão leve entries only when absent, then updates only entries
-  marked as Mão leve-managed on later runs.
-- If safe merging is not possible, it pauses for approval before a recoverable
-  backup-and-rewrite flow. It never silently overwrites a configuration file.
+### Your harness stays in charge
 
-Credential discovery requires explicit, source-by-source permission. Finding
-an integration or credential does not authorize adopting it.
+Existing harness configuration and credentials remain yours. Mão leve
+complements your setup; it does not replace it.
+
+- Reads relevant existing configuration before proposing an edit.
+- Preserves every credential categorically: credentials are never deleted,
+  replaced, or exposed.
+- Preserves model choices, plugins, rules, commands, hooks, unknown fields,
+  formatting, and ordering whenever possible.
+- Adds approved Mão leve entries only when absent.
+- Updates only entries marked as Mão leve-managed on later runs.
+- Pauses for approval before any recoverable backup-and-rewrite flow when safe
+  merging is not possible.
+- Never silently overwrites a configuration file.
+
+### Permission before discovery
+
+Credential discovery requires explicit, source-by-source permission. The setup
+agent asks whether it may inspect credentials in other agents and exactly which
+agents are authorized.
+
+Finding an integration or credential does not authorize adopting it. If a
+selected integration is already configured, Mão leve preserves the existing
+credential and merges around it.
 
 ## Optional integrations
 
-Every integration is opt-in. Mão leve does not recommend or enable any
-integration automatically. The setup agent asks independently about:
+Every integration is independent and opt-in. Mão leve does not recommend or
+enable any integration automatically.
 
-- Headroom — context compression and model-call proxying
-- RTK — compact shell-command output
-- Serena — selective symbol lookup and code navigation
-- Caveman — concise technical responses and workflow style
-- Spectkit — specification workflow support
-- Superpowers — agent workflow skills
-- Firecrawl — web search and structured content retrieval
-- Context7 — current library and framework documentation
+| Integration | Purpose |
+| --- | --- |
+| Headroom | Context compression and model-call proxying |
+| RTK | Compact shell-command output |
+| Serena | Selective symbol lookup and code navigation |
+| Caveman | Concise technical responses and workflow style |
+| Spectkit | Specification workflow support |
+| Superpowers | Agent workflow skills |
+| Firecrawl | Web search and structured content retrieval |
+| Context7 | Current library and framework documentation |
 
 MCP entries follow the same rule: configure only selected entries in the
-authorized agent's native surface. Mão leve does not promise a default MCP
-list, automatic plugin install, or a shared configuration format across all
-agents.
+authorized agent's native surface. There is no default MCP list, automatic
+plugin install, or shared configuration format across all agents.
 
 ## Environment and credentials
 
 Some selected integrations may need environment variables or account-specific
 setup. Before reading any environment configuration, credential-bearing file,
 directory, or variable source, the setup agent asks which exact source it may
-inspect. It does not print, replace, or copy secret values unnecessarily, and
-prefers references to existing environment variables.
+inspect.
 
-If something is missing, the agent reports the exact variable or manual step
-without asking you to disclose a secret.
+It does not print, replace, or copy secret values unnecessarily, and prefers
+references to existing environment variables. If something is missing, it
+reports the exact variable or manual step without asking you to disclose a
+secret.
 
-## Installation, repair, and validation
+## Repair and validation
 
 Use the [guided setup documentation](docs/README.md) and
 [operational prompt](PROMPT.md) as current instructions. Do not treat older
@@ -127,7 +164,7 @@ credentials. At completion, the agent reports approved agents and
 integrations, what it installed, reused, skipped, left manual, or could not
 complete, and what configuration it preserved.
 
-## Related documentation
+## Documentation
 
 - [Guided setup and bootstrap prompt](docs/README.md)
 - [Operational prompt](PROMPT.md)
