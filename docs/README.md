@@ -1,9 +1,11 @@
 # Maoleve guided setup
 
 Maoleve is an Ubuntu-supported, supervised setup layer for coding agents. A
-human remains in control: the setup agent explains its plan, asks before it
-inspects or changes anything, and reports what it installed, reused, skipped,
-left for manual setup, or could not complete.
+human remains in control: the setup agent identifies the platform, explains
+its plan, and asks before it clones or updates the checkout, inspects or
+changes configuration, installs anything, or reads credentials. It then
+reports what it installed, reused, skipped, left for manual setup, or could
+not complete.
 
 For current setup instructions, this guide and the repository's
 [operational prompt](../PROMPT.md) take precedence over older product-planning
@@ -17,11 +19,12 @@ do not run it as a shell command.
 
 ```text
 Set up Maoleve in supervised mode. Identify which supported agent you are,
-verify Linux/Ubuntu support, then clone or update Maoleve in a user-local
-directory without discarding my changes. Read PROMPT.md in that checkout and
-follow it exactly. Before any inspection, installation, configuration change,
-credential read, repair, or reinstall, explain the action and ask for my
-approval.
+verify Linux/Ubuntu support, then explain whether you plan to clone or update
+Maoleve, where the checkout will live, and what that action will do. Obtain my
+approval before cloning or updating it, and do not discard my changes. Read
+PROMPT.md in that checkout and follow it exactly. Before any inspection,
+installation, configuration change, credential read, repair, or reinstall,
+explain the action and ask for my approval.
 ```
 
 Inspect the complete [operational prompt](../PROMPT.md) before using it if you
@@ -143,4 +146,4 @@ Related repository material:
 - [Repository README](../README.md)
 - [Operational prompt](../PROMPT.md)
 - [Version lock](../versions.env)
-- [Product spec (planning reference)](./product-spec.md)
+- [Current product contract](./product-spec.md)

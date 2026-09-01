@@ -5,9 +5,10 @@ helps you add a small, token-efficient harness without taking control of an
 existing setup.
 
 Start by pasting the bootstrap prompt from [docs/README.md](docs/README.md)
-into a supported agent. The agent identifies itself, explains each proposed
-action, and waits for approval before it inspects configuration, reads a
-credential source, installs anything, or makes a change.
+into a supported agent. The agent identifies itself and the platform, explains
+each proposed action, and waits for approval before it clones or updates the
+checkout, inspects configuration, reads a credential source, installs
+anything, or makes a change.
 
 `versions.env` is the version lock. Setup must refuse pinned-version drift
 rather than upgrade a dependency silently.
@@ -34,8 +35,10 @@ identifiable, Maoleve-managed layer only for agents and integrations you
 approve.
 
 - It reads relevant existing configuration before proposing an edit.
-- It preserves model choices, plugins, rules, commands, hooks, unknown
-  fields, formatting, ordering, and credentials whenever possible.
+- It preserves every existing credential categorically: credentials are never
+  deleted, replaced, or exposed.
+- It preserves existing model choices, plugins, rules, commands, hooks, and
+  unknown fields. It preserves formatting and ordering whenever possible.
 - It adds approved Maoleve entries only when absent, then updates only entries
   marked as Maoleve-managed on later runs.
 - If safe merging is not possible, it pauses for approval before a recoverable
@@ -99,4 +102,4 @@ complete, and what configuration it preserved.
 - [Guided setup and bootstrap prompt](docs/README.md)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)
-- [Product spec (planning reference)](docs/product-spec.md)
+- [Current product contract](docs/product-spec.md)
