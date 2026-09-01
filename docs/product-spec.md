@@ -48,11 +48,12 @@ dependency or adopting `latest`.
 This is the required onboarding mode. The setup agent:
 
 1. Identifies the active supported agent and verifies Linux/Ubuntu scope.
-2. Clones or updates Maoleve in a user-local directory without discarding user
-   changes, then reads `PROMPT.md`, `README.md`, `docs/README.md`, this spec,
-   and `versions.env` when present.
-3. Explains planned actions and obtains the required approvals before making
-   changes.
+2. Identifies whether a Maoleve checkout must be cloned or updated and
+   describes that planned checkout action, including that it will use a
+   user-local directory without discarding user changes.
+3. Obtains the required approval before cloning or updating the checkout, then
+   reads `PROMPT.md`, `README.md`, `docs/README.md`, this spec, and
+   `versions.env` when present.
 4. Merges only approved Maoleve-managed entries, validates them in the native
    agent context when possible, and reports installed, reused, skipped, manual,
    and failed items.
