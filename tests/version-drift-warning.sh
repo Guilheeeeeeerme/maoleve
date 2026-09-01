@@ -20,7 +20,7 @@ if [[ "${1:-}" == "--version" ]]; then
     *) printf '%s\n' 'tool 1.0.0' ;;
   esac
 else
-  printf '%s\n' "$*" >> "${FAKE_ARGS_LOG:-/dev/null}"
+  printf '%s %s\n' "$(basename "$0")" "$*" >> "${FAKE_ARGS_LOG:-/dev/null}"
   exit 0
 fi
 EOF
@@ -48,6 +48,7 @@ MAOLEVE_CAVEMAN_PLUGIN_VERSION=
 EOF
   HOME="$FAKE_HOME" MAOLEVE_STATE_DIR="$state_dir" PATH="$FAKE_BIN:$PATH" \
     FAKE_HEADROOM_VERSION="$actual_headroom" FAKE_SERENA_VERSION="$actual_serena" \
+    FAKE_ARGS_LOG="$output_file.args" \
     "$ROOT_DIR/bin/maoleve" wrap cursor-agent >"$output_file" 2>&1
 }
 
@@ -60,6 +61,8 @@ grep -q 'warning: headroom 0.32.1 is older than supported 0.37.0' "$breaking_out
 compatible_output="$TEST_ROOT/compatible.out"
 run_case "$TEST_ROOT/compatible-state" 0.32.1 0.37.0 1.5.3 1.7.0 "$compatible_output"
 ! grep -q 'warning: headroom' "$compatible_output"
+grep -q '^cursor-agent\($\| \)' "$compatible_output.args"
+! grep -q '^headroom ' "$compatible_output.args"
 
 repair_state="$TEST_ROOT/repair-state"
 mkdir -p "$FAKE_HOME/.codex" "$repair_state"
