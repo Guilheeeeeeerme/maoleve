@@ -46,7 +46,8 @@ an integration or credential does not authorize adopting it.
 
 ## Optional integrations
 
-Every integration is opt-in. The setup agent asks independently about:
+Every integration is opt-in. Maoleve does not recommend or enable any
+integration automatically. The setup agent asks independently about:
 
 - Headroom — context compression and model-call proxying
 - RTK — compact shell-command output
