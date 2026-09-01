@@ -4,11 +4,34 @@ Maoleve is an Ubuntu-supported, supervised setup layer for coding agents. It
 helps you add a small, token-efficient harness without taking control of an
 existing setup.
 
-Start by pasting the bootstrap prompt from [docs/README.md](docs/README.md)
-into a supported agent. The agent identifies itself and the platform, explains
-each proposed action, and waits for approval before it clones or updates the
-checkout, inspects configuration, reads a credential source, installs
-anything, or makes a change.
+## Start here
+
+Open your coding agent, paste this prompt, and follow its questions:
+
+```text
+Set up Maoleve in supervised mode.
+
+1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
+   (cursor-agent), Cursor IDE, or Claude Code.
+2. Verify Linux/Ubuntu support. Ubuntu is the only guaranteed platform. Stop
+   and ask me how to proceed on another Linux distribution or outside Linux.
+3. Explain where Maoleve will live and whether you will clone or update it.
+   Ask for my approval before changing anything.
+4. After I approve, clone this repository if it is missing:
+   https://github.com/Guilheeeeeeerme/maoleve.git
+   If it already exists, inspect its status and update it only without
+   discarding my changes. Never use destructive cleanup.
+5. Enter the Maoleve checkout and read `PROMPT.md`. Follow that prompt exactly.
+   It contains the complete setup questions, merge rules, credential safety,
+   supported-agent guidance, optional integrations, repair rules, and final
+   report format.
+6. Before every configuration inspection, credential-source read, installation,
+   repair, reinstall, or configuration change, explain the action and ask for
+   my approval. Preserve my existing harness and credentials.
+```
+
+This prompt is self-contained: paste it directly into the agent you want to
+configure. Full operational rules live in [`PROMPT.md`](PROMPT.md).
 
 `versions.env` is the version lock. Setup must refuse pinned-version drift
 rather than upgrade a dependency silently.
@@ -25,8 +48,8 @@ Maoleve supports these distinct native surfaces:
 
 Cursor Agents and Cursor IDE are separate targets. The setup agent never
 assumes that an IDE-only setting applies to terminal-facing Cursor Agents.
-See [docs/README.md](docs/README.md) for the copyable bootstrap prompt and
-the native configuration policy for each agent.
+See [docs/README.md](docs/README.md) for the same prompt plus the native
+configuration policy for each agent.
 
 ## Supervised, complementary setup
 

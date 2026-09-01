@@ -18,13 +18,25 @@ Paste this prompt into one supported agent. It is plain text for the agent;
 do not run it as a shell command.
 
 ```text
-Set up Maoleve in supervised mode. Identify which supported agent you are,
-verify Linux/Ubuntu support, then explain whether you plan to clone or update
-Maoleve, where the checkout will live, and what that action will do. Obtain my
-approval before cloning or updating it, and do not discard my changes. Read
-PROMPT.md in that checkout and follow it exactly. Before any inspection,
-installation, configuration change, credential read, repair, or reinstall,
-explain the action and ask for my approval.
+Set up Maoleve in supervised mode.
+
+1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
+   (cursor-agent), Cursor IDE, or Claude Code.
+2. Verify Linux/Ubuntu support. Ubuntu is the only guaranteed platform. Stop
+   and ask me how to proceed on another Linux distribution or outside Linux.
+3. Explain where Maoleve will live and whether you will clone or update it.
+   Ask for my approval before changing anything.
+4. After I approve, clone this repository if it is missing:
+   https://github.com/Guilheeeeeeerme/maoleve.git
+   If it already exists, inspect its status and update it only without
+   discarding my changes. Never use destructive cleanup.
+5. Enter the Maoleve checkout and read `PROMPT.md`. Follow that prompt exactly.
+   It contains the complete setup questions, merge rules, credential safety,
+   supported-agent guidance, optional integrations, repair rules, and final
+   report format.
+6. Before every configuration inspection, credential-source read, installation,
+   repair, reinstall, or configuration change, explain the action and ask for
+   my approval. Preserve my existing harness and credentials.
 ```
 
 Inspect the complete [operational prompt](../PROMPT.md) before using it if you

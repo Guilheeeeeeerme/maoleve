@@ -17,10 +17,14 @@ report installed, reused, skipped, manual, and failed items at the end.
 3. Ask where Maoleve should live if no user-local checkout is available.
    Identify whether the checkout action will be a clone or update, explain its
    target and planned effects, and obtain human approval before performing
-   either mutation. After approval, clone Maoleve there or update the existing
-   checkout without discarding user changes. Treat `versions.env` as the
-   version lock file; refuse drift instead of upgrading pinned versions
-   blindly.
+   either mutation. After approval:
+   - if checkout does not exist, run `git clone
+     https://github.com/Guilheeeeeeerme/maoleve.git <install-directory>`;
+   - if checkout exists, inspect its status and update it only after confirming
+     that the update will not discard user changes.
+   Never use `git reset --hard`, `git checkout --`, or equivalent destructive
+   cleanup. Treat `versions.env` as the version lock file; refuse drift instead
+   of upgrading pinned versions blindly.
 4. Read this prompt and the detailed repository documentation before making
    changes. At minimum, read `README.md`, `docs/README.md`,
    `docs/product-spec.md`, and `versions.env` when present. Use the
