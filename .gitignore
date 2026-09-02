@@ -2,3 +2,6 @@
 /.venv/
 node_modules/
 .DS_Store
+.tokensave/
+.specify/
+.serena/

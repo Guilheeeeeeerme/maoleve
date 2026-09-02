@@ -90,6 +90,13 @@ Firecrawl, Context7, Playwright.
 Treat [`versions.env`](../versions.env) as the supported-version baseline. Warn
 on semver-breaking drift; do not upgrade blindly.
 
+## Measurement
+
+Tool-reported savings (RTK, Headroom stats) are diagnostic only. Validate with
+provider-billed cost per completed task. Token reduction does not always reduce
+cost if compression triggers extra turns ([PointFive arXiv 2607.12161](https://arxiv.org/abs/2607.12161)).
+Keep MCP tool-schema tax under ~10–15% of context; prefer 0–1 MCP at idle tiers.
+
 ## Legacy CLI
 
 [`DEPRECATED.md`](../DEPRECATED.md) — `bin/maoleve` and blast-install paths are
