@@ -1,0 +1,138 @@
+# Mão leve post-install verification
+
+Run this in a **new chat session** immediately after completing
+[`install.md`](./install.md). It audits the harness, reports status, and fixes
+gaps with your approval. It does **not** activate a tier or enable proxy/MCP.
+
+---
+
+You are the Mão leve verification agent performing a **read-check-fix** pass.
+
+**Goal:** confirm one-time install succeeded, nothing is always-on that should
+be dormant, and MCP count is zero at idle. Repair only with explicit approval.
+
+**Out of scope:** enabling Headroom proxy/wrap, registering MCP servers,
+`alwaysApply: true`, tier activation, `bin/maoleve`, `install.sh`, tokensave,
+Playwright MCP.
+
+Work as a supervised operator: identify platform and authorized agents, explain
+each check, obtain approval before any fix, and report pass/fail per item.
+
+## First actions
+
+1. Identify the active supported agent: Codex, OpenCode, Cursor Agents
+   (`cursor-agent`), Cursor IDE, or Claude Code.
+2. Locate the Mão leve checkout (`MAOLEVE_CHECKOUT` or ask the human). Read
+   `versions.env`, `docs/token-tiers.md`, and `PROMPT.md`.
+3. Ask: may I inspect harness configuration and run non-destructive version
+   checks? Wait for approval before reading credential-bearing files.
+
+## Verification checklist
+
+Run each check; record **pass**, **fail**, or **skipped**. Fix failures only
+after approval (re-run relevant `install.md` steps or targeted repair).
+
+### 1. Binaries (compare to `versions.env`)
+
+| Tool | Check | Expected |
+| --- | --- | --- |
+| **RTK** | `rtk --version` | Installed; version matches or warn on drift |
+| **Headroom** | `headroom --version` | Binary installed; proxy/wrap **not** required at idle |
+| **Serena** | `serena --version` | Binary installed; MCP **not** registered yet |
+
+### 2. RTK hooks
+
+Confirm RTK init hooks exist for each **authorized** agent (from install).
+Hooks may be present; RTK is used **only when a tier is activated**.
+
+### 3. Caveman vendored copy
+
+| Path | Expected |
+| --- | --- |
+| `~/.agents/skills/caveman/SKILL.md` | Present |
+| Agent mirrors | Present per authorized agent (see `install.md` table) |
+
+Content should match `$MAOLEVE_CHECKOUT/.agents/skills/caveman/` — not from
+`npx skills add`.
+
+### 4. Headroom idle state
+
+**Pass:** no active Headroom proxy/wrap in agent config; no `HEADROOM_*` proxy
+base URL forcing always-on traffic compression.
+
+**Fail:** wrap enabled, proxy URL set, or Headroom MCP registered without a tier
+activation — offer to remove or document as manual (with approval).
+
+### 5. MCP at idle
+
+**Pass:** **0** MCP servers configured for token-economy tools at idle.
+
+Inspect agent MCP config (`mcp.json`, `claude mcp list`, OpenCode MCP entries,
+etc.). Flag and offer removal (with approval):
+
+- Serena (belongs at **high/full** activation only)
+- Headroom MCP (belongs at **full** on Cursor IDE only, if needed)
+- tokensave, Playwright, or other blast-install leftovers
+
+### 6. Dormant policy templates
+
+| Agent | Surface | Pass criteria |
+| --- | --- | --- |
+| Cursor IDE | `~/.cursor/rules/maoleve.mdc` | `alwaysApply: false`; "when tier activated" wording |
+| Codex | `~/.codex/AGENTS.md` | Mão leve block marked; "when tier activated" / when selected |
+| OpenCode | `~/.config/opencode/AGENTS.md` | Same dormant pattern |
+| Claude Code | `~/.claude/CLAUDE.md` | Same dormant pattern |
+| Cursor Agents | project or agreed `AGENTS.md` | Same dormant pattern |
+
+**Fail:** `alwaysApply: true`, unconditional "always use RTK/Caveman", or missing
+ownership markers (`BEGIN MAOLEVE` / `END MAOLEVE` or equivalent).
+
+### 7. Stray global always-on rules
+
+Scan for other rules or project files that force Mão leve tiers globally (e.g.
+`token-savings.mdc` with `alwaysApply: true`, duplicate Caveman always-on
+blocks). Report; do not delete without approval.
+
+### 8. Legacy paths
+
+**Pass:** human was not directed to `bin/maoleve apply` or `install.sh` for
+setup. Note if legacy MCP entries remain from prior CLI use.
+
+## Fix ladder (approval required)
+
+For each failure, in order:
+
+1. Show non-secret evidence (path, version, config key name).
+2. Propose minimal fix (re-copy Caveman, merge dormant template, remove stray
+   MCP entry, re-run single install step).
+3. Create backup before config edits.
+4. Re-run the failed check and update the report.
+
+Do not enable proxy, MCP, or tier policy during verification unless the human
+explicitly asks to **activate** a tier (use `activate-*.md` instead).
+
+## Report shape
+
+```text
+Mão leve verification report
+Session: post-install (new chat)
+Platform:
+Agent:
+Checkout:
+
+RTK: pass/fail — version, hooks
+Headroom: pass/fail — binary only, proxy/wrap off
+Serena: pass/fail — binary only, MCP off
+Caveman: pass/fail — vendored paths
+Policy dormant: pass/fail — per agent
+MCP at idle: N (required 0)
+Stray always-on rules: none / listed
+Version drift vs versions.env: none / warned
+
+Fixed (with approval):
+Manual follow-up:
+Next step: start daily chats with /maoleve-medium (or another tier)
+```
+
+English only. If all checks pass, tell the human they are ready for per-chat
+activation. If not, list what was fixed and what still needs manual action.

@@ -17,9 +17,10 @@ main() {
   cat <<EOF
 Mão leve checkout: $INSTALL_DIR
 
-The CLI blast-install path is deprecated. One-time setup and per-chat tiers:
+The CLI blast-install path is deprecated. One-time setup, verify, and per-chat tiers:
 
   install  → docs/prompts/install.md  (once per machine)
+  verify   → docs/prompts/verify.md   (new chat after install)
   low      → docs/prompts/activate-low.md   or /maoleve-low
   fast     → docs/prompts/activate-fast.md  or /maoleve-fast
   medium   → docs/prompts/activate-medium.md (default) or /maoleve-medium

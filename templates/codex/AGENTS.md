@@ -20,9 +20,9 @@ Apply **only when a Mão leve tier is activated** for the current chat
 <!-- headroom:rtk-instructions -->
 # RTK (Rust Token Killer) - Token-Optimized Commands
 
-When running shell commands, **always prefix with `rtk`**. This reduces context
-usage by 60-90% with zero behavior change. If rtk has no filter for a command,
-it passes through unchanged — so it is always safe to use.
+When running shell commands **and RTK is selected for this chat**, prefix with
+`rtk`. This reduces context usage by 60-90% with zero behavior change. If rtk
+has no filter for a command, it passes through unchanged.
 
 ## Key Commands
 ```bash
@@ -55,7 +55,7 @@ rtk pip list            rtk pnpm install        rtk npm run <script>
 ```
 
 ## Rules
-- In command chains, prefix each segment: `rtk git add . && rtk git commit -m "msg"`
+- When RTK is selected for this chat, prefix command chains: `rtk git add . && rtk git commit -m "msg"`
 - For debugging, use raw command without rtk prefix
 - `rtk proxy <cmd>` runs command without filtering but tracks usage
 <!-- /headroom:rtk-instructions -->

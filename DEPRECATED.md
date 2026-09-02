@@ -4,7 +4,9 @@
 
 1. **Once:** [`docs/prompts/install.md`](docs/prompts/install.md) — prepare tools
    and templates (no global proxy/MCP/rules).
-2. **Each chat:** [`docs/prompts/activate-<tier>.md`](docs/prompts/) or
+2. **Verify:** [`docs/prompts/verify.md`](docs/prompts/verify.md) — new chat after
+   install; audit and fix drift.
+3. **Each chat:** [`docs/prompts/activate-<tier>.md`](docs/prompts/) or
    `/maoleve-<tier>` — see [`docs/token-tiers.md`](docs/token-tiers.md).
 
 | Legacy | Status |
@@ -23,9 +25,10 @@
 ## Migration
 
 1. Run one-time install: [docs/prompts/install.md](docs/prompts/install.md)
-2. Start each chat with `/maoleve-medium` (or another tier) or paste
+2. Verify in a new chat: [docs/prompts/verify.md](docs/prompts/verify.md)
+3. Start each chat with `/maoleve-medium` (or another tier) or paste
    `docs/prompts/activate-<tier>.md`
-3. Remove legacy MCP entries (tokensave, Playwright) if `maoleve apply` ran
+4. Remove legacy MCP entries (tokensave, Playwright) if `maoleve apply` ran
    previously — activation prompts list what to keep
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed.

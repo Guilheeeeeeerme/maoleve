@@ -26,7 +26,15 @@ per machine (or when repairing). It:
 - Copies vendored Caveman skills and merges **dormant** policy templates
 - Does **not** enable proxy, MCP, or always-on rules
 
-### 2. Per-chat activation
+Re-run safely; already-installed components are reused or skipped.
+
+### 2. Verify (new chat)
+
+Paste [`docs/prompts/verify.md`](prompts/verify.md) in a **fresh chat** after
+install. It audits RTK hooks, Caveman copy, dormant policies, MCP at idle (0),
+and legacy stray config — and repairs with approval.
+
+### 3. Per-chat activation
 
 At the start of each chat, paste an activation prompt or use a slash command:
 
@@ -103,12 +111,14 @@ source does not authorize its use for a newly selected integration.
 ## Repair
 
 Re-run [`install.md`](prompts/install.md) to realign binaries and templates.
+Re-run [`verify.md`](prompts/verify.md) in a new chat to audit and fix drift.
 Re-paste an activation prompt to restore tier behavior for a chat.
 
 ## What completion looks like
 
-**Install:** the install prompt's verification block — tools on disk, MCP count
-0, policy dormant.
+**Install:** tools on disk, MCP count 0, policy dormant.
+
+**Verify:** verification report all pass (or fixes applied with approval).
 
 **Activation:** agent confirms tier for the current chat and follows that stack.
 

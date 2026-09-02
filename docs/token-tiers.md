@@ -12,8 +12,10 @@ Supported agents: **Codex**, **OpenCode**, **Cursor IDE**, **Cursor Agents**
 
 1. **Once:** paste [`docs/prompts/install.md`](./prompts/install.md) — prepares
    RTK, Headroom, Serena binaries, Caveman copy, dormant policy templates.
-   Does **not** enable proxy, MCP, or always-on rules.
-2. **Each chat:** paste a tier activation prompt (or use slash commands below).
+   Does **not** enable proxy, MCP, or always-on rules. Idempotent on re-run.
+2. **Verify (new chat):** paste [`docs/prompts/verify.md`](./prompts/verify.md)
+   — audit status, confirm MCP 0 at idle, fix gaps with approval.
+3. **Each chat:** paste a tier activation prompt (or use slash commands below).
 
 ## Slash commands and aliases
 
@@ -149,6 +151,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | Purpose | File |
 | --- | --- |
 | One-time setup | [install.md](./prompts/install.md) |
+| Post-install audit (new chat) | [verify.md](./prompts/verify.md) |
 | Per-chat activation | [activate-low.md](./prompts/activate-low.md) … [activate-full.md](./prompts/activate-full.md) |
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed; use

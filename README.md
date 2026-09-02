@@ -35,9 +35,16 @@ Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 
 Paste [`docs/prompts/install.md`](docs/prompts/install.md) into your coding agent
 once. It prepares RTK, Headroom, Serena, vendored Caveman skills, and dormant
-policy templates — without enabling proxy, MCP, or always-on rules.
+policy templates — without enabling proxy, MCP, or always-on rules. Safe to
+re-run; skips components already installed.
 
-### 2. Activate a tier each chat
+### 2. Verify (new chat)
+
+Open a **new chat** and paste [`docs/prompts/verify.md`](docs/prompts/verify.md).
+It checks binaries, dormant policies, MCP count at idle, and stray always-on
+rules — and fixes gaps with your approval.
+
+### 3. Activate a tier each chat
 
 Paste an activation prompt or type a slash command as your first message:
 
@@ -50,6 +57,20 @@ Paste an activation prompt or type a slash command as your first message:
 | **full** | high + multi-agent consistency | `/maoleve-full` | [activate-full.md](docs/prompts/activate-full.md) |
 
 Aliases without a slash work too: `maoleve-fast`, `maoleve-medium`, etc.
+
+**Example daily flow**
+
+```text
+# First time only (any chat)
+Paste docs/prompts/install.md → approve steps → install report
+
+# Right after install (new chat)
+Paste docs/prompts/verify.md → all checks pass
+
+# Every coding session (first message)
+/maoleve-medium
+# or paste docs/prompts/activate-medium.md
+```
 
 > [!IMPORTANT]
 > The agent will ask before inspecting configuration, reading credential
@@ -78,9 +99,10 @@ Set up Mão leve in supervised mode.
    discarding my changes. Never use destructive cleanup.
 5. Follow docs/prompts/install.md for one-time setup (tools on disk, no global
    proxy/MCP/rules).
-6. Before every configuration inspection, credential read, installation, or
+6. Tell me to open a new chat and run docs/prompts/verify.md before daily use.
+7. Before every configuration inspection, credential read, installation, or
    change, explain the action and ask for my approval.
-7. When I start a new chat, I will activate a tier with /maoleve-<tier> or
+8. When I start a new chat, I will activate a tier with /maoleve-<tier> or
    docs/prompts/activate-<tier>.md — apply that tier for the current chat only.
 ```
 
@@ -134,6 +156,7 @@ Use install + activation prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 - [Guided setup](docs/README.md)
 - [Token economy tiers](docs/token-tiers.md)
 - [Install prompt](docs/prompts/install.md)
+- [Verify prompt](docs/prompts/verify.md)
 - [Activation prompts](docs/prompts/)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)

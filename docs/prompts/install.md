@@ -20,6 +20,11 @@ per chat with `/maoleve-<tier>` or `maoleve-<tier>` (see `docs/token-tiers.md`).
 servers, `alwaysApply` rules, starting proxies, legacy `bin/maoleve` /
 `install.sh`, tokensave, Playwright MCP.
 
+**Idempotent:** safe to re-run. For each component, detect what is already
+installed or merged; **reuse or skip** when versions match `versions.env` and
+dormant policy markers are correct. Install or repair only what is missing or
+broken. Never enable proxy, MCP, or always-on tier rules on a re-run.
+
 Work as a supervised operator: identify platform, explain each planned action,
 obtain human approval before checkout mutation, configuration inspection,
 installation, or change. Report installed, reused, skipped, manual, and failed
@@ -71,6 +76,9 @@ Use versions from `versions.env` when installing binaries.
 
 ### 1. Vendored Caveman (do not use `npx skills add`)
 
+Skip if `~/.agents/skills/caveman/SKILL.md` exists and matches the checkout
+(compare checksum or diff); otherwise copy:
+
 ```bash
 mkdir -p "$HOME/.agents/skills/caveman"
 cp -a "$MAOLEVE_CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
@@ -88,8 +96,9 @@ separate path (symlink with `ln -sfn` when possible):
 
 ### 2. RTK
 
-1. Install if missing: `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh`
-2. Initialize hooks for each **authorized** agent (with approval):
+1. If `rtk --version` succeeds and matches `versions.env`, skip install; else:
+   `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh`
+2. Initialize hooks for each **authorized** agent when hooks are absent (with approval):
    - **Claude Code:** `rtk init --global`
    - **Codex:** `rtk init --global --codex`
    - **OpenCode:** `rtk init --global --opencode`
@@ -98,6 +107,8 @@ separate path (symlink with `ln -sfn` when possible):
    prompt selects it for the current chat**.
 
 ### 3. Headroom (binary only — do not wrap or proxy yet)
+
+Skip if `headroom --version` matches `versions.env`; else install:
 
 ```bash
 # if uv missing: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -118,6 +129,8 @@ install. The human starts proxy/wrap when activating **fast+** tiers (see
 `docs/prompts/activate-*.md`).
 
 ### 4. Serena (binary only — do not register MCP yet)
+
+Skip if `serena --version` matches `versions.env`; else:
 
 ```bash
 uv tool install -p 3.13 "serena-agent==<MAOLEVE_SERENA_VERSION>"
@@ -152,7 +165,7 @@ Tell the human: tier policy takes effect only after pasting an activation prompt
 - tokensave, Playwright MCP
 - `bin/maoleve`, `install.sh`, blast-install paths
 
-## Post-install verification
+## Post-install (this session)
 
 After approval, run and summarize (no secrets):
 
@@ -181,10 +194,13 @@ Serena: binary installed | MCP NOT registered
 Caveman: vendored copy ok/missing
 Policy templates: merged dormant / skipped
 MCP at idle: 0 (required)
-Next step: start a chat with /maoleve-<tier> or maoleve-<tier>
+Next step: new chat → docs/prompts/verify.md, then daily /maoleve-<tier>
 Credentials preserved: yes/no
 Manual actions:
 Failures:
 ```
 
 Report installed, reused, skipped, manual, and failed items. English only.
+
+**Next (new chat):** tell the human to paste [`docs/prompts/verify.md`](./verify.md)
+in a fresh session for a full audit and repair pass before daily tier activation.
