@@ -12,7 +12,8 @@ You are the Mão leve setup agent performing a **one-time install**.
 **Goal:** prepare the token-economy stack on disk so the human can activate a tier
 per chat with `/maoleve-<tier>` or `maoleve-<tier>` (see `docs/token-tiers.md`).
 
-**In scope:** checkout clone/update, RTK + Headroom + Serena binaries (pinned to
+**In scope:** use of an existing checkout (or an explicitly approved managed
+checkout), RTK + Headroom + Serena binaries (pinned to
 `versions.env`), vendored Caveman skill copy, policy templates merged as
 **dormant** Mão leve-managed blocks (per-chat activation only).
 
@@ -34,12 +35,14 @@ items at the end.
 1. Run discovery from `docs/supervised-setup.md` (platform, active agent,
    harness dirs, checkout, binaries, existing Mão leve state).
 2. Present the approval card with defaults: agents = active + detected harnesses;
-   checkout = clone `~/maoleve` if missing else update existing; config access
+   checkout = current checkout when available; otherwise use or clone to
+   `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve` only if approved; config access
    = structure only.
 3. After approval, set `MAOLEVE_CHECKOUT` to the repo root. Read `PROMPT.md`,
    `docs/token-tiers.md`, and `versions.env`.
 4. Checkout mutation only after approval:
-   - missing: `git clone https://github.com/Guilheeeeeeerme/maoleve.git <dir>`
+   - missing: do not create `~/maoleve`. Ask for an existing checkout path or
+     approval to clone into `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`.
    - existing: inspect status; update only without discarding user changes
    Never use `git reset --hard`, `git checkout --`, or destructive cleanup.
 
@@ -55,6 +58,18 @@ extend to another. For every authorized agent, install applies the rows below.
 | **Claude Code** | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` | `templates/claude/CLAUDE.md` |
 | **Cursor IDE** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
 | **Cursor Agents** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` (or path human confirms) | `templates/cursor-agent/AGENTS.md` |
+
+All five tier skills are copied from
+`$MAOLEVE_CHECKOUT/templates/skills/maoleve-<tier>/` into the native skill
+directory of every authorized agent, plus the shared `~/.agents/skills/` path:
+
+| Agent | Tier skill directory |
+| --- | --- |
+| Codex | `~/.codex/skills/maoleve-<tier>/` |
+| OpenCode | `~/.config/opencode/skills/maoleve-<tier>/` |
+| Claude Code | `~/.claude/skills/maoleve-<tier>/` |
+| Cursor IDE / Cursor Agents | `~/.cursor/skills/maoleve-<tier>/` |
+| Shared fallback | `~/.agents/skills/maoleve-<tier>/` |
 
 Shared for all authorized agents:
 
@@ -74,7 +89,7 @@ Preserve existing RTK `@RTK.md` references and hooks added by `rtk init`.
 
 Use versions from `versions.env` when installing binaries.
 
-### 1. Vendored Caveman (do not use `npx skills add`)
+### 1. Vendored skills (do not use `npx skills add`)
 
 Skip if `~/.agents/skills/caveman/SKILL.md` exists and matches the checkout
 (compare checksum or diff); otherwise copy:
@@ -94,6 +109,11 @@ when possible). See the coverage table above for the full per-agent list:
 | Claude Code | `~/.claude/skills/caveman/` |
 | Cursor IDE | `~/.cursor/skills/caveman/` |
 | Cursor Agents | `~/.cursor/skills/caveman/` (shared with Cursor IDE when both authorized) |
+
+Copy the five Mão leve tier skills into the authorized native directories listed
+above. They are slash-only skills (`disable-model-invocation: true`); natural
+language aliases are also recognized by the merged dormant policy. A bare
+`maoleve` selects medium.
 
 ### 2. RTK
 

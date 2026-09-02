@@ -21,15 +21,17 @@ Supported agents: **Codex**, **OpenCode**, **Cursor IDE**, **Cursor Agents**
 
 | Tier | Slash command | Alias (no slash) | Activation prompt |
 | --- | --- | --- | --- |
-| **low** | `/maoleve-low` | `maoleve-low` | [activate-low.md](./prompts/activate-low.md) |
-| **fast** | `/maoleve-fast` | `maoleve-fast` | [activate-fast.md](./prompts/activate-fast.md) |
-| **medium** | `/maoleve-medium` | `maoleve-medium` | [activate-medium.md](./prompts/activate-medium.md) |
-| **high** | `/maoleve-high` | `maoleve-high` | [activate-high.md](./prompts/activate-high.md) |
-| **full** | `/maoleve-full` | `maoleve-full` | [activate-full.md](./prompts/activate-full.md) |
+| **low** | `/maoleve-low` | `maoleve-low`, `start maoleve low`, `maolevelow` | [activate-low.md](./prompts/activate-low.md) |
+| **fast** | `/maoleve-fast` | `maoleve-fast`, `start maoleve fast`, `maolevefast` | [activate-fast.md](./prompts/activate-fast.md) |
+| **medium** | `/maoleve-medium` | `maoleve-medium`, `start maoleve medium`, `maolevemedium` | [activate-medium.md](./prompts/activate-medium.md) |
+| **high** | `/maoleve-high` | `maoleve-high`, `start maoleve high`, `maolevehigh` | [activate-high.md](./prompts/activate-high.md) |
+| **full** | `/maoleve-full` | `maoleve-full`, `start maoleve full`, `maolevefull` | [activate-full.md](./prompts/activate-full.md) |
 
-Paste the activation file body below its title line, or type the slash command /
-alias as the first message. The agent applies that tier **for the current chat
-only** — not globally.
+Paste the activation file body below its title line, or type the slash command,
+`start maoleve <tier>`, or `maoleve<tier>` as the first message. The agent
+applies that tier **for the current chat only** — not globally. A bare `maoleve`
+means medium. After install, native skills provide slash completions on all
+supported agents; before install, paste the activation prompt.
 
 **Default tier:** **medium** if you do not specify.
 

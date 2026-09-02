@@ -9,7 +9,10 @@ installed/reused/skipped/manual/failed at the end.
 
 1. Identify the active supported agent and run full discovery (see supervised-setup).
 2. Present **one** approval card; do not use a multi-question questionnaire.
-3. Checkout: clone or update only after approval; never destructive git cleanup.
+3. Checkout: use the current checkout when available. If missing, ask for a path
+   or approval to clone under `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`;
+   never create `~/maoleve`. Update only after approval; never destructive git
+   cleanup.
    Treat `versions.env` as baseline; warn on semver drift instead of refusing.
 4. Read this prompt plus `README.md`, `docs/README.md`, `docs/token-tiers.md`,
    and `versions.env` in the checkout.

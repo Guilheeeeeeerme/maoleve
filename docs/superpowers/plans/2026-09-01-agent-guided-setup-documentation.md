@@ -105,7 +105,8 @@ rtk git commit -m "docs: define supervised setup prompt"
 - [ ] **Step 1: Add the copy/paste bootstrap prompt**
 
 Provide a short shell-safe prompt that tells the user to paste it into one of
-the five supported agents and tells that agent to clone Mão leve and read
+the five supported agents and tells that agent to use the current Mão leve
+checkout, or an approved XDG data-directory checkout, and read
 `PROMPT.md`. Link to the detailed prompt for inspection.
 
 - [ ] **Step 2: Document supported agents and config surfaces**

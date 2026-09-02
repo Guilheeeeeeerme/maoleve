@@ -52,10 +52,12 @@ This is the required onboarding mode. The setup agent:
 
 1. Identifies the active supported agent and detects the operating system,
    shell, and relevant package manager.
-2. Identifies whether a Mão leve checkout must be cloned or updated and
-   describes that planned checkout action, including that it will use a
+2. Identifies whether an existing Mão leve checkout can be reused or whether a
+   managed checkout is needed, and describes that planned action, including
+   that any managed checkout uses
+   `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve` rather than a home-root clone;
    user-local directory without discarding user changes.
-3. Obtains the required approval before cloning or updating the checkout, then
+3. Obtains the required approval before creating or updating the checkout, then
    reads `PROMPT.md`, `README.md`, `docs/README.md`, this spec, and
    `versions.env` when present.
 4. Merges only approved Mão leve-managed entries, validates them in the native

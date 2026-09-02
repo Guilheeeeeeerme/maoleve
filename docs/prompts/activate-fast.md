@@ -1,6 +1,7 @@
 # Activate tier: **fast**
 
-Copy everything below the line at the **start of this chat** (or type `/maoleve-fast` or `maoleve-fast`).
+Copy everything below the line at the **start of this chat** (or type
+`/maoleve-fast`, `start maoleve fast`, or `maolevefast`).
 
 ---
 

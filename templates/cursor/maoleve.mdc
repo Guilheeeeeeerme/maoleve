@@ -6,8 +6,11 @@ alwaysApply: false
 # Mão leve Policy
 
 Apply this policy **only when the human activates a Mão leve tier** for the
-current chat (`/maoleve-<tier>` or `docs/prompts/activate-<tier>.md`). Do not
-treat these rules as always-on when no tier is active.
+current chat (`/maoleve-<tier>`, `start maoleve <tier>`, `maoleve<tier>`, or the
+matching activation prompt). A bare `maoleve` means the default **medium** tier.
+Do not treat these rules as always-on when no tier is active.
+Treat `start maoleve <tier>` and `maoleve<tier>` as activation requests too; a
+bare `maoleve` selects medium.
 
 - Keep the harness Linux-only and shell-first.
 - Prefer the smallest sufficient tool chain.

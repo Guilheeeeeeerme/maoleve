@@ -54,6 +54,11 @@ applies the rows below.
 | **Cursor IDE** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor --uninstall` | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
 | **Cursor Agents** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor --uninstall` | project `AGENTS.md` (or path human confirms) | `templates/cursor-agent/AGENTS.md` |
 
+For every authorized agent, remove only the five Mão leve tier skill
+directories (`maoleve-low`, `maoleve-fast`, `maoleve-medium`, `maoleve-high`,
+`maoleve-full`) from its native skills directory and from `~/.agents/skills/`.
+Preserve unrelated skills.
+
 Shared for all authorized agents:
 
 - `~/.agents/skills/caveman/` — canonical vendored copy (step 1)
