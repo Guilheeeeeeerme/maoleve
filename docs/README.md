@@ -115,12 +115,12 @@ not replace your workflow.
 
 ## Discovery and credentials
 
-Inspecting the active agent and inspecting other agents are separate
-permissions. Credential-bearing sources require explicit authorization, named
-per source. The agent never prints secret values.
+Use the **single approval card** in [`supervised-setup.md`](supervised-setup.md).
+Default config access is structure only (no secret values). Credential-bearing
+sources require explicit `edit:` on the card naming each file.
 
-Discovery is not adoption. Finding a component or credential in an authorized
-source does not authorize its use for a newly selected integration.
+Discovery is not adoption. Finding a component in a harness does not authorize
+using it for a new integration unless it is on the approved agent list.
 
 ## Repair
 
@@ -146,6 +146,7 @@ It does not clean legacy blast-install cruft from old CLI use.
 Related repository material:
 
 - [Repository README](../README.md)
+- [Supervised setup flow](supervised-setup.md)
 - [Operational prompt](../PROMPT.md)
 - [Token economy tiers](token-tiers.md)
 - [Version lock](../versions.env)

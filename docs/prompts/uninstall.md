@@ -28,36 +28,18 @@ removing unrelated MCP or rules the human uses for other projects.
 **skip** when already absent. Never delete whole config files — remove only
 Mão leve-owned blocks, symlinks, hooks, and skill trees from install.
 
-Work as a supervised operator: identify platform, explain each planned action,
-obtain human approval before configuration inspection, removal, or change.
-Report removed, skipped, preserved, manual, and failed items at the end.
+Follow [`docs/supervised-setup.md`](../supervised-setup.md): run **discovery**,
+present the **single approval card** (phase = uninstall), then remove artifacts
+only after `approve` or `edit:`. Report removed, skipped, preserved, manual,
+and failed items at the end.
 
 ## First actions
 
-1. Identify the active supported agent: Codex, OpenCode, Cursor Agents
-   (`cursor-agent`), Cursor IDE, or Claude Code. Do not assume from directory
-   names or environment variables.
-2. Detect OS, shell, and package manager. Ubuntu Linux is primary tested;
-   continue on compatible Linux or macOS when possible.
-3. Locate the Mão leve checkout if present (`MAOLEVE_CHECKOUT` or ask). Read
-   `docs/prompts/install.md`, `PROMPT.md`, and `versions.env` to distinguish
-   **remove** (install artifacts) vs **preserve** (unrelated user config).
-4. Ask which agents were authorized during install. One agent's permission does
-   not extend to another.
-
-## Required supervised questions
-
-Ask explicitly; wait for answers. "skip" and "manual instructions" are valid.
-
-1. May I inspect the active agent's harness configuration?
-2. May I inspect other agents that had install applied? Which agents are
-   authorized? (One agent's permission does not extend to another.)
-3. Which exact credential-bearing files, directories, or environment sources may
-   I read? Discovery consent does not authorize credential reads.
-4. Confirm **prompt-only uninstall**: remove install.md artifacts only; do **not**
-   attempt legacy blast cleanup or delete unrelated MCP/rules.
-5. Remove RTK, Headroom, and Serena **binaries** too? (Default: hooks and policy
-   only; binaries optional with explicit yes per tool.)
+1. Run discovery from `docs/supervised-setup.md`.
+2. Present the approval card; default agents = active + detected harnesses unless
+   the human names the install set. Include `Remove binaries: no` unless edited.
+3. Locate checkout if present; read `docs/prompts/install.md`, `PROMPT.md`, and
+   `versions.env` to distinguish remove vs preserve.
 
 ## Supported agents — uninstall coverage
 
@@ -151,7 +133,7 @@ Mão leve-managed sections or were added solely by install merge (show diff firs
 ### 3. Headroom (reverse install step 3)
 
 **Default:** leave the Headroom binary installed unless the human approved binary
-removal in supervised questions.
+removal on the approval card (`Remove binaries: yes`).
 
 If approved and `headroom` was installed via uv for Mão leve:
 

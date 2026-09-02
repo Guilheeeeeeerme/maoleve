@@ -352,7 +352,14 @@ install_optional_tools() {
 
   if ! have rtk; then
     printf '%s\n' "Installing rtk..."
-    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh
+    if [ -f "${ROOT_DIR}/scripts/install-rtk.sh" ]; then
+      bash "${ROOT_DIR}/scripts/install-rtk.sh"
+    else
+      for branch in master main; do
+        url="https://raw.githubusercontent.com/rtk-ai/rtk/${branch}/install.sh"
+        curl -fsSL "$url" | sh && break
+      done
+    fi
   fi
 }
 

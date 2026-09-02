@@ -25,7 +25,8 @@
 
 Mão leve is a supervised, **prompt-only** setup layer for coding agents. Run
 **one-time install** once, then activate a token-economy tier at the start of
-each chat. No custom CLI or blast install required.
+each chat. Setup uses one **approval card** ([`docs/supervised-setup.md`](docs/supervised-setup.md))
+after auto-detecting your harness — not a long questionnaire.
 
 Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 

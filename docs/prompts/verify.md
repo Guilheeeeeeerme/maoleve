@@ -15,17 +15,17 @@ be dormant, and MCP count is zero at idle. Repair only with explicit approval.
 `alwaysApply: true`, tier activation, `bin/maoleve`, `install.sh`, tokensave,
 Playwright MCP.
 
-Work as a supervised operator: identify platform and authorized agents, explain
-each check, obtain approval before any fix, and report pass/fail per item.
+Follow [`docs/supervised-setup.md`](../supervised-setup.md): run **discovery**,
+present the **single approval card** (phase = verify), then run checks and fix
+only after `approve` or `edit:`.
 
 ## First actions
 
-1. Identify the active supported agent: Codex, OpenCode, Cursor Agents
-   (`cursor-agent`), Cursor IDE, or Claude Code.
-2. Locate the Mão leve checkout (`MAOLEVE_CHECKOUT` or ask the human). Read
-   `versions.env`, `docs/token-tiers.md`, and `PROMPT.md`.
-3. Ask: may I inspect harness configuration and run non-destructive version
-   checks? Wait for approval before reading credential-bearing files.
+1. Run discovery from `docs/supervised-setup.md`.
+2. Present the approval card; default agents = those authorized at install (or
+   active + detected harnesses if unknown).
+3. Set `MAOLEVE_CHECKOUT`, read `versions.env`, `docs/token-tiers.md`, and
+   `PROMPT.md`.
 
 ## Authorized agents — verification coverage
 
