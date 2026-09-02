@@ -38,7 +38,7 @@ Codex/OpenCode/Claude: Serena only; Headroom via proxy, not MCP.
 
 ## Do not enable for this chat
 
-- tokensave, Playwright MCP, blast-install MCP lists
+- Non–token-economy MCP servers (Playwright, etc.)
 - Headroom MCP on Codex when proxy is configured
 
 Confirm tier **full** is active, then proceed.

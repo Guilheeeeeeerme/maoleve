@@ -17,45 +17,31 @@ per chat with `/maoleve-<tier>` or `maoleve-<tier>` (see `docs/token-tiers.md`).
 **dormant** Mão leve-managed blocks (per-chat activation only).
 
 **Out of scope:** enabling Headroom proxy/wrap in agent config, registering MCP
-servers, `alwaysApply` rules, starting proxies, legacy `bin/maoleve` /
-`install.sh`, tokensave, Playwright MCP.
+servers, `alwaysApply` rules, or starting proxies during install.
 
 **Idempotent:** safe to re-run. For each component, detect what is already
 installed or merged; **reuse or skip** when versions match `versions.env` and
 dormant policy markers are correct. Install or repair only what is missing or
 broken. Never enable proxy, MCP, or always-on tier rules on a re-run.
 
-Work as a supervised operator: identify platform, explain each planned action,
-obtain human approval before checkout mutation, configuration inspection,
-installation, or change. Report installed, reused, skipped, manual, and failed
+Follow [`docs/supervised-setup.md`](../supervised-setup.md): run **discovery**,
+present the **single approval card** (phase = install), then execute only after
+`approve` or `edit:`. Report installed, reused, skipped, manual, and failed
 items at the end.
 
 ## First actions
 
-1. Identify the active supported agent: Codex, OpenCode, Cursor Agents
-   (`cursor-agent`), Cursor IDE, or Claude Code. Do not assume from directory
-   names or environment variables.
-2. Detect OS, shell, and package manager. Ubuntu Linux is primary tested;
-   continue on compatible Linux or macOS when possible.
-3. Ask where Mão leve should live if no checkout exists. Explain clone vs
-   update and obtain approval before mutating the checkout. After approval:
-   - missing checkout: `git clone https://github.com/Guilheeeeeeerme/maoleve.git <dir>`
-   - existing checkout: inspect status; update only without discarding user changes
+1. Run discovery from `docs/supervised-setup.md` (platform, active agent,
+   harness dirs, checkout, binaries, existing Mão leve state).
+2. Present the approval card with defaults: agents = active + detected harnesses;
+   checkout = clone `~/maoleve` if missing else update existing; config access
+   = structure only.
+3. After approval, set `MAOLEVE_CHECKOUT` to the repo root. Read `PROMPT.md`,
+   `docs/token-tiers.md`, and `versions.env`.
+4. Checkout mutation only after approval:
+   - missing: `git clone https://github.com/Guilheeeeeeerme/maoleve.git <dir>`
+   - existing: inspect status; update only without discarding user changes
    Never use `git reset --hard`, `git checkout --`, or destructive cleanup.
-4. Set `MAOLEVE_CHECKOUT` to the repo root. Read `PROMPT.md`, `docs/token-tiers.md`,
-   and `versions.env`.
-
-## Required supervised questions
-
-Ask explicitly; wait for answers. "skip" and "manual instructions" are valid.
-
-1. May I inspect the active agent's existing harness configuration?
-2. May I discover reusable configuration in other agents? Which agents are
-   authorized? (One agent's permission does not extend to another.)
-3. Which exact credential-bearing files, directories, or environment sources may
-   I read? Discovery consent does not authorize credential reads.
-4. Confirm **one-time install only**: prepare tools and templates; do **not**
-   enable proxy, MCP, or always-on tier policy for this chat.
 
 ## Supported agents — install coverage
 
@@ -81,16 +67,8 @@ both are authorized.
 
 ## Configuration merge rules
 
-- Read existing configuration before editing.
-- Preserve credentials, model choices, plugins, rules, hooks, unknown fields,
-  formatting, and ordering.
-- Add only absent Mão leve-managed entries; mark blocks with stable ownership
-  metadata (`BEGIN MAOLEVE` / `END MAOLEVE`).
-- Policy templates use **when selected / per-chat** wording — not always-on.
-- For Cursor IDE: write `templates/cursor/maoleve.mdc` with `alwaysApply: false`.
-- Show a diff or concise summary before ambiguous edits.
-- Create a recoverable backup before repair or rewrite.
-- Never print secret values.
+Use the merge rules in [`docs/supervised-setup.md`](../supervised-setup.md).
+Preserve existing RTK `@RTK.md` references and hooks added by `rtk init`.
 
 ## Install steps
 
@@ -119,8 +97,9 @@ when possible). See the coverage table above for the full per-agent list:
 
 ### 2. RTK
 
-1. If `rtk --version` succeeds and matches `versions.env`, skip install; else:
-   `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh`
+1. If `rtk --version` succeeds and matches `versions.env`, skip install; else run
+   `"$MAOLEVE_CHECKOUT/scripts/install-rtk.sh"` (tries `master`, then `main`).
+   Warn if installed semver drifts from `MAOLEVE_RTK_VERSION`.
 2. Initialize hooks for each **authorized** agent when hooks are absent (with approval):
    - **Claude Code:** `rtk init --global`
    - **Codex:** `rtk init --global --codex`
@@ -190,8 +169,7 @@ Tell the human: tier policy takes effect only after pasting an activation prompt
 - Headroom proxy/wrap and Headroom MCP
 - Serena (and any other) MCP registration
 - Enabling `alwaysApply: true` on Cursor rules
-- tokensave, Playwright MCP
-- `bin/maoleve`, `install.sh`, blast-install paths
+- Non–token-economy MCP servers (Playwright, etc.) unless the human explicitly requests them
 
 ## Post-install (this session)
 

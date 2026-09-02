@@ -32,7 +32,7 @@ Re-run safely; already-installed components are reused or skipped.
 
 Paste [`docs/prompts/verify.md`](prompts/verify.md) in a **fresh chat** after
 install. It audits RTK hooks, Caveman copy, dormant policies, MCP at idle (0),
-and legacy stray config — and repairs with approval.
+and stray always-on rules — and repairs with approval.
 
 ### 3. Per-chat activation
 
@@ -49,9 +49,6 @@ At the start of each chat, paste an activation prompt or use a slash command:
 Activation tells the agent which compression layers, proxy, and MCP to use **for
 that chat only**. Manual pre-steps (e.g. `headroom wrap`, starting Serena MCP)
 are documented in the activation prompts.
-
-Do **not** run `install.sh` or `bin/maoleve apply` for new setups. See
-[`DEPRECATED.md`](../DEPRECATED.md).
 
 ## Supported agents and install coverage
 
@@ -97,8 +94,8 @@ not fetched with `npx skills add`.
 
 ## Out of scope
 
-tokensave and Playwright MCP are not part of Mão leve tier flows unless you
-explicitly request them outside this harness.
+Playwright MCP and other non–token-economy MCP are not part of Mão leve tier
+flows unless you explicitly request them outside this harness.
 
 ## Complementary configuration, not replacement
 
@@ -115,12 +112,12 @@ not replace your workflow.
 
 ## Discovery and credentials
 
-Inspecting the active agent and inspecting other agents are separate
-permissions. Credential-bearing sources require explicit authorization, named
-per source. The agent never prints secret values.
+Use the **single approval card** in [`supervised-setup.md`](supervised-setup.md).
+Default config access is structure only (no secret values). Credential-bearing
+sources require explicit `edit:` on the card naming each file.
 
-Discovery is not adoption. Finding a component or credential in an authorized
-source does not authorize its use for a newly selected integration.
+Discovery is not adoption. Finding a component in a harness does not authorize
+using it for a new integration unless it is on the approved agent list.
 
 ## Repair
 
@@ -133,7 +130,6 @@ Re-paste an activation prompt to restore tier behavior for a chat.
 To remove a prompt-only install (reverse [`install.md`](prompts/install.md)),
 paste [`uninstall.md`](prompts/uninstall.md) in a new chat. It removes dormant
 policies, vendored Caveman copies, and RTK hooks — idempotent and supervised.
-It does not clean legacy blast-install cruft from old CLI use.
 
 ## What completion looks like
 
@@ -146,7 +142,7 @@ It does not clean legacy blast-install cruft from old CLI use.
 Related repository material:
 
 - [Repository README](../README.md)
+- [Supervised setup flow](supervised-setup.md)
 - [Operational prompt](../PROMPT.md)
 - [Token economy tiers](token-tiers.md)
 - [Version lock](../versions.env)
-- [Deprecated CLI](../DEPRECATED.md)
