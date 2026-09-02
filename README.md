@@ -64,7 +64,10 @@ Paste an activation prompt or type a slash command as your first message:
 | **high** | medium + Serena MCP | `/maoleve-high` | [activate-high.md](docs/prompts/activate-high.md) |
 | **full** | high + multi-agent consistency | `/maoleve-full` | [activate-full.md](docs/prompts/activate-full.md) |
 
-Aliases without a slash work too: `maoleve-fast`, `maoleve-medium`, etc.
+Aliases without a slash work too: `maoleve-fast`, `start maoleve fast`, or
+`maolevefast`. A bare `maoleve` selects the default medium tier. After install,
+the native skills provide slash completions on every supported agent; before
+install, paste the activation prompt.
 
 **Example daily flow**
 
@@ -101,7 +104,8 @@ Set up Mão leve in supervised mode.
    environment; continue on compatible Linux or macOS when possible.
 3. Explain where Mão leve will live and whether you will clone or update it.
    Ask for my approval before changing anything.
-4. After I approve, clone this repository if it is missing:
+4. After I approve, use the current checkout. If none exists, ask for a path or
+   clone into `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve` — never `~/maoleve`:
    https://github.com/Guilheeeeeeerme/maoleve.git
    If it already exists, inspect its status and update it only without
    discarding my changes. Never use destructive cleanup.

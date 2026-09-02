@@ -1,6 +1,7 @@
 # Activate tier: **low**
 
-Copy everything below the line at the **start of this chat** (or type `/maoleve-low`).
+Copy everything below the line at the **start of this chat** (or type
+`/maoleve-low`, `start maoleve low`, or `maolevelow`).
 
 ---
 

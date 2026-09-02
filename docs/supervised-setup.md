@@ -23,8 +23,10 @@ card — do not ask the human to repeat what you can detect.
    | Cursor IDE | `~/.cursor/` |
    | Cursor Agents | `cursor-agent` on `PATH` or project `AGENTS.md` |
 
-4. **Checkout:** `MAOLEVE_CHECKOUT`, then `~/maoleve`, then shallow search
-   under `~/Code`. Note clone vs update and whether the tree is dirty.
+4. **Checkout:** `MAOLEVE_CHECKOUT`, then the current repository, then an
+   explicitly chosen path under `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`.
+   Never assume or create `~/maoleve`. Note clone vs update and whether the tree
+   is dirty.
 5. **Binaries:** `rtk --version`, `headroom --version`, `serena --version`
    vs `versions.env` (warn on drift; do not refuse).
 6. **Mão leve state per detected agent:** Caveman mirror, RTK hook, dormant
@@ -42,7 +44,7 @@ Present **one** summary table, then wait for a single reply. Valid replies:
 Mão leve setup — confirm or edit
 
 Phase:        <install | verify | uninstall | activate-<tier>>
-Checkout:     <path | clone ~/maoleve | update existing | skip>
+Checkout:     <path | use current | clone XDG data path | update existing | skip>
 Agents:       <comma-separated from defaults below>
 Config access: structure only (no secret values)  [default: yes]
 Scope:        <one line: e.g. dormant install; no proxy/MCP/always-on>

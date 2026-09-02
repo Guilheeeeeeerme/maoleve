@@ -1,6 +1,8 @@
 # Activate tier: **medium** (default)
 
-Copy everything below the line at the **start of this chat** (or type `/maoleve-medium` or `maoleve-medium`).
+Copy everything below the line at the **start of this chat** (or type
+`/maoleve-medium`, `start maoleve medium`, or `maolevemedium`). A bare
+`maoleve` also activates this default tier.
 
 ---
 

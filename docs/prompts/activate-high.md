@@ -1,6 +1,7 @@
 # Activate tier: **high**
 
-Copy everything below the line at the **start of this chat** (or type `/maoleve-high` or `maoleve-high`).
+Copy everything below the line at the **start of this chat** (or type
+`/maoleve-high`, `start maoleve high`, or `maolevehigh`).
 
 ---
 

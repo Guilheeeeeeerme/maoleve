@@ -39,6 +39,12 @@ agent and per component below.
 | **Cursor IDE** | `~/.cursor/skills/caveman/` | `--agent cursor` init present | `~/.cursor/rules/maoleve.mdc` | `alwaysApply: false`; dormant wording |
 | **Cursor Agents** | `~/.cursor/skills/caveman/` | `--agent cursor` init present | project `AGENTS.md` | Same dormant pattern |
 
+For every authorized agent, verify these five files exist and have matching
+frontmatter (`name: maoleve-<tier>` and `disable-model-invocation: true`):
+`<native skills dir>/maoleve-{low,fast,medium,high,full}/SKILL.md`. Also verify
+the shared `~/.agents/skills/` copies when installed. A bare `maoleve` must
+select medium; aliases include `start maoleve <tier>` and `maoleve<tier>`.
+
 ## Verification checklist
 
 Run each check; record **pass**, **fail**, or **skipped**. Fix failures only

@@ -39,7 +39,8 @@ each integration independently, skip it, or request manual instructions.
 The bootstrap prompt is intentionally short. It instructs the active agent to:
 
 1. identify the current agent and verify Linux/Ubuntu support;
-2. clone or update Mão leve in a user-local directory;
+2. use the current Mão leve checkout, or create/update it under the XDG user
+   data directory when explicitly approved;
 3. read the repository's detailed setup prompt;
 4. explain the planned actions to the supervising human;
 5. inspect the active agent's existing harness configuration;

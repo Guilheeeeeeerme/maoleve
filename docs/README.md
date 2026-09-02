@@ -6,7 +6,7 @@ custom CLI required.
 
 Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 The setup agent identifies the platform, explains its plan, and asks before it
-clones or updates the checkout, inspects or changes configuration, installs
+uses or creates a checkout, inspects or changes configuration, installs
 anything, or reads credentials.
 
 For current instructions, this guide, [`docs/token-tiers.md`](token-tiers.md), and
@@ -21,9 +21,10 @@ drift instead of refusing to run or silently upgrading.
 Paste [`docs/prompts/install.md`](prompts/install.md) into your coding agent once
 per machine (or when repairing). It:
 
-- Clones or updates the Mão leve checkout
+- Uses the current checkout, or an approved checkout under
+  `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`
 - Installs RTK, Headroom, and Serena binaries (pinned to `versions.env`)
-- Copies vendored Caveman skills and merges **dormant** policy templates
+- Copies vendored Caveman and Mão leve tier skills and merges **dormant** policy templates
 - Does **not** enable proxy, MCP, or always-on rules
 
 Re-run safely; already-installed components are reused or skipped.
@@ -40,11 +41,11 @@ At the start of each chat, paste an activation prompt or use a slash command:
 
 | Tier | Slash command | Alias | Activation prompt |
 | --- | --- | --- | --- |
-| low | `/maoleve-low` | `maoleve-low` | [activate-low.md](prompts/activate-low.md) |
-| fast | `/maoleve-fast` | `maoleve-fast` | [activate-fast.md](prompts/activate-fast.md) |
-| medium (default) | `/maoleve-medium` | `maoleve-medium` | [activate-medium.md](prompts/activate-medium.md) |
-| high | `/maoleve-high` | `maoleve-high` | [activate-high.md](prompts/activate-high.md) |
-| full | `/maoleve-full` | `maoleve-full` | [activate-full.md](prompts/activate-full.md) |
+| low | `/maoleve-low` | `maoleve-low`, `start maoleve low`, `maolevelow` | [activate-low.md](prompts/activate-low.md) |
+| fast | `/maoleve-fast` | `maoleve-fast`, `start maoleve fast`, `maolevefast` | [activate-fast.md](prompts/activate-fast.md) |
+| medium (default) | `/maoleve-medium` | `maoleve-medium`, `start maoleve medium`, `maolevemedium`, or bare `maoleve` | [activate-medium.md](prompts/activate-medium.md) |
+| high | `/maoleve-high` | `maoleve-high`, `start maoleve high`, `maolevehigh` | [activate-high.md](prompts/activate-high.md) |
+| full | `/maoleve-full` | `maoleve-full`, `start maoleve full`, `maolevefull` | [activate-full.md](prompts/activate-full.md) |
 
 Activation tells the agent which compression layers, proxy, and MCP to use **for
 that chat only**. Manual pre-steps (e.g. `headroom wrap`, starting Serena MCP)
@@ -52,15 +53,16 @@ are documented in the activation prompts.
 
 ## Supported agents and install coverage
 
-| Agent | Caveman mirror | RTK hooks | Dormant policy surface |
+| Agent | Caveman / tier skills | RTK hooks | Dormant policy surface |
 | --- | --- | --- | --- |
-| Codex | `~/.codex/skills/caveman/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` |
-| OpenCode | `~/.config/opencode/skills/caveman/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` |
-| Claude Code | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` |
-| Cursor IDE | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` |
-| Cursor Agents | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` |
+| Codex | `~/.codex/skills/{caveman,maoleve-*}/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` |
+| OpenCode | `~/.config/opencode/skills/{caveman,maoleve-*}/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` |
+| Claude Code | `~/.claude/skills/{caveman,maoleve-*}/` | `rtk init --global` | `~/.claude/CLAUDE.md` |
+| Cursor IDE | `~/.cursor/skills/{caveman,maoleve-*}/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` |
+| Cursor Agents | `~/.cursor/skills/{caveman,maoleve-*}/` | `rtk init --global --agent cursor` | project `AGENTS.md` |
 
-All authorized agents also receive `~/.agents/skills/caveman/` plus RTK,
+All authorized agents also receive `~/.agents/skills/caveman/` and the five
+`maoleve-*` tier skills plus RTK,
 Headroom, and Serena binaries. See [install.md](prompts/install.md) for merge
 rules and idempotent re-run behavior.
 

@@ -1,6 +1,7 @@
 # Activate tier: **full**
 
-Copy everything below the line at the **start of this chat** (or type `/maoleve-full` or `maoleve-full`).
+Copy everything below the line at the **start of this chat** (or type
+`/maoleve-full`, `start maoleve full`, or `maolevefull`).
 
 ---
 

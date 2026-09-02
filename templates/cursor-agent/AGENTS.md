@@ -2,7 +2,9 @@
 
 Terminal-facing policy for `cursor-agent`. Apply **only when a Mão leve tier is
 activated** for the current chat (`/maoleve-<tier>` or
-`docs/prompts/activate-<tier>.md`). Do not assume Cursor IDE rules,
+`start maoleve <tier>`, `maoleve<tier>`, or the matching activation prompt).
+A bare `maoleve` means the default **medium** tier. Treat `start maoleve
+<tier>` and `maoleve<tier>` as activation requests too. Do not assume Cursor IDE rules,
 IDE-only MCP, or Cursor Settings UI.
 
 - Keep the harness Linux-only and shell-first.
