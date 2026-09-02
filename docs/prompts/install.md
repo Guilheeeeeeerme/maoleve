@@ -57,6 +57,28 @@ Ask explicitly; wait for answers. "skip" and "manual instructions" are valid.
 4. Confirm **one-time install only**: prepare tools and templates; do **not**
    enable proxy, MCP, or always-on tier policy for this chat.
 
+## Supported agents — install coverage
+
+Configure **each agent the human authorizes**. One agent's permission does not
+extend to another. For every authorized agent, install applies the rows below.
+
+| Agent | Caveman mirror | RTK hooks | Policy merge target | Template |
+| --- | --- | --- | --- | --- |
+| **Codex** | `~/.codex/skills/caveman/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` | `templates/codex/AGENTS.md` |
+| **OpenCode** | `~/.config/opencode/skills/caveman/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` | `templates/opencode/AGENTS.md` |
+| **Claude Code** | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` | `templates/claude/CLAUDE.md` |
+| **Cursor IDE** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
+| **Cursor Agents** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` (or path human confirms) | `templates/cursor-agent/AGENTS.md` |
+
+Shared for all authorized agents:
+
+- `~/.agents/skills/caveman/` — canonical vendored copy (step 1)
+- RTK, Headroom, Serena binaries (steps 2–4) — same versions from `versions.env`
+- Optional non-secret defaults in `~/.config/maoleve/env.sh` (Headroom vars by name only)
+
+Cursor IDE and Cursor Agents are **separate targets** — configure both only when
+both are authorized.
+
 ## Configuration merge rules
 
 - Read existing configuration before editing.
@@ -84,15 +106,16 @@ mkdir -p "$HOME/.agents/skills/caveman"
 cp -a "$MAOLEVE_CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 ```
 
-Mirror into each **authorized** agent skill directory when that runtime uses a
-separate path (symlink with `ln -sfn` when possible):
+Mirror into each **authorized** agent skill directory (symlink with `ln -sfn`
+when possible). See the coverage table above for the full per-agent list:
 
-| Agent | Also mirror to |
+| Agent | Mirror path |
 | --- | --- |
-| Cursor IDE / Cursor Agents | `~/.cursor/skills/caveman/` |
 | Codex | `~/.codex/skills/caveman/` |
-| Claude Code | `~/.claude/skills/caveman/` |
 | OpenCode | `~/.config/opencode/skills/caveman/` |
+| Claude Code | `~/.claude/skills/caveman/` |
+| Cursor IDE | `~/.cursor/skills/caveman/` |
+| Cursor Agents | `~/.cursor/skills/caveman/` (shared with Cursor IDE when both authorized) |
 
 ### 2. RTK
 
@@ -102,7 +125,8 @@ separate path (symlink with `ln -sfn` when possible):
    - **Claude Code:** `rtk init --global`
    - **Codex:** `rtk init --global --codex`
    - **OpenCode:** `rtk init --global --opencode`
-   - **Cursor IDE / Cursor Agents:** `rtk init --global --agent cursor`
+   - **Cursor IDE:** `rtk init --global --agent cursor`
+   - **Cursor Agents:** `rtk init --global --agent cursor` (same RTK target as Cursor IDE)
 3. RTK hooks stay installed but the agent uses RTK **only when a tier activation
    prompt selects it for the current chat**.
 
@@ -146,13 +170,17 @@ Merge Mão leve-managed policy from `$MAOLEVE_CHECKOUT/templates/<agent>/` into
 each authorized agent's native surface. Templates already say tools apply
 **when selected** for the active chat — do not change them to always-on.
 
-| Agent | Surface | Template |
+| Agent | Merge target | Template |
 | --- | --- | --- |
-| Codex | `AGENTS.md` | `templates/codex/AGENTS.md` |
-| OpenCode | `AGENTS.md` | `templates/opencode/AGENTS.md` |
-| Cursor Agents | project or agreed `AGENTS.md` | `templates/cursor-agent/AGENTS.md` |
-| Cursor IDE | `.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
-| Claude Code | `CLAUDE.md` | `templates/claude/CLAUDE.md` |
+| Codex | `~/.codex/AGENTS.md` | `templates/codex/AGENTS.md` |
+| OpenCode | `~/.config/opencode/AGENTS.md` | `templates/opencode/AGENTS.md` |
+| Claude Code | `~/.claude/CLAUDE.md` | `templates/claude/CLAUDE.md` |
+| Cursor IDE | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
+| Cursor Agents | project `AGENTS.md` (confirm path with human) | `templates/cursor-agent/AGENTS.md` |
+
+For OpenCode, ensure `opencode.json` references the merged `AGENTS.md` if the
+runtime requires an `instructions` entry — merge only; do not overwrite unrelated
+MCP or plugin settings.
 
 Tell the human: tier policy takes effect only after pasting an activation prompt
 (`/maoleve-medium`, etc.) at the start of a chat.

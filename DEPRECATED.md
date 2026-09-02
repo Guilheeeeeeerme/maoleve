@@ -28,7 +28,15 @@
 2. Verify in a new chat: [docs/prompts/verify.md](docs/prompts/verify.md)
 3. Start each chat with `/maoleve-medium` (or another tier) or paste
    `docs/prompts/activate-<tier>.md`
-4. Remove legacy MCP entries (tokensave, Playwright) if `maoleve apply` ran
-   previously — activation prompts list what to keep
+4. Remove legacy cruft from prior CLI use: [docs/prompts/uninstall-legacy.md](docs/prompts/uninstall-legacy.md)
+   — blast MCPs (tokensave, Playwright, Speckit, Superpowers, Firecrawl,
+   Context7), always-on rules, npx skills. Preserves prompt-only install.
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed.
+
+## Legacy cleanup vs current install
+
+| Prompt | Purpose |
+| --- | --- |
+| [uninstall-legacy.md](docs/prompts/uninstall-legacy.md) | Remove **old** blast-install / CLI artifacts only |
+| [install.md](docs/prompts/install.md) + [verify.md](docs/prompts/verify.md) | Current prompt-only setup — **not** removed by uninstall-legacy |

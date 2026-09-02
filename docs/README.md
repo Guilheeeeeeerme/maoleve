@@ -53,6 +53,20 @@ are documented in the activation prompts.
 Do **not** run `install.sh` or `bin/maoleve apply` for new setups. See
 [`DEPRECATED.md`](../DEPRECATED.md).
 
+## Supported agents and install coverage
+
+| Agent | Caveman mirror | RTK hooks | Dormant policy surface |
+| --- | --- | --- | --- |
+| Codex | `~/.codex/skills/caveman/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` |
+| OpenCode | `~/.config/opencode/skills/caveman/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` |
+| Claude Code | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` |
+| Cursor IDE | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` |
+| Cursor Agents | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` |
+
+All authorized agents also receive `~/.agents/skills/caveman/` plus RTK,
+Headroom, and Serena binaries. See [install.md](prompts/install.md) for merge
+rules and idempotent re-run behavior.
+
 ## Supported agents and their native configuration
 
 Mão leve adds a marked, Mão leve-managed layer in the native surface of only the
@@ -113,6 +127,14 @@ source does not authorize its use for a newly selected integration.
 Re-run [`install.md`](prompts/install.md) to realign binaries and templates.
 Re-run [`verify.md`](prompts/verify.md) in a new chat to audit and fix drift.
 Re-paste an activation prompt to restore tier behavior for a chat.
+
+## Removing legacy installs
+
+If an older `bin/maoleve apply` or blast MCP setup left cruft on disk, paste
+[`uninstall-legacy.md`](prompts/uninstall-legacy.md) in a new chat. It removes
+legacy MCPs, always-on rules, and npx skills while preserving a correct
+prompt-only install. Follow with [`verify.md`](prompts/verify.md) in another new
+chat. This is not an uninstall for the current version.
 
 ## What completion looks like
 

@@ -113,6 +113,7 @@ Copy from the Mão leve checkout (`CHECKOUT`) during **install** — do not use
 | same | `~/.cursor/skills/caveman/` (Cursor IDE / Agents) |
 | same | `~/.codex/skills/caveman/` (Codex) |
 | same | `~/.claude/skills/caveman/` (Claude Code) |
+| same | `~/.config/opencode/skills/caveman/` (OpenCode) |
 | `templates/codex/AGENTS.md` | `~/.codex/AGENTS.md` (merge; dormant until activation) |
 | `templates/opencode/AGENTS.md` | `~/.config/opencode/AGENTS.md` (OpenCode) |
 | `templates/claude/CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude Code) |
@@ -152,6 +153,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | --- | --- |
 | One-time setup | [install.md](./prompts/install.md) |
 | Post-install audit (new chat) | [verify.md](./prompts/verify.md) |
+| Remove legacy pre–prompt-only cruft | [uninstall-legacy.md](./prompts/uninstall-legacy.md) |
 | Per-chat activation | [activate-low.md](./prompts/activate-low.md) … [activate-full.md](./prompts/activate-full.md) |
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed; use

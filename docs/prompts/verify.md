@@ -27,6 +27,19 @@ each check, obtain approval before any fix, and report pass/fail per item.
 3. Ask: may I inspect harness configuration and run non-destructive version
    checks? Wait for approval before reading credential-bearing files.
 
+## Authorized agents — verification coverage
+
+Verify **each agent the human authorized during install**. Record pass/fail per
+agent and per component below.
+
+| Agent | Caveman mirror | RTK hooks | Policy surface | Pass criteria |
+| --- | --- | --- | --- | --- |
+| **Codex** | `~/.codex/skills/caveman/` | `--codex` init present | `~/.codex/AGENTS.md` | Dormant Mão leve block; "when tier activated" |
+| **OpenCode** | `~/.config/opencode/skills/caveman/` | `--opencode` init present | `~/.config/opencode/AGENTS.md` | Same dormant pattern |
+| **Claude Code** | `~/.claude/skills/caveman/` | global init present | `~/.claude/CLAUDE.md` | Same dormant pattern |
+| **Cursor IDE** | `~/.cursor/skills/caveman/` | `--agent cursor` init present | `~/.cursor/rules/maoleve.mdc` | `alwaysApply: false`; dormant wording |
+| **Cursor Agents** | `~/.cursor/skills/caveman/` | `--agent cursor` init present | project `AGENTS.md` | Same dormant pattern |
+
 ## Verification checklist
 
 Run each check; record **pass**, **fail**, or **skipped**. Fix failures only
@@ -49,8 +62,11 @@ Hooks may be present; RTK is used **only when a tier is activated**.
 
 | Path | Expected |
 | --- | --- |
-| `~/.agents/skills/caveman/SKILL.md` | Present |
-| Agent mirrors | Present per authorized agent (see `install.md` table) |
+| `~/.agents/skills/caveman/SKILL.md` | Present (canonical vendored copy) |
+| `~/.codex/skills/caveman/SKILL.md` | Present if Codex authorized |
+| `~/.config/opencode/skills/caveman/SKILL.md` | Present if OpenCode authorized |
+| `~/.claude/skills/caveman/SKILL.md` | Present if Claude Code authorized |
+| `~/.cursor/skills/caveman/SKILL.md` | Present if Cursor IDE or Cursor Agents authorized |
 
 Content should match `$MAOLEVE_CHECKOUT/.agents/skills/caveman/` — not from
 `npx skills add`.
@@ -67,12 +83,15 @@ activation — offer to remove or document as manual (with approval).
 
 **Pass:** **0** MCP servers configured for token-economy tools at idle.
 
-Inspect agent MCP config (`mcp.json`, `claude mcp list`, OpenCode MCP entries,
-etc.). Flag and offer removal (with approval):
+Inspect agent MCP config (`~/.cursor/mcp.json`, `claude mcp list`, Codex
+`config.toml` `[mcp_servers.*]`, OpenCode `opencode.json` `mcp`, etc.). Flag
+and offer removal (with approval):
 
 - Serena (belongs at **high/full** activation only)
 - Headroom MCP (belongs at **full** on Cursor IDE only, if needed)
 - tokensave, Playwright, or other blast-install leftovers
+- Legacy optional MCPs from old Mão leve CLI installs: Speckit, Superpowers,
+  Firecrawl, Context7 (remove unless human explicitly wants to keep them)
 
 ### 6. Dormant policy templates
 
@@ -90,8 +109,9 @@ ownership markers (`BEGIN MAOLEVE` / `END MAOLEVE` or equivalent).
 ### 7. Stray global always-on rules
 
 Scan for other rules or project files that force Mão leve tiers globally (e.g.
-`token-savings.mdc` with `alwaysApply: true`, duplicate Caveman always-on
-blocks). Report; do not delete without approval.
+`token-savings.mdc` or `superpowers-mcp-router.mdc` with `alwaysApply: true`,
+duplicate Caveman always-on blocks, legacy `maoleve.mdc` copies with
+`alwaysApply: true`). Report; do not delete without approval.
 
 ### 8. Legacy paths
 

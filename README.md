@@ -108,6 +108,24 @@ Set up Mão leve in supervised mode.
 
 </details>
 
+## What install configures (per agent)
+
+Paste [`docs/prompts/install.md`](docs/prompts/install.md) once; authorize each
+agent you use. Install prepares the same stack on disk for every authorized
+agent — tier policy stays dormant until you activate a tier per chat.
+
+| Agent | Caveman mirror | RTK hooks | Dormant policy surface |
+| --- | --- | --- | --- |
+| **Codex** | `~/.codex/skills/caveman/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` |
+| **OpenCode** | `~/.config/opencode/skills/caveman/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` |
+| **Claude Code** | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` |
+| **Cursor IDE** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` (`alwaysApply: false`) |
+| **Cursor Agents** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` |
+
+All authorized agents also get `~/.agents/skills/caveman/` (canonical copy) plus
+RTK, Headroom, and Serena **binaries** (no proxy/MCP at idle). Cursor IDE and
+Cursor Agents are separate targets — configure both only if you use both.
+
 ## What it supports
 
 Mão leve writes an additive, clearly marked layer into the native surface of
@@ -151,12 +169,27 @@ integration does not authorize adopting it.
 [`bin/maoleve`](bin/maoleve) and [`install.sh`](install.sh) are **deprecated**.
 Use install + activation prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 
+## Removing legacy installs
+
+If you previously used `bin/maoleve apply`, blast MCP installs, or always-on
+tier rules, paste [`docs/prompts/uninstall-legacy.md`](docs/prompts/uninstall-legacy.md)
+into a **new chat**. It removes old cruft (blast MCPs, always-on rules, npx
+skills, CLI symlinks) while **preserving** a correct prompt-only install from
+`install.md`.
+
+This is **not** an uninstall prompt for the current version. For clean-machine
+testing, use your local purge script (e.g. `~/scripts purge`).
+
+After legacy cleanup, run [`docs/prompts/verify.md`](docs/prompts/verify.md) in
+another new chat to confirm MCP 0 at idle and dormant policy intact.
+
 ## Documentation
 
 - [Guided setup](docs/README.md)
 - [Token economy tiers](docs/token-tiers.md)
 - [Install prompt](docs/prompts/install.md)
 - [Verify prompt](docs/prompts/verify.md)
+- [Remove legacy installs](docs/prompts/uninstall-legacy.md)
 - [Activation prompts](docs/prompts/)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)
