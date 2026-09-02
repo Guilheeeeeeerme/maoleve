@@ -108,15 +108,14 @@ MCP configuration follows the same rule: add only tier-selected entries in the
 authorized agent's native configuration. Mão leve has no default MCP list or
 automatic plugin installation contract.
 
-**Out of scope for tier activation:** tokensave (legacy, heavy MCP schema) and
-Playwright MCP unless explicitly requested outside Mão leve.
+**Out of scope for tier activation:** Playwright MCP and other non–token-economy
+MCP unless explicitly requested outside Mão leve.
 
 Current lock coverage is declared by `MAOLEVE_HEADROOM_VERSION`,
 `MAOLEVE_RTK_VERSION`, `MAOLEVE_SERENA_VERSION`, and
 `MAOLEVE_CAVEMAN_PLUGIN_VERSION` in `versions.env`. The lock file is
 authoritative; a lock entry does not select, recommend, install, or enable its
-integration. `MAOLEVE_TOKENSAVE_VERSION` is retained for legacy compatibility
-only and is not used by tier prompts.
+integration.
 
 ## 7. Merge, Ownership, and Credential Requirements
 
@@ -161,10 +160,6 @@ The primary interface is **prompt-only**:
    `/maoleve-<tier>` — see `docs/token-tiers.md`.
 
 `PROMPT.md` is the operational contract.
-
-`bin/maoleve` and `install.sh` are deprecated legacy paths documented in
-`DEPRECATED.md`. They do not blast-install MCP servers or configure all agents
-automatically.
 
 Mão leve may install, repair, or reinstall only selected components within its
 documented managed scope. For a selected missing or broken component, it must:
@@ -236,7 +231,6 @@ Current user instructions are:
 - [Install prompts](./prompts/)
 - [Operational prompt](../PROMPT.md)
 - [Repository overview](../README.md)
-- [Deprecated CLI](../DEPRECATED.md)
 - [Version lock](../versions.env)
 
 Older planning material is historical and must not override these supervised
@@ -246,5 +240,3 @@ setup instructions.
 
 - Which Ubuntu LTS release should become the explicit tested baseline, and
   which Linux/macOS environments should be added to validation?
-- Should legacy tokensave compatibility remain documented only for users
-  migrating off deprecated `maoleve apply` configs?

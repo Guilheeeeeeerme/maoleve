@@ -3,8 +3,7 @@
 Copy everything below the line into your coding agent when you want to **remove
 a prompt-only Mão leve install** — the same artifacts [`install.md`](./install.md)
 creates. This undoes dormant policies, vendored Caveman copies, RTK hooks, and
-optional install-time env defaults. It does **not** hunt arbitrary legacy
-blast-install cruft from years ago.
+optional install-time env defaults.
 
 ---
 
@@ -19,10 +18,10 @@ explicitly approves.
 mirrors (including symlinks), RTK hooks per authorized agent, optional
 `~/.config/maoleve/env.sh` defaults added during install.
 
-**Out of scope:** legacy `bin/maoleve apply` blast MCPs, always-on tier rules
-from old CLI installs, npx skills unrelated to install, tokensave, Playwright
-MCP, deleting entire agent config directories, removing the Mão leve checkout,
-removing unrelated MCP or rules the human uses for other projects.
+**Out of scope:** always-on tier rules not created by install, npx skills
+unrelated to install, deleting entire agent config directories, removing the
+Mão leve checkout, removing unrelated MCP or rules the human uses for other
+projects.
 
 **Idempotent:** safe to re-run. For each component, detect what is present;
 **skip** when already absent. Never delete whole config files — remove only
@@ -164,8 +163,7 @@ uv tool uninstall serena-agent
 
 Do **not** remove Serena MCP registration here unless it was added during a
 tier activation the human wants torn down — install.md does not register MCP.
-Report stray MCP; offer removal only with explicit approval (out of install
-uninstall scope if legacy blast).
+Report stray Serena/Headroom MCP; offer removal only with explicit approval.
 
 ### 5. Dormant policy templates (reverse install step 5)
 
@@ -192,10 +190,7 @@ questions. Follow upstream RTK uninstall instructions; do not guess paths.
 
 ### Explicitly skip during uninstall
 
-- Legacy blast MCP servers (tokensave, Playwright, etc.) from old CLI installs
 - Always-on global rules not created by install.md merge
-- `bin/maoleve`, `install.sh`, `~/.local/bin/maoleve` symlink (unless human
-  asks separately — out of install.md scope)
 - Entire agent config directories
 - The Mão leve checkout clone
 - Unrelated user MCP, skills, or rules
@@ -235,6 +230,3 @@ Failures:
 ```
 
 Report removed, skipped, preserved, manual, and failed items. English only.
-
-**Note:** For full machine purge including legacy parallel installs and old MCP
-stacks, use a local maintainer script outside this repository — not this prompt.

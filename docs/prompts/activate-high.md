@@ -36,7 +36,7 @@ Use versions from `versions.env`.
 ## Do not enable for this chat
 
 - Headroom MCP (full tier / Cursor IDE only)
-- tokensave
+- Non–token-economy MCP servers (Playwright, etc.)
 - Extra MCP servers beyond Serena
 
 ## MCP budget

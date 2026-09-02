@@ -50,7 +50,7 @@ rules — and fixes gaps with your approval.
 To remove a prompt-only install (reverse step 1), paste
 [`docs/prompts/uninstall.md`](docs/prompts/uninstall.md) in a new chat. It undoes
 dormant policies, vendored Caveman copies, and RTK hooks from `install.md` —
-idempotent and supervised. It does not clean legacy blast-install cruft.
+idempotent and supervised.
 
 ### 4. Activate a tier each chat
 
@@ -152,7 +152,8 @@ Cursor Agents and Cursor IDE are separate targets.
 ## Token economy only
 
 In-scope tools: **Headroom**, **RTK**, **Caveman** (vendored from this repo),
-**Serena** (high/full when activated). Out of scope: tokensave, Playwright MCP.
+**Serena** (high/full when activated). Out of scope: non–token-economy MCP
+(Playwright, etc.) unless you explicitly request them.
 
 Caveman skills copy from `.agents/skills/caveman*` — not `npx skills add`.
 See [vendored copy layout](docs/token-tiers.md#vendored-copy-layout).
@@ -171,11 +172,6 @@ See [vendored copy layout](docs/token-tiers.md#vendored-copy-layout).
 
 Credential discovery requires explicit, source-by-source permission. Finding an
 integration does not authorize adopting it.
-
-## Legacy CLI
-
-[`bin/maoleve`](bin/maoleve) and [`install.sh`](install.sh) are **deprecated**.
-Use install + activation prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 
 ## Documentation
 

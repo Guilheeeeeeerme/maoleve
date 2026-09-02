@@ -16,8 +16,8 @@ installed/reused/skipped/manual/failed at the end.
 
 ## Install vs activation
 
-Mão leve is **prompt-only**. Do not run `bin/maoleve apply`, `install.sh`, or
-blast-install MCP servers.
+Mão leve is **prompt-only**. Setup and tiers are driven by paste-in prompts in
+`docs/prompts/` — no shell CLI in this repository.
 
 | Phase | Prompt | When |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ Tiers: **low**, **fast**, **medium** (default), **high**, **full**.
 
 Token-economy tools in scope: **RTK**, **Headroom**, **Caveman** (vendored from
 repo), **Serena** (high/full activation only). Out of scope unless explicitly
-requested: tokensave, Playwright MCP.
+requested: Playwright MCP and other non–token-economy MCP.
 
 Copy Caveman skills from `$CHECKOUT/.agents/skills/caveman*` — never
 `npx skills add`.
@@ -98,8 +98,3 @@ or broad context collection unless the human requests them.
 Validate each approved change in its native agent context when possible, and
 report what was reused, installed, skipped, assigned to manual instructions,
 or failed. Keep all user-facing text in English.
-
-## Legacy CLI
-
-`bin/maoleve` and `install.sh` are deprecated. See `DEPRECATED.md`. Do not
-use them for new setups unless the human explicitly requests migration help.

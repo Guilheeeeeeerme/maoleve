@@ -17,8 +17,7 @@ per chat with `/maoleve-<tier>` or `maoleve-<tier>` (see `docs/token-tiers.md`).
 **dormant** Mão leve-managed blocks (per-chat activation only).
 
 **Out of scope:** enabling Headroom proxy/wrap in agent config, registering MCP
-servers, `alwaysApply` rules, starting proxies, legacy `bin/maoleve` /
-`install.sh`, tokensave, Playwright MCP.
+servers, `alwaysApply` rules, or starting proxies during install.
 
 **Idempotent:** safe to re-run. For each component, detect what is already
 installed or merged; **reuse or skip** when versions match `versions.env` and
@@ -170,8 +169,7 @@ Tell the human: tier policy takes effect only after pasting an activation prompt
 - Headroom proxy/wrap and Headroom MCP
 - Serena (and any other) MCP registration
 - Enabling `alwaysApply: true` on Cursor rules
-- tokensave, Playwright MCP
-- `bin/maoleve`, `install.sh`, blast-install paths
+- Non–token-economy MCP servers (Playwright, etc.) unless the human explicitly requests them
 
 ## Post-install (this session)
 

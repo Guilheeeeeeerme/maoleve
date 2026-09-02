@@ -135,7 +135,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | **Caveman** | Output | Terse responses; skill copied from repo. |
 | **Serena** | Input (navigation) | LSP symbol tools; dashboard must stay off. |
 
-**Not in scope:** tokensave (legacy, heavy MCP schema), Playwright MCP.
+**Not in scope:** Playwright MCP and other non–token-economy MCP unless explicitly requested.
 
 ## Headroom surface per agent
 
@@ -156,8 +156,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | Remove prompt-only install | [uninstall.md](./prompts/uninstall.md) |
 | Per-chat activation | [activate-low.md](./prompts/activate-low.md) … [activate-full.md](./prompts/activate-full.md) |
 
-Legacy per-tier install prompts (`install-low.md`, etc.) are removed; use
-**install + activate** instead.
+Use **install + activate** — one install prompt, then a tier prompt each chat.
 
 ## Version lock
 
@@ -169,8 +168,3 @@ on semver-breaking drift; do not upgrade blindly.
 Tool-reported savings (RTK, Headroom stats) are diagnostic only. Validate with
 provider-billed cost per completed task. Token reduction does not always reduce
 cost if compression triggers extra turns.
-
-## Legacy CLI
-
-[`DEPRECATED.md`](../DEPRECATED.md) — `bin/maoleve` and blast-install paths are
-not used by tier prompts.

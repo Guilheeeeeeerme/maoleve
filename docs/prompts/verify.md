@@ -12,8 +12,7 @@ You are the Mão leve verification agent performing a **read-check-fix** pass.
 be dormant, and MCP count is zero at idle. Repair only with explicit approval.
 
 **Out of scope:** enabling Headroom proxy/wrap, registering MCP servers,
-`alwaysApply: true`, tier activation, `bin/maoleve`, `install.sh`, tokensave,
-Playwright MCP.
+`alwaysApply: true`, or tier activation during this pass.
 
 Follow [`docs/supervised-setup.md`](../supervised-setup.md): run **discovery**,
 present the **single approval card** (phase = verify), then run checks and fix
@@ -89,9 +88,9 @@ and offer removal (with approval):
 
 - Serena (belongs at **high/full** activation only)
 - Headroom MCP (belongs at **full** on Cursor IDE only, if needed)
-- tokensave, Playwright, or other blast-install leftovers
-- Legacy optional MCPs from old Mão leve CLI installs (remove unless human
-  explicitly wants to keep them)
+
+Do not remove unrelated MCP the human uses for other workflows unless they
+ask on the approval card.
 
 ### 6. Dormant policy templates
 
@@ -110,13 +109,8 @@ ownership markers (`BEGIN MAOLEVE` / `END MAOLEVE` or equivalent).
 
 Scan for other rules or project files that force Mão leve tiers globally (e.g.
 `token-savings.mdc` or `superpowers-mcp-router.mdc` with `alwaysApply: true`,
-duplicate Caveman always-on blocks, legacy `maoleve.mdc` copies with
+duplicate Caveman always-on blocks, stray `maoleve.mdc` copies with
 `alwaysApply: true`). Report; do not delete without approval.
-
-### 8. Legacy paths
-
-**Pass:** human was not directed to `bin/maoleve apply` or `install.sh` for
-setup. Note if legacy MCP entries remain from prior CLI use.
 
 ## Fix ladder (approval required)
 

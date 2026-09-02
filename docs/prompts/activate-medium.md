@@ -30,7 +30,7 @@ ask the human to run `docs/prompts/install.md`.
 
 - Serena MCP
 - Headroom MCP
-- tokensave or non-token MCPs
+- Non–token-economy MCP servers
 
 ## MCP budget
 
