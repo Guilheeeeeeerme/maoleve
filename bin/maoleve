@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DEPRECATED — use docs/prompts/install-<tier>.md instead. See DEPRECATED.md.
+# DEPRECATED — use docs/prompts/install.md + activate-<tier>.md instead. See DEPRECATED.md.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -8,7 +8,7 @@ STATE_DIR="${MAOLEVE_STATE_DIR:-$HOME/.local/share/maoleve}"
 
 deprecation_banner() {
   printf '%s\n' \
-    "DEPRECATED: bin/maoleve is legacy. Use docs/prompts/install-<tier>.md. See DEPRECATED.md." >&2
+    "DEPRECATED: bin/maoleve is legacy. Use docs/prompts/install.md + activate-<tier>.md. See DEPRECATED.md." >&2
 }
 
 source_env() {
@@ -314,7 +314,7 @@ write_claude_policy() {
 apply_configs() {
   printf '%s\n' \
     "maoleve apply is deprecated and writes minimal configs only (no MCP blast-install)." \
-    "Use docs/prompts/install-<tier>.md for tier-scoped setup." >&2
+    "Use docs/prompts/install.md for one-time setup; activate-<tier>.md per chat." >&2
   install_links
   write_env_files
   write_cursor_mcp
@@ -328,13 +328,13 @@ apply_configs() {
     rtk init --global --opencode || true
   fi
   printf '%s\n' "Mão leve minimal legacy configs written."
-  printf '%s\n' "For new setups, use docs/prompts/install-<tier>.md instead."
+  printf '%s\n' "For new setups, use docs/prompts/install.md + activate-<tier>.md instead."
 }
 
 install_optional_tools() {
   source_versions
   printf '%s\n' \
-    "maoleve tools is deprecated. Install binaries per docs/prompts/install-<tier>.md." >&2
+    "maoleve tools is deprecated. Install binaries via docs/prompts/install.md." >&2
   if ! have uv; then
     printf '%s\n' "Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -358,14 +358,14 @@ install_optional_tools() {
 
 setup_claude() {
   printf '%s\n' \
-    "maoleve claude is deprecated. Use docs/prompts/install-<tier>.md for Claude Code setup." >&2
+    "maoleve claude is deprecated. Use docs/prompts/install.md for Claude Code setup." >&2
   if ! have claude; then
     printf '%s\n' "Claude Code is not installed. Install it first, then use a tier install prompt."
     printf '%s\n' "Suggested: npm install -g @anthropic-ai/claude-code"
     return 0
   fi
   printf '%s\n' "No MCP servers are configured by this legacy command."
-  printf '%s\n' "Copy Caveman from the checkout and follow docs/prompts/install-<tier>.md."
+  printf '%s\n' "Copy Caveman from the checkout and follow docs/prompts/install.md."
 }
 
 doctor() {
@@ -449,7 +449,7 @@ print_prompt() {
 
 usage() {
   cat <<'EOF'
-DEPRECATED: use docs/prompts/install-<tier>.md instead. See DEPRECATED.md.
+DEPRECATED: use docs/prompts/install.md + activate-<tier>.md instead. See DEPRECATED.md.
 
 Usage:
   maoleve prereqs

@@ -31,26 +31,28 @@ report installed, reused, skipped, manual, and failed items at the end.
    `docs/token-tiers.md`, and `versions.env` when present. Use the
    documentation in the checkout as the operational source of truth.
 
-## Token economy tiers
+## Install vs activation
 
 Mão leve is **prompt-only**. Do not run `bin/maoleve apply`, `install.sh`, or
-blast-install MCP servers. Ask the human which tier they want:
+blast-install MCP servers.
 
-| Tier | Prompt file |
-| --- | --- |
-| low | `docs/prompts/install-low.md` |
-| fast | `docs/prompts/install-fast.md` |
-| medium (default) | `docs/prompts/install-medium.md` |
-| high | `docs/prompts/install-high.md` |
-| full | `docs/prompts/install-full.md` |
+| Phase | Prompt | When |
+| --- | --- | --- |
+| **One-time install** | `docs/prompts/install.md` | Once per machine — binaries, Caveman copy, dormant policy |
+| **Per-chat activation** | `docs/prompts/activate-<tier>.md` or `/maoleve-<tier>` | Start of each chat — select tier for **this conversation only** |
 
-Follow the selected tier prompt exactly. Token-economy tools in scope: **RTK**,
-**Headroom**, **Caveman** (vendored from repo), **Serena** (high/full only).
-Out of scope unless explicitly requested: Speckit, Superpowers, Firecrawl,
-Context7, Playwright, tokensave.
+Tiers: **low**, **fast**, **medium** (default), **high**, **full**.
+
+Token-economy tools in scope: **RTK**, **Headroom**, **Caveman** (vendored from
+repo), **Serena** (high/full activation only). Out of scope unless explicitly
+requested: tokensave, Playwright MCP.
 
 Copy Caveman skills from `$CHECKOUT/.agents/skills/caveman*` — never
 `npx skills add`.
+
+**Install** must not enable proxy, MCP, or always-on tier rules. **Activation**
+enables layers for the current chat only; manual pre-steps (proxy start, MCP
+register) may be required — see each `activate-*.md` file.
 
 ## Required supervised questions
 
@@ -66,11 +68,12 @@ instructions” are valid answers for every discovery or integration question.
    configuration, which exact sources may I read? Name each authorized file,
    directory, environment configuration, or variable source; discovery
    consent does not authorize these reads.
-5. Which token-economy tier does the human want (low, fast, medium, high, full)?
+5. Is this a **one-time install** or **tier activation** for the current chat?
+   If activation, which tier (low, fast, medium, high, full)?
 
 Discovery is not adoption: finding a configured component or key in an authorized
 agent does not authorize using it for a newly selected integration. Install only
-tier-scoped components in Mão leve-managed scope.
+prepares components; activation selects what applies **this chat**.
 
 ## Configuration merge and ownership
 
@@ -116,7 +119,7 @@ Write guidance as an additive Mão leve-managed block in the native location for
 the selected agent. Keep syntax and capabilities separate; do not assume
 configuration formats are interchangeable.
 
-- Cursor IDE: Cursor rules file with concise context and shell guidance.
+- Cursor IDE: Cursor rules file with `alwaysApply: false`; tier applies per chat.
 - Cursor Agents: compatible terminal-facing guidance without IDE-only
   assumptions.
 - Codex: `AGENTS.md` with targeted reads, compact command output, and human
@@ -125,10 +128,10 @@ configuration formats are interchangeable.
 - Claude Code: `CLAUDE.md` plus selected hook, MCP, or plugin entries.
 
 Across all policy layers, use targeted searches and reads. Use compact shell
-output only when RTK is **selected**. Use concise responses only when Caveman is
-**selected**. Use selective symbol lookup only when Serena is **selected**.
-Do not run broad tests, refactors, or broad context collection unless the human
-requests them.
+output only when RTK is **selected for this chat**. Use concise responses only
+when Caveman is **selected for this chat**. Use selective symbol lookup only
+when Serena is **selected for this chat**. Do not run broad tests, refactors,
+or broad context collection unless the human requests them.
 
 Validate each approved change in its native agent context when possible, and
 report what was reused, installed, skipped, assigned to manual instructions,

@@ -1,11 +1,35 @@
 # Token economy tiers
 
-Mão leve is **prompt-only**: pick a tier, paste the matching install prompt into
-your coding agent. No `maoleve` CLI required. Vendored assets (Caveman skill,
-policy templates) live in this repo and are **copied** into agent-native paths.
+Mão leve is **prompt-only**: run **one-time install** once, then activate a tier
+at the start of each chat. No `maoleve` CLI required. Vendored assets (Caveman
+skills, policy templates) are **copied** during install but apply **per chat**
+only when you paste an activation prompt.
 
 Supported agents: **Codex**, **OpenCode**, **Cursor IDE**, **Cursor Agents**
 (`cursor-agent`), and **Claude Code**.
+
+## Workflow
+
+1. **Once:** paste [`docs/prompts/install.md`](./prompts/install.md) — prepares
+   RTK, Headroom, Serena binaries, Caveman copy, dormant policy templates.
+   Does **not** enable proxy, MCP, or always-on rules.
+2. **Each chat:** paste a tier activation prompt (or use slash commands below).
+
+## Slash commands and aliases
+
+| Tier | Slash command | Alias (no slash) | Activation prompt |
+| --- | --- | --- | --- |
+| **low** | `/maoleve-low` | `maoleve-low` | [activate-low.md](./prompts/activate-low.md) |
+| **fast** | `/maoleve-fast` | `maoleve-fast` | [activate-fast.md](./prompts/activate-fast.md) |
+| **medium** | `/maoleve-medium` | `maoleve-medium` | [activate-medium.md](./prompts/activate-medium.md) |
+| **high** | `/maoleve-high` | `maoleve-high` | [activate-high.md](./prompts/activate-high.md) |
+| **full** | `/maoleve-full` | `maoleve-full` | [activate-full.md](./prompts/activate-full.md) |
+
+Paste the activation file body below its title line, or type the slash command /
+alias as the first message. The agent applies that tier **for the current chat
+only** — not globally.
+
+**Default tier:** **medium** if you do not specify.
 
 ## Tier semantics
 
@@ -22,18 +46,64 @@ Supported agents: **Codex**, **OpenCode**, **Cursor IDE**, **Cursor Agents**
 Estimates come from upstream benchmarks (RTK, Headroom, Caveman, Serena).
 Real savings depend on repo size, session length, and agent behavior.
 
-| Tier | Tools enabled | Expected token savings (indicative) | Latency tradeoff | MCP at idle |
+| Tier | Stack (this chat) | Expected token savings (indicative) | Latency tradeoff | MCP at idle |
 | --- | --- | --- | --- | --- |
-| **low** | RTK, Caveman policy + vendored skill copy | **Input:** 60–90% on shell output (RTK). **Output:** ~30–65% when Caveman applies. | **Lowest.** RTK hook &lt;10 ms/command; no proxy or MCP. | **0** |
+| **low** | RTK + Caveman | **Input:** 60–90% on shell output (RTK). **Output:** ~30–65% when Caveman applies. | **Lowest.** RTK hook &lt;10 ms/command; no proxy or MCP. | **0** |
 | **fast** | low + Headroom **proxy** (wrap) | **Input:** +15–40% on tool/API traffic via proxy. Shell savings unchanged. | **Low–medium.** Proxy startup ~1–3 s once; no MCP tool-schema tax. | **0** |
-| **medium** | fast + full Caveman skill copy + policy templates from repo | **Output:** full Caveman skill catalog. **Input:** proxy + RTK as in fast. | **Medium** (same as fast). | **0** |
+| **medium** | fast + full Caveman skills + policy | **Output:** full Caveman skill catalog. **Input:** proxy + RTK as in fast. | **Medium** (same as fast). | **0** |
 | **high** | medium + **Serena** MCP (`--open-web-dashboard False`) | **Input:** symbol-level reads vs whole files on large repos. | **Medium–high.** LSP indexing at project attach. | **1** (Serena) |
-| **full** | high + Headroom MCP on **Cursor IDE only** (if not using proxy URL) + all policy templates | Combined proxy + optional on-demand MCP compression on Cursor. | **Highest** acceptable for max savings. | **≤2** |
+| **full** | high + multi-agent consistency; Headroom MCP on **Cursor IDE only** if needed | Combined proxy + optional on-demand MCP compression on Cursor. | **Highest** acceptable for max savings. | **≤2** |
+
+## Research: practical stack combinations (2025–2026)
+
+Findings from public benchmarks and MCP guidance — not academic targets.
+
+### Layered input + output (recommended baseline)
+
+| Combination | What it optimizes | Practical note |
+| --- | --- | --- |
+| **RTK + Caveman** | Shell output (input) + agent prose (output) | Complementary streams; best **zero-MCP** baseline ([Codepointer replay](https://codepointer.substack.com/p/cutting-llm-token-costs-with-rtk)). |
+| **RTK + Headroom proxy** | CLI output + in-flight API/tool payloads | Headroom wrap can register RTK hooks; proxy acts on wire, RTK on shell ([Headroom + RTK](https://github.com/RaiAnsar/mcp-gateway)). |
+| **Above + Serena (high+)** | Symbol navigation vs whole-file reads | One MCP slot; pays off on medium/large repos; fixed schema overhead at session start ([Serena](https://github.com/oraios/serena)). |
+
+### MCP budget and lazy loading
+
+- Keep MCP tool definitions under ~**10–15%** of context; prefer **0–1 idle MCP**
+  on low/medium/fast tiers ([MCP client best practices](https://modelcontextprotocol.io/docs/develop/clients/client-best-practices)).
+- **Lazy / progressive discovery** (meta-tools, load-on-demand schemas) cuts idle
+  schema tax ~85–97% vs eager loading when many servers exist ([mcp-tool-search](https://github.com/KGT24k/mcp-tool-search), [Tokenade lazy MCP](https://tokenade.net/en/articles/lazy-mcp-loading)).
+- Mão leve default: **no MCP at install**; register Serena only when activating
+  **high/full**; Headroom MCP only at **full** on Cursor IDE if needed.
+
+### Per-session vs always-on rules
+
+- **Always-on** system prompts and `alwaysApply` rules re-bill every turn (often
+  as cache reads); tier policy should activate **per chat**, not globally
+  ([THOL leaderboard](https://pi-infected.github.io/token-harness-optimizer-leaderboard/)).
+- **Per-chat activation** (`/maoleve-medium`, etc.) matches how RTK/Caveman/Headroom
+  are meant to be selected — install prepares binaries; activation selects layers.
+
+### End-to-end cost caveat
+
+Component-level savings (60–99% on a single grep) do not always reduce **billed
+cost per completed task** if compression causes extra turns or cache invalidation
+([PointFive arXiv 2607.12161](https://arxiv.org/abs/2607.12161), THOL). Validate
+with provider invoices, not tool marketing alone.
+
+### Mão leve tier → stack mapping
+
+| Tier | Recommended combo |
+| --- | --- |
+| **low** | RTK + Caveman only |
+| **fast** | low + Headroom proxy (`--no-mcp`) |
+| **medium** | fast + full Caveman skills (default) |
+| **high** | medium + Serena (dashboard off) |
+| **full** | high + optional Headroom MCP on Cursor IDE; multi-agent consistency |
 
 ## Vendored copy layout
 
-Copy from the Mão leve checkout (`CHECKOUT`) — do not use `npx skills add` when
-these paths exist:
+Copy from the Mão leve checkout (`CHECKOUT`) during **install** — do not use
+`npx skills add` when these paths exist:
 
 | Repo path | Copy to (per authorized agent) |
 | --- | --- |
@@ -41,10 +111,10 @@ these paths exist:
 | same | `~/.cursor/skills/caveman/` (Cursor IDE / Agents) |
 | same | `~/.codex/skills/caveman/` (Codex) |
 | same | `~/.claude/skills/caveman/` (Claude Code) |
-| `templates/codex/AGENTS.md` | `~/.codex/AGENTS.md` (merge; Codex) |
+| `templates/codex/AGENTS.md` | `~/.codex/AGENTS.md` (merge; dormant until activation) |
 | `templates/opencode/AGENTS.md` | `~/.config/opencode/AGENTS.md` (OpenCode) |
 | `templates/claude/CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude Code) |
-| `templates/cursor/maoleve.mdc` | `~/.cursor/rules/maoleve.mdc` (Cursor IDE) |
+| `templates/cursor/maoleve.mdc` | `~/.cursor/rules/maoleve.mdc` (`alwaysApply: false`) |
 | `templates/cursor-agent/AGENTS.md` | project `AGENTS.md` or agent policy path |
 
 ```bash
@@ -62,8 +132,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | **Caveman** | Output | Terse responses; skill copied from repo. |
 | **Serena** | Input (navigation) | LSP symbol tools; dashboard must stay off. |
 
-**Not in scope:** tokensave (legacy, heavy MCP schema), Speckit, Superpowers,
-Firecrawl, Context7, Playwright.
+**Not in scope:** tokensave (legacy, heavy MCP schema), Playwright MCP.
 
 ## Headroom surface per agent
 
@@ -75,15 +144,15 @@ Firecrawl, Context7, Playwright.
 | **Cursor IDE** | `headroom wrap cursor` or proxy base URL | Headroom MCP at full only if needed |
 | **Cursor Agents** | Skip wrap | Serena at high+ if authorized; prefer bare MCP budget |
 
-## Install prompts
+## Prompts
 
-| Tier | Prompt |
+| Purpose | File |
 | --- | --- |
-| low | [install-low.md](./prompts/install-low.md) |
-| fast | [install-fast.md](./prompts/install-fast.md) |
-| medium | [install-medium.md](./prompts/install-medium.md) |
-| high | [install-high.md](./prompts/install-high.md) |
-| full | [install-full.md](./prompts/install-full.md) |
+| One-time setup | [install.md](./prompts/install.md) |
+| Per-chat activation | [activate-low.md](./prompts/activate-low.md) … [activate-full.md](./prompts/activate-full.md) |
+
+Legacy per-tier install prompts (`install-low.md`, etc.) are removed; use
+**install + activate** instead.
 
 ## Version lock
 
@@ -94,8 +163,7 @@ on semver-breaking drift; do not upgrade blindly.
 
 Tool-reported savings (RTK, Headroom stats) are diagnostic only. Validate with
 provider-billed cost per completed task. Token reduction does not always reduce
-cost if compression triggers extra turns ([PointFive arXiv 2607.12161](https://arxiv.org/abs/2607.12161)).
-Keep MCP tool-schema tax under ~10–15% of context; prefer 0–1 MCP at idle tiers.
+cost if compression triggers extra turns.
 
 ## Legacy CLI
 

@@ -92,8 +92,8 @@ or environment variable. Cursor Agents and Cursor IDE are separate targets.
 
 ## 6. Token-economy integrations (in scope)
 
-Tier prompts install only the integrations below. Each is optional within its
-tier, independently selected, and configured only after human approval.
+Tier activation enables only the integrations below for **the current chat**.
+Each is optional within its tier and configured only after human approval.
 `versions.env` remains authoritative for pinned versions.
 
 | Integration | Tiers | Purpose |
@@ -108,8 +108,8 @@ MCP configuration follows the same rule: add only tier-selected entries in the
 authorized agent's native configuration. Mão leve has no default MCP list or
 automatic plugin installation contract.
 
-**Out of scope for tier prompts:** Speckit, Superpowers, Firecrawl, Context7,
-Playwright MCP, and tokensave (legacy, heavy MCP schema).
+**Out of scope for tier activation:** tokensave (legacy, heavy MCP schema) and
+Playwright MCP unless explicitly requested outside Mão leve.
 
 Current lock coverage is declared by `MAOLEVE_HEADROOM_VERSION`,
 `MAOLEVE_RTK_VERSION`, `MAOLEVE_SERENA_VERSION`, and
@@ -153,9 +153,14 @@ configured component or key never authorizes adopting it.
 
 ## 8. Installation and Recovery
 
-The primary installation interface is **prompt-only**: pick a tier in
-`docs/token-tiers.md`, paste the matching `docs/prompts/install-<tier>.md`
-prompt, and follow supervised steps. `PROMPT.md` is the operational contract.
+The primary interface is **prompt-only**:
+
+1. **One-time install:** `docs/prompts/install.md` — binaries, Caveman copy,
+   dormant policy (no global proxy/MCP/rules).
+2. **Per-chat activation:** `docs/prompts/activate-<tier>.md` or
+   `/maoleve-<tier>` — see `docs/token-tiers.md`.
+
+`PROMPT.md` is the operational contract.
 
 `bin/maoleve` and `install.sh` are deprecated legacy paths documented in
 `DEPRECATED.md`. They do not blast-install MCP servers or configure all agents

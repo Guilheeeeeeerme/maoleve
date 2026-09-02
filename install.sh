@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DEPRECATED: Use tier install prompts from docs/prompts/ instead.
+# DEPRECATED: Use docs/prompts/install.md + activate-<tier>.md instead.
 # See DEPRECATED.md — this script no longer blast-installs tools.
 set -euo pipefail
 
@@ -17,14 +17,14 @@ main() {
   cat <<EOF
 Mão leve checkout: $INSTALL_DIR
 
-The CLI blast-install path is deprecated. Pick a token-economy tier and paste
-the matching install prompt into your coding agent:
+The CLI blast-install path is deprecated. One-time setup and per-chat tiers:
 
-  low    → docs/prompts/install-low.md
-  fast   → docs/prompts/install-fast.md
-  medium → docs/prompts/install-medium.md  (default)
-  high   → docs/prompts/install-high.md
-  full   → docs/prompts/install-full.md
+  install  → docs/prompts/install.md  (once per machine)
+  low      → docs/prompts/activate-low.md   or /maoleve-low
+  fast     → docs/prompts/activate-fast.md  or /maoleve-fast
+  medium   → docs/prompts/activate-medium.md (default) or /maoleve-medium
+  high     → docs/prompts/activate-high.md  or /maoleve-high
+  full     → docs/prompts/activate-full.md  or /maoleve-full
 
 See docs/token-tiers.md for the comparison table and DEPRECATED.md for details.
 EOF

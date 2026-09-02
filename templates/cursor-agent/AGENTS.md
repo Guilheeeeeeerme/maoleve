@@ -1,6 +1,8 @@
 # Mão leve Policy (Cursor Agents)
 
-Terminal-facing policy for `cursor-agent`. Do not assume Cursor IDE rules,
+Terminal-facing policy for `cursor-agent`. Apply **only when a Mão leve tier is
+activated** for the current chat (`/maoleve-<tier>` or
+`docs/prompts/activate-<tier>.md`). Do not assume Cursor IDE rules,
 IDE-only MCP, or Cursor Settings UI.
 
 - Keep the harness Linux-only and shell-first.

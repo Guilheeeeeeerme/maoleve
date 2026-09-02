@@ -1,8 +1,8 @@
 # Mão leve guided setup
 
-Mão leve is a supervised, **prompt-only** setup layer for coding agents. Pick a
-token-economy tier, paste the install prompt, approve each step. No custom CLI
-required.
+Mão leve is a supervised, **prompt-only** setup layer for coding agents. Run
+**one-time install** once, then activate a tier at the start of each chat. No
+custom CLI required.
 
 Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 The setup agent identifies the platform, explains its plan, and asks before it
@@ -14,24 +14,33 @@ For current instructions, this guide, [`docs/token-tiers.md`](token-tiers.md), a
 `versions.env` is the supported-version baseline: setup warns on semver-breaking
 drift instead of refusing to run or silently upgrading.
 
-## Pick a tier, paste a prompt
+## Two-step workflow
 
-1. Read the [tier comparison](token-tiers.md) and choose **low**, **fast**,
-   **medium** (default), **high**, or **full**.
-2. Open the matching install prompt and copy everything below the line into
-   your coding agent.
+### 1. One-time install
 
-| Tier | Prompt |
-| --- | --- |
-| low | [install-low.md](prompts/install-low.md) |
-| fast | [install-fast.md](prompts/install-fast.md) |
-| medium | [install-medium.md](prompts/install-medium.md) |
-| high | [install-high.md](prompts/install-high.md) |
-| full | [install-full.md](prompts/install-full.md) |
+Paste [`docs/prompts/install.md`](prompts/install.md) into your coding agent once
+per machine (or when repairing). It:
 
-Each prompt is self-contained: agent identification, approval gates, checkout
-clone/update, vendored Caveman skill copy from the repo, binary install only
-when the tier requires it, agent-native configuration, and a verification report.
+- Clones or updates the Mão leve checkout
+- Installs RTK, Headroom, and Serena binaries (pinned to `versions.env`)
+- Copies vendored Caveman skills and merges **dormant** policy templates
+- Does **not** enable proxy, MCP, or always-on rules
+
+### 2. Per-chat activation
+
+At the start of each chat, paste an activation prompt or use a slash command:
+
+| Tier | Slash command | Alias | Activation prompt |
+| --- | --- | --- | --- |
+| low | `/maoleve-low` | `maoleve-low` | [activate-low.md](prompts/activate-low.md) |
+| fast | `/maoleve-fast` | `maoleve-fast` | [activate-fast.md](prompts/activate-fast.md) |
+| medium (default) | `/maoleve-medium` | `maoleve-medium` | [activate-medium.md](prompts/activate-medium.md) |
+| high | `/maoleve-high` | `maoleve-high` | [activate-high.md](prompts/activate-high.md) |
+| full | `/maoleve-full` | `maoleve-full` | [activate-full.md](prompts/activate-full.md) |
+
+Activation tells the agent which compression layers, proxy, and MCP to use **for
+that chat only**. Manual pre-steps (e.g. `headroom wrap`, starting Serena MCP)
+are documented in the activation prompts.
 
 Do **not** run `install.sh` or `bin/maoleve apply` for new setups. See
 [`DEPRECATED.md`](../DEPRECATED.md).
@@ -39,14 +48,14 @@ Do **not** run `install.sh` or `bin/maoleve apply` for new setups. See
 ## Supported agents and their native configuration
 
 Mão leve adds a marked, Mão leve-managed layer in the native surface of only the
-agents you authorize.
+agents you authorize. Policy applies **when a tier is activated**, not globally.
 
 | Agent | Native rule or configuration surface |
 | --- | --- |
 | Codex | `AGENTS.md` guidance, with its native configuration kept separate. |
 | OpenCode | `AGENTS.md` guidance plus only selected plugin or MCP entries. |
 | Cursor Agents (`cursor-agent`) | Terminal-facing guidance compatible with Cursor Agents, without assuming Cursor IDE-only features. |
-| Cursor IDE | Cursor rules file with concise project context and shell guidance. |
+| Cursor IDE | Cursor rules file (`alwaysApply: false`) with concise project context and shell guidance. |
 | Claude Code | `CLAUDE.md` guidance plus selected hook, MCP, or plugin entries. |
 
 The setup agent first identifies the active agent instead of guessing from a
@@ -54,7 +63,7 @@ directory name or environment variable.
 
 ## Token-economy tools (in scope)
 
-| Tool | Tiers | Role |
+| Tool | Tiers (when activated) | Role |
 | --- | --- | --- |
 | RTK | all | Compact shell-command output |
 | Caveman | all (full skill set from medium+) | Concise technical response style; skills copied from repo |
@@ -64,10 +73,10 @@ directory name or environment variable.
 Caveman skills are **vendored** from `.agents/skills/caveman*` in the checkout —
 not fetched with `npx skills add`.
 
-## Out of scope (all tiers)
+## Out of scope
 
-Speckit, Superpowers, Firecrawl, Context7, Playwright MCP, and tokensave are
-not part of tier prompts unless you explicitly request them outside this flow.
+tokensave and Playwright MCP are not part of Mão leve tier flows unless you
+explicitly request them outside this harness.
 
 ## Complementary configuration, not replacement
 
@@ -93,13 +102,15 @@ source does not authorize its use for a newly selected integration.
 
 ## Repair
 
-Recovery applies only to selected Mão leve-managed components. Re-run the
-appropriate tier prompt to realign after drift or partial installs.
+Re-run [`install.md`](prompts/install.md) to realign binaries and templates.
+Re-paste an activation prompt to restore tier behavior for a chat.
 
 ## What completion looks like
 
-The tier prompt's verification block defines completion. The agent reports each
-item as installed, reused, skipped, manual, or failed.
+**Install:** the install prompt's verification block — tools on disk, MCP count
+0, policy dormant.
+
+**Activation:** agent confirms tier for the current chat and follows that stack.
 
 Related repository material:
 

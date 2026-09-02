@@ -23,25 +23,33 @@
   <a href="docs/README.md">Full guide</a>
 </p>
 
-Mão leve is a supervised, **prompt-only** setup layer for coding agents. Pick a
-token-economy tier, paste the install prompt into your agent, approve each step.
-No custom CLI or blast install required.
+Mão leve is a supervised, **prompt-only** setup layer for coding agents. Run
+**one-time install** once, then activate a token-economy tier at the start of
+each chat. No custom CLI or blast install required.
 
 Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 
 ## Start here
 
-1. Read [Token economy tiers](docs/token-tiers.md) and pick a tier.
-2. Open the matching [install prompt](docs/prompts/) and copy everything below
-   the line into your coding agent.
+### 1. One-time install
 
-| Tier | One-liner | Prompt |
-| --- | --- | --- |
-| **low** | RTK + Caveman policy, zero MCP | [install-low.md](docs/prompts/install-low.md) |
-| **fast** | low + Headroom proxy | [install-fast.md](docs/prompts/install-fast.md) |
-| **medium** | fast + full Caveman skills from repo (**default**) | [install-medium.md](docs/prompts/install-medium.md) |
-| **high** | medium + Serena MCP | [install-high.md](docs/prompts/install-high.md) |
-| **full** | high + multi-agent consistency, Headroom MCP on Cursor IDE if needed | [install-full.md](docs/prompts/install-full.md) |
+Paste [`docs/prompts/install.md`](docs/prompts/install.md) into your coding agent
+once. It prepares RTK, Headroom, Serena, vendored Caveman skills, and dormant
+policy templates — without enabling proxy, MCP, or always-on rules.
+
+### 2. Activate a tier each chat
+
+Paste an activation prompt or type a slash command as your first message:
+
+| Tier | One-liner | Slash command | Activation prompt |
+| --- | --- | --- | --- |
+| **low** | RTK + Caveman, zero MCP | `/maoleve-low` | [activate-low.md](docs/prompts/activate-low.md) |
+| **fast** | low + Headroom proxy | `/maoleve-fast` | [activate-fast.md](docs/prompts/activate-fast.md) |
+| **medium** | fast + full Caveman (**default**) | `/maoleve-medium` | [activate-medium.md](docs/prompts/activate-medium.md) |
+| **high** | medium + Serena MCP | `/maoleve-high` | [activate-high.md](docs/prompts/activate-high.md) |
+| **full** | high + multi-agent consistency | `/maoleve-full` | [activate-full.md](docs/prompts/activate-full.md) |
+
+Aliases without a slash work too: `maoleve-fast`, `maoleve-medium`, etc.
 
 > [!IMPORTANT]
 > The agent will ask before inspecting configuration, reading credential
@@ -51,8 +59,6 @@ Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 > installed versions may contain breaking changes, then continues.
 
 ### Generic bootstrap (optional)
-
-If you prefer one entry prompt before choosing a tier:
 
 <details>
 <summary><strong>Copy this bootstrap prompt</strong></summary>
@@ -70,11 +76,12 @@ Set up Mão leve in supervised mode.
    https://github.com/Guilheeeeeeerme/maoleve.git
    If it already exists, inspect its status and update it only without
    discarding my changes. Never use destructive cleanup.
-5. Read docs/token-tiers.md and ask which tier I want: low, fast, medium,
-   high, or full.
-6. Follow the matching docs/prompts/install-<tier>.md exactly.
-7. Before every configuration inspection, credential read, installation, or
+5. Follow docs/prompts/install.md for one-time setup (tools on disk, no global
+   proxy/MCP/rules).
+6. Before every configuration inspection, credential read, installation, or
    change, explain the action and ask for my approval.
+7. When I start a new chat, I will activate a tier with /maoleve-<tier> or
+   docs/prompts/activate-<tier>.md — apply that tier for the current chat only.
 ```
 
 </details>
@@ -82,7 +89,7 @@ Set up Mão leve in supervised mode.
 ## What it supports
 
 Mão leve writes an additive, clearly marked layer into the native surface of
-the agent you authorize.
+the agent you authorize. Tier policy applies **when activated**, not globally.
 
 | Coding agent | Native surface |
 | --- | --- |
@@ -97,8 +104,7 @@ Cursor Agents and Cursor IDE are separate targets.
 ## Token economy only
 
 In-scope tools: **Headroom**, **RTK**, **Caveman** (vendored from this repo),
-**Serena** (high/full). Out of scope for tier prompts: Speckit, Superpowers,
-Firecrawl, Context7, Playwright, tokensave.
+**Serena** (high/full when activated). Out of scope: tokensave, Playwright MCP.
 
 Caveman skills copy from `.agents/skills/caveman*` — not `npx skills add`.
 See [vendored copy layout](docs/token-tiers.md#vendored-copy-layout).
@@ -121,12 +127,13 @@ integration does not authorize adopting it.
 ## Legacy CLI
 
 [`bin/maoleve`](bin/maoleve) and [`install.sh`](install.sh) are **deprecated**.
-Use tier install prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
+Use install + activation prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 
 ## Documentation
 
 - [Guided setup](docs/README.md)
 - [Token economy tiers](docs/token-tiers.md)
-- [Install prompts](docs/prompts/)
+- [Install prompt](docs/prompts/install.md)
+- [Activation prompts](docs/prompts/)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)
