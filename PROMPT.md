@@ -40,6 +40,7 @@ blast-install MCP servers.
 | --- | --- | --- |
 | **One-time install** | `docs/prompts/install.md` | Once per machine — binaries, Caveman copy, dormant policy |
 | **Post-install verify** | `docs/prompts/verify.md` | New chat after install — audit, fix drift, confirm MCP 0 at idle |
+| **Uninstall** | `docs/prompts/uninstall.md` | Remove prompt-only install artifacts (reverse install.md) |
 | **Per-chat activation** | `docs/prompts/activate-<tier>.md` or `/maoleve-<tier>` | Start of each chat — select tier for **this conversation only** |
 
 Tiers: **low**, **fast**, **medium** (default), **high**, **full**.

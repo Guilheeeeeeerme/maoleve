@@ -44,7 +44,14 @@ Open a **new chat** and paste [`docs/prompts/verify.md`](docs/prompts/verify.md)
 It checks binaries, dormant policies, MCP count at idle, and stray always-on
 rules — and fixes gaps with your approval.
 
-### 3. Activate a tier each chat
+### 3. Uninstall (optional)
+
+To remove a prompt-only install (reverse step 1), paste
+[`docs/prompts/uninstall.md`](docs/prompts/uninstall.md) in a new chat. It undoes
+dormant policies, vendored Caveman copies, and RTK hooks from `install.md` —
+idempotent and supervised. It does not clean legacy blast-install cruft.
+
+### 4. Activate a tier each chat
 
 Paste an activation prompt or type a slash command as your first message:
 
@@ -169,27 +176,13 @@ integration does not authorize adopting it.
 [`bin/maoleve`](bin/maoleve) and [`install.sh`](install.sh) are **deprecated**.
 Use install + activation prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 
-## Removing legacy installs
-
-If you previously used `bin/maoleve apply`, blast MCP installs, or always-on
-tier rules, paste [`docs/prompts/uninstall-legacy.md`](docs/prompts/uninstall-legacy.md)
-into a **new chat**. It removes old cruft (blast MCPs, always-on rules, npx
-skills, CLI symlinks) while **preserving** a correct prompt-only install from
-`install.md`.
-
-This is **not** an uninstall prompt for the current version. For clean-machine
-testing, use your local purge script (e.g. `~/scripts purge`).
-
-After legacy cleanup, run [`docs/prompts/verify.md`](docs/prompts/verify.md) in
-another new chat to confirm MCP 0 at idle and dormant policy intact.
-
 ## Documentation
 
 - [Guided setup](docs/README.md)
 - [Token economy tiers](docs/token-tiers.md)
 - [Install prompt](docs/prompts/install.md)
 - [Verify prompt](docs/prompts/verify.md)
-- [Remove legacy installs](docs/prompts/uninstall-legacy.md)
+- [Uninstall prompt](docs/prompts/uninstall.md)
 - [Activation prompts](docs/prompts/)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)

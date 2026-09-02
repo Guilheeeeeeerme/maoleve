@@ -128,13 +128,12 @@ Re-run [`install.md`](prompts/install.md) to realign binaries and templates.
 Re-run [`verify.md`](prompts/verify.md) in a new chat to audit and fix drift.
 Re-paste an activation prompt to restore tier behavior for a chat.
 
-## Removing legacy installs
+## Uninstall
 
-If an older `bin/maoleve apply` or blast MCP setup left cruft on disk, paste
-[`uninstall-legacy.md`](prompts/uninstall-legacy.md) in a new chat. It removes
-legacy MCPs, always-on rules, and npx skills while preserving a correct
-prompt-only install. Follow with [`verify.md`](prompts/verify.md) in another new
-chat. This is not an uninstall for the current version.
+To remove a prompt-only install (reverse [`install.md`](prompts/install.md)),
+paste [`uninstall.md`](prompts/uninstall.md) in a new chat. It removes dormant
+policies, vendored Caveman copies, and RTK hooks — idempotent and supervised.
+It does not clean legacy blast-install cruft from old CLI use.
 
 ## What completion looks like
 

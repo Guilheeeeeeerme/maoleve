@@ -153,7 +153,7 @@ cp -a "$CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
 | --- | --- |
 | One-time setup | [install.md](./prompts/install.md) |
 | Post-install audit (new chat) | [verify.md](./prompts/verify.md) |
-| Remove legacy pre–prompt-only cruft | [uninstall-legacy.md](./prompts/uninstall-legacy.md) |
+| Remove prompt-only install | [uninstall.md](./prompts/uninstall.md) |
 | Per-chat activation | [activate-low.md](./prompts/activate-low.md) … [activate-full.md](./prompts/activate-full.md) |
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed; use

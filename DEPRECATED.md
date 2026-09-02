@@ -28,15 +28,12 @@
 2. Verify in a new chat: [docs/prompts/verify.md](docs/prompts/verify.md)
 3. Start each chat with `/maoleve-medium` (or another tier) or paste
    `docs/prompts/activate-<tier>.md`
-4. Remove legacy cruft from prior CLI use: [docs/prompts/uninstall-legacy.md](docs/prompts/uninstall-legacy.md)
-   — blast MCPs (tokensave, Playwright, Speckit, Superpowers, Firecrawl,
-   Context7), always-on rules, npx skills. Preserves prompt-only install.
+4. To remove a prompt-only install: [docs/prompts/uninstall.md](docs/prompts/uninstall.md)
 
 Legacy per-tier install prompts (`install-low.md`, etc.) are removed.
 
-## Legacy cleanup vs current install
+## Maintainer note
 
-| Prompt | Purpose |
-| --- | --- |
-| [uninstall-legacy.md](docs/prompts/uninstall-legacy.md) | Remove **old** blast-install / CLI artifacts only |
-| [install.md](docs/prompts/install.md) + [verify.md](docs/prompts/verify.md) | Current prompt-only setup — **not** removed by uninstall-legacy |
+For full machine purge on a dev workstation (legacy parallel installs, old MCP
+stacks, tokensave, etc.), use a local script outside this repo — e.g.
+`~/scripts/maoleve-purge/` — not the in-repo uninstall prompt.

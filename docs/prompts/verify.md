@@ -90,8 +90,8 @@ and offer removal (with approval):
 - Serena (belongs at **high/full** activation only)
 - Headroom MCP (belongs at **full** on Cursor IDE only, if needed)
 - tokensave, Playwright, or other blast-install leftovers
-- Legacy optional MCPs from old Mão leve CLI installs: Speckit, Superpowers,
-  Firecrawl, Context7 (remove unless human explicitly wants to keep them)
+- Legacy optional MCPs from old Mão leve CLI installs (remove unless human
+  explicitly wants to keep them)
 
 ### 6. Dormant policy templates
 
