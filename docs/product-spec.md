@@ -90,35 +90,33 @@ Mão leve-managed block only in an authorized target's native surface.
 The active agent must be identified rather than inferred from a directory name
 or environment variable. Cursor Agents and Cursor IDE are separate targets.
 
-## 6. Optional Integrations
+## 6. Token-economy integrations (in scope)
 
-Each integration is optional, independently selected, and installed or
-configured only after approval. `versions.env` remains authoritative for any
-selected component with a pinned version.
+Tier activation enables only the integrations below for **the current chat**.
+Each is optional within its tier and configured only after human approval.
+`versions.env` remains authoritative for pinned versions.
 
-| Integration | Purpose |
-| --- | --- |
-| Headroom | Context compression and model-call proxying. |
-| RTK | Compact shell-command output. |
-| Serena | Selective symbol lookup and code navigation. |
-| Caveman | Concise technical response and workflow style. |
-| Spectkit | Specification workflow support. |
-| Superpowers | Agent workflow skills. |
-| Firecrawl | Web search and structured content retrieval. |
-| Context7 | Current library and framework documentation lookup. |
+| Integration | Tiers | Purpose |
+| --- | --- | --- |
+| RTK | all | Compact shell-command output. |
+| Caveman | all (full skill set from medium+) | Concise technical response; vendored from repo checkout. |
+| Headroom | fast+ | Context compression and model-call **proxy/wrap** (`--no-mcp` on Codex, OpenCode, Claude). |
+| Headroom MCP | full (Cursor IDE only, optional) | On-demand compression when proxy URL is not used. |
+| Serena | high, full | Symbol lookup and code navigation; MCP with dashboard off. |
 
-MCP configuration follows the same rule: add only selected entries in the
+MCP configuration follows the same rule: add only tier-selected entries in the
 authorized agent's native configuration. Mão leve has no default MCP list or
 automatic plugin installation contract.
 
-Current lock coverage for optional integrations is declared by
-`MAOLEVE_HEADROOM_VERSION`, `MAOLEVE_RTK_VERSION`,
-`MAOLEVE_SERENA_VERSION`, and `MAOLEVE_CAVEMAN_PLUGIN_VERSION` in
-`versions.env`. Their values must not be duplicated in this spec: the lock
-file is authoritative. A lock entry does not select, recommend, install, or
-enable its integration. Integrations without a lock entry remain optional but
-require an approved, documented version decision before automated
-installation.
+**Out of scope for tier activation:** tokensave (legacy, heavy MCP schema) and
+Playwright MCP unless explicitly requested outside Mão leve.
+
+Current lock coverage is declared by `MAOLEVE_HEADROOM_VERSION`,
+`MAOLEVE_RTK_VERSION`, `MAOLEVE_SERENA_VERSION`, and
+`MAOLEVE_CAVEMAN_PLUGIN_VERSION` in `versions.env`. The lock file is
+authoritative; a lock entry does not select, recommend, install, or enable its
+integration. `MAOLEVE_TOKENSAVE_VERSION` is retained for legacy compatibility
+only and is not used by tier prompts.
 
 ## 7. Merge, Ownership, and Credential Requirements
 
@@ -155,10 +153,18 @@ configured component or key never authorizes adopting it.
 
 ## 8. Installation and Recovery
 
-The bootstrap prompt and `PROMPT.md` are the primary installation interface.
-A shell installer may remain an implementation path only where its behavior is
-accurate, documented, and supervised; it is not authorization to configure
-all agents or integrations automatically.
+The primary interface is **prompt-only**:
+
+1. **One-time install:** `docs/prompts/install.md` — binaries, Caveman copy,
+   dormant policy (no global proxy/MCP/rules).
+2. **Per-chat activation:** `docs/prompts/activate-<tier>.md` or
+   `/maoleve-<tier>` — see `docs/token-tiers.md`.
+
+`PROMPT.md` is the operational contract.
+
+`bin/maoleve` and `install.sh` are deprecated legacy paths documented in
+`DEPRECATED.md`. They do not blast-install MCP servers or configure all agents
+automatically.
 
 Mão leve may install, repair, or reinstall only selected components within its
 documented managed scope. For a selected missing or broken component, it must:
@@ -204,8 +210,8 @@ setup behavior satisfy all of the following:
 - A supported agent can follow the bootstrap prompt to the detailed
   `PROMPT.md` in a user-local checkout.
 - Setup explains platform limitations and asks before proceeding when a
-  command, path, package, or integration is incompatible; it refuses version
-  drift instead of silently proceeding.
+  command, path, package, or integration is incompatible; it warns on
+  semver-breaking version drift instead of silently upgrading or refusing to run.
 - The supervising human approves optional integration selection, configuration
   inspection, cross-agent discovery, credential-source reads, ambiguous merges,
   repair, and clean reinstall actions.
@@ -225,9 +231,12 @@ setup behavior satisfy all of the following:
 
 Current user instructions are:
 
-- [Guided setup and bootstrap prompt](./README.md)
+- [Guided setup](./README.md)
+- [Token economy tiers](./token-tiers.md)
+- [Install prompts](./prompts/)
 - [Operational prompt](../PROMPT.md)
 - [Repository overview](../README.md)
+- [Deprecated CLI](../DEPRECATED.md)
 - [Version lock](../versions.env)
 
 Older planning material is historical and must not override these supervised
@@ -237,7 +246,5 @@ setup instructions.
 
 - Which Ubuntu LTS release should become the explicit tested baseline, and
   which Linux/macOS environments should be added to validation?
-- Which shell-installer actions remain accurate enough to document as an
-  optional implementation path?
-- Should legacy TokenSave compatibility remain documented only where an
-  existing selected integration still requires it?
+- Should legacy tokensave compatibility remain documented only for users
+  migrating off deprecated `maoleve apply` configs?

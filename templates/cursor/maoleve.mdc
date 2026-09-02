@@ -1,16 +1,20 @@
 ---
-description: Mão leve harness policy for Cursor
-alwaysApply: true
+description: Mão leve harness policy for Cursor (per-chat activation)
+alwaysApply: false
 ---
 
 # Mão leve Policy
 
+Apply this policy **only when the human activates a Mão leve tier** for the
+current chat (`/maoleve-<tier>` or `docs/prompts/activate-<tier>.md`). Do not
+treat these rules as always-on when no tier is active.
+
 - Keep the harness Linux-only and shell-first.
 - Prefer the smallest sufficient tool chain.
-- Use Headroom for context compression and proxying when available.
-- Use RTK for shell output compression when available.
-- Use Caveman for terse model output, compact reviews, and commit text.
-- Use Serena only when symbol-level navigation or memory is needed.
+- Use Headroom for context compression and proxying when selected.
+- Use RTK for shell output compression when selected.
+- Use Caveman for terse model output, compact reviews, and commit text when selected.
+- Use Serena only when selected for symbol-level navigation or memory.
 - Do not run broad tests or broad refactors unless explicitly requested.
 - Start with targeted reads and exact searches before anything larger.
 - Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
