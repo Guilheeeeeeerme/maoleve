@@ -28,8 +28,29 @@ report installed, reused, skipped, manual, and failed items at the end.
    semver-breaking drift instead of refusing to run or upgrading blindly.
 4. Read this prompt and the detailed repository documentation before making
    changes. At minimum, read `README.md`, `docs/README.md`,
-   `docs/product-spec.md`, and `versions.env` when present. Use the
+   `docs/token-tiers.md`, and `versions.env` when present. Use the
    documentation in the checkout as the operational source of truth.
+
+## Token economy tiers
+
+Mão leve is **prompt-only**. Do not run `bin/maoleve apply`, `install.sh`, or
+blast-install MCP servers. Ask the human which tier they want:
+
+| Tier | Prompt file |
+| --- | --- |
+| low | `docs/prompts/install-low.md` |
+| fast | `docs/prompts/install-fast.md` |
+| medium (default) | `docs/prompts/install-medium.md` |
+| high | `docs/prompts/install-high.md` |
+| full | `docs/prompts/install-full.md` |
+
+Follow the selected tier prompt exactly. Token-economy tools in scope: **RTK**,
+**Headroom**, **Caveman** (vendored from repo), **Serena** (high/full only).
+Out of scope unless explicitly requested: Speckit, Superpowers, Firecrawl,
+Context7, Playwright, tokensave.
+
+Copy Caveman skills from `$CHECKOUT/.agents/skills/caveman*` — never
+`npx skills add`.
 
 ## Required supervised questions
 
@@ -45,14 +66,11 @@ instructions” are valid answers for every discovery or integration question.
    configuration, which exact sources may I read? Name each authorized file,
    directory, environment configuration, or variable source; discovery
    consent does not authorize these reads.
-5. Ask independently whether to select Headroom, RTK, Serena, Caveman,
-   Spectkit, Superpowers, Firecrawl, and Context7. Do not recommend or enable
-   any integration automatically.
+5. Which token-economy tier does the human want (low, fast, medium, high, full)?
 
-Distinguish discovery from adoption: finding a configured component or key in
-an authorized agent does not authorize using it for a newly selected
-integration. Install only selected components, and only in the documented
-Mão leve-managed scope.
+Discovery is not adoption: finding a configured component or key in an authorized
+agent does not authorize using it for a newly selected integration. Install only
+tier-scoped components in Mão leve-managed scope.
 
 ## Configuration merge and ownership
 
@@ -107,12 +125,16 @@ configuration formats are interchangeable.
 - Claude Code: `CLAUDE.md` plus selected hook, MCP, or plugin entries.
 
 Across all policy layers, use targeted searches and reads. Use compact shell
-output only when RTK is selected. Use concise responses only when Caveman is
-selected. Use selective symbol lookup only when Serena is selected. Use MCP
-selectively for current documentation or web research, such as Context7 or
-Firecrawl when selected. Do not run broad tests, refactors, or broad context
-collection unless the human requests them.
+output only when RTK is **selected**. Use concise responses only when Caveman is
+**selected**. Use selective symbol lookup only when Serena is **selected**.
+Do not run broad tests, refactors, or broad context collection unless the human
+requests them.
 
 Validate each approved change in its native agent context when possible, and
 report what was reused, installed, skipped, assigned to manual instructions,
 or failed. Keep all user-facing text in English.
+
+## Legacy CLI
+
+`bin/maoleve` and `install.sh` are deprecated. See `DEPRECATED.md`. Do not
+use them for new setups unless the human explicitly requests migration help.

@@ -18,24 +18,44 @@
 
 <p align="center">
   <a href="#start-here">Start here</a> ·
+  <a href="docs/token-tiers.md">Tiers</a> ·
   <a href="PROMPT.md">Operational prompt</a> ·
   <a href="docs/README.md">Full guide</a>
 </p>
 
-Mão leve is a cross-platform, supervised setup layer for coding agents. It is
-tested primarily on Ubuntu Linux and aims to work on compatible Linux and macOS
-environments without taking control of an existing setup.
+Mão leve is a supervised, **prompt-only** setup layer for coding agents. Pick a
+token-economy tier, paste the install prompt into your agent, approve each step.
+No custom CLI or blast install required.
+
+Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 
 ## Start here
 
-Open your coding agent, paste the prompt below, and follow its questions.
+1. Read [Token economy tiers](docs/token-tiers.md) and pick a tier.
+2. Open the matching [install prompt](docs/prompts/) and copy everything below
+   the line into your coding agent.
+
+| Tier | One-liner | Prompt |
+| --- | --- | --- |
+| **low** | RTK + Caveman policy, zero MCP | [install-low.md](docs/prompts/install-low.md) |
+| **fast** | low + Headroom proxy | [install-fast.md](docs/prompts/install-fast.md) |
+| **medium** | fast + full Caveman skills from repo (**default**) | [install-medium.md](docs/prompts/install-medium.md) |
+| **high** | medium + Serena MCP | [install-high.md](docs/prompts/install-high.md) |
+| **full** | high + multi-agent consistency, Headroom MCP on Cursor IDE if needed | [install-full.md](docs/prompts/install-full.md) |
 
 > [!IMPORTANT]
 > The agent will ask before inspecting configuration, reading credential
 > sources, installing tools, repairing files, or making changes.
 
-<details open>
-<summary><strong>Copy this prompt into your agent</strong></summary>
+> **Supported versions:** `versions.env` is authoritative. Setup warns when
+> installed versions may contain breaking changes, then continues.
+
+### Generic bootstrap (optional)
+
+If you prefer one entry prompt before choosing a tier:
+
+<details>
+<summary><strong>Copy this bootstrap prompt</strong></summary>
 
 ```text
 Set up Mão leve in supervised mode.
@@ -43,75 +63,21 @@ Set up Mão leve in supervised mode.
 1. Identify which supported agent you are: Codex, OpenCode, Cursor Agents
    (cursor-agent), Cursor IDE, or Claude Code.
 2. Detect the operating system and shell. Ubuntu Linux is the primary tested
-   environment; continue on compatible Linux or macOS when possible. If a
-   platform-specific limitation appears, explain it and ask me how to proceed.
+   environment; continue on compatible Linux or macOS when possible.
 3. Explain where Mão leve will live and whether you will clone or update it.
    Ask for my approval before changing anything.
 4. After I approve, clone this repository if it is missing:
    https://github.com/Guilheeeeeeerme/maoleve.git
    If it already exists, inspect its status and update it only without
    discarding my changes. Never use destructive cleanup.
-5. Enter the Mão leve checkout and read `PROMPT.md`. Follow that prompt exactly.
-   It contains the complete setup questions, merge rules, credential safety,
-   supported-agent guidance, optional integrations, repair rules, and final
-   report format.
-6. Before every configuration inspection, credential-source read, installation,
-   repair, reinstall, or configuration change, explain the action and ask for
-   my approval. Preserve my existing harness and credentials.
+5. Read docs/token-tiers.md and ask which tier I want: low, fast, medium,
+   high, or full.
+6. Follow the matching docs/prompts/install-<tier>.md exactly.
+7. Before every configuration inspection, credential read, installation, or
+   change, explain the action and ask for my approval.
 ```
 
 </details>
-
-This prompt is self-contained. The complete operational rules live in
-[`PROMPT.md`](PROMPT.md).
-
-> **Supported versions:** `versions.env` is authoritative. Setup warns when
-> installed versions may contain breaking changes, then continues.
-
-## Initial post-install verification
-
-After setup, paste this prompt into the active coding agent to produce a
-quick, comparable installation report:
-
-```text
-Create a concise Mão leve post-install report.
-
-1. Identify the platform, shell, checkout path, and installed supported agents.
-2. Run `maoleve doctor` and `maoleve versions`.
-3. Compare installed versions with `versions.env`. Mark each as ok, outdated,
-   missing, or newer.
-4. Check Mão leve-managed links and selected integrations without printing
-   credential values.
-5. Report preserved credentials as yes/no only. Do not expose secrets.
-
-Use exactly this shape:
-
-Mão leve post-install report
-Platform:
-Shell:
-Checkout:
-Supported agents:
-  Codex: installed/reused/missing
-  OpenCode: installed/reused/missing
-  Cursor Agents: installed/reused/missing
-  Cursor IDE: installed/reused/missing
-  Claude Code: installed/reused/missing
-Core:
-  maoleve launcher:
-  doctor:
-Versions:
-  tool | supported | installed | status
-Integrations:
-  installed/reused/skipped/failed
-Configuration:
-  managed surfaces:
-  credentials preserved: yes/no
-Manual actions:
-Failures:
-```
-
-Save the report or compare it with a previous run to spot missing agents,
-version drift, broken managed links, and incomplete integrations.
 
 ## What it supports
 
@@ -126,92 +92,41 @@ the agent you authorize.
 | Cursor IDE | Cursor rules and MCP configuration |
 | Claude Code | `CLAUDE.md`, Claude configuration |
 
-Cursor Agents and Cursor IDE are separate targets. Mão leve never assumes that
-an IDE-only setting applies to terminal-facing Cursor Agents.
+Cursor Agents and Cursor IDE are separate targets.
 
-## The maoleve approach
+## Token economy only
+
+In-scope tools: **Headroom**, **RTK**, **Caveman** (vendored from this repo),
+**Serena** (high/full). Out of scope for tier prompts: Speckit, Superpowers,
+Firecrawl, Context7, Playwright, tokensave.
+
+Caveman skills copy from `.agents/skills/caveman*` — not `npx skills add`.
+See [vendored copy layout](docs/token-tiers.md#vendored-copy-layout).
+
+## The Mão leve approach
 
 ### Your harness stays in charge
 
-Existing harness configuration and credentials remain yours. Mão leve
-complements your setup; it does not replace it.
-
-- Reads relevant existing configuration before proposing an edit.
-- Preserves every credential categorically: credentials are never deleted,
-  replaced, or exposed.
-- Preserves model choices, plugins, rules, commands, hooks, unknown fields,
-  formatting, and ordering whenever possible.
+- Reads existing configuration before proposing an edit.
+- Preserves credentials categorically — never deleted, replaced, or exposed.
 - Adds approved Mão leve entries only when absent.
-- Updates only entries marked as Mão leve-managed on later runs.
-- Pauses for approval before any recoverable backup-and-rewrite flow when safe
-  merging is not possible.
+- Pauses for approval before recoverable backup-and-rewrite flows.
 - Never silently overwrites a configuration file.
 
 ### Permission before discovery
 
-Credential discovery requires explicit, source-by-source permission. The setup
-agent asks whether it may inspect credentials in other agents and exactly which
-agents are authorized.
+Credential discovery requires explicit, source-by-source permission. Finding an
+integration does not authorize adopting it.
 
-Finding an integration or credential does not authorize adopting it. If a
-selected integration is already configured, Mão leve preserves the existing
-credential and merges around it.
+## Legacy CLI
 
-## Optional integrations
-
-Every integration is independent and opt-in. Mão leve does not recommend or
-enable any integration automatically.
-
-| Integration | Purpose |
-| --- | --- |
-| Headroom | Context compression and model-call proxying |
-| RTK | Compact shell-command output |
-| Serena | Selective symbol lookup and code navigation |
-| Caveman | Concise technical responses and workflow style |
-| Spectkit | Specification workflow support |
-| Superpowers | Agent workflow skills |
-| Firecrawl | Web search and structured content retrieval |
-| Context7 | Current library and framework documentation |
-
-MCP entries follow the same rule: configure only selected entries in the
-authorized agent's native surface. There is no default MCP list, automatic
-plugin install, or shared configuration format across all agents.
-
-## Environment and credentials
-
-Some selected integrations may need environment variables or account-specific
-setup. Before reading any environment configuration, credential-bearing file,
-directory, or variable source, the setup agent asks which exact source it may
-inspect.
-
-It does not print, replace, or copy secret values unnecessarily, and prefers
-references to existing environment variables. If something is missing, it
-reports the exact variable or manual step without asking you to disclose a
-secret.
-
-## Repair and validation
-
-Use the [guided setup documentation](docs/README.md) and
-[operational prompt](PROMPT.md) as current instructions. Do not treat older
-product-planning material or a shell command as authorization to configure all
-agents or integrations automatically.
-
-For a selected Mão leve-managed component, recovery follows this order:
-
-1. Diagnose with non-secret evidence.
-2. Repair managed configuration.
-3. Reinstall the managed package, plugin, or files after approval.
-4. Recreate only the Mão leve-owned component if necessary.
-5. Re-merge preserved user configuration and validate it.
-
-Recovery never deletes an entire agent configuration directory or existing
-credentials. At completion, the agent reports approved agents and
-integrations, what it installed, reused, skipped, left manual, or could not
-complete, and what configuration it preserved.
+[`bin/maoleve`](bin/maoleve) and [`install.sh`](install.sh) are **deprecated**.
+Use tier install prompts instead. See [`DEPRECATED.md`](DEPRECATED.md).
 
 ## Documentation
 
-- [Guided setup and bootstrap prompt](docs/README.md)
+- [Guided setup](docs/README.md)
+- [Token economy tiers](docs/token-tiers.md)
+- [Install prompts](docs/prompts/)
 - [Operational prompt](PROMPT.md)
 - [Version lock](versions.env)
-- [Current product contract](docs/product-spec.md)

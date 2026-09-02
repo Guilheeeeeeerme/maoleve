@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
+# DEPRECATED — use docs/prompts/install-<tier>.md instead. See DEPRECATED.md.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${MAOLEVE_CONFIG_DIR:-$HOME/.config/maoleve}"
 STATE_DIR="${MAOLEVE_STATE_DIR:-$HOME/.local/share/maoleve}"
+
+deprecation_banner() {
+  printf '%s\n' \
+    "DEPRECATED: bin/maoleve is legacy. Use docs/prompts/install-<tier>.md. See DEPRECATED.md." >&2
+}
 
 source_env() {
   if [[ -f "$CONFIG_DIR/config.env" ]]; then
@@ -174,20 +180,14 @@ remove_codex_headroom_mcp() {
 
 enforce_versions() {
   source_versions
-  local failed=0
-  if [[ -n "${MAOLEVE_HEADROOM_VERSION:-}" ]]; then require_version headroom "$MAOLEVE_HEADROOM_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_RTK_VERSION:-}" ]]; then require_version rtk "$MAOLEVE_RTK_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_CODEX_VERSION:-}" ]]; then require_version codex "$MAOLEVE_CODEX_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_OPENCODE_VERSION:-}" ]]; then require_version opencode "$MAOLEVE_OPENCODE_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_CURSOR_AGENT_VERSION:-}" ]]; then require_version cursor-agent "$MAOLEVE_CURSOR_AGENT_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_CURSOR_BINARY:-}" ]]; then require_version cursor "$MAOLEVE_CURSOR_BINARY" || failed=1; fi
-  if [[ -n "${MAOLEVE_TOKENSAVE_VERSION:-}" ]]; then require_version tokensave "$MAOLEVE_TOKENSAVE_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_SERENA_VERSION:-}" ]]; then require_version serena "$MAOLEVE_SERENA_VERSION" || failed=1; fi
-  if [[ -n "${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-}" ]]; then require_caveman_plugin "$MAOLEVE_CAVEMAN_PLUGIN_VERSION" || failed=1; fi
-  if (( failed )); then
-    printf '%s\n' "Mão leve prerequisite check failed. Refusing to run." >&2
-    exit 1
-  fi
+  if [[ -n "${MAOLEVE_HEADROOM_VERSION:-}" ]]; then require_version headroom "$MAOLEVE_HEADROOM_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_RTK_VERSION:-}" ]]; then require_version rtk "$MAOLEVE_RTK_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_CODEX_VERSION:-}" ]]; then require_version codex "$MAOLEVE_CODEX_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_OPENCODE_VERSION:-}" ]]; then require_version opencode "$MAOLEVE_OPENCODE_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_CURSOR_AGENT_VERSION:-}" ]]; then require_version cursor-agent "$MAOLEVE_CURSOR_AGENT_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_CURSOR_BINARY:-}" ]]; then require_version cursor "$MAOLEVE_CURSOR_BINARY" || true; fi
+  if [[ -n "${MAOLEVE_SERENA_VERSION:-}" ]]; then require_version serena "$MAOLEVE_SERENA_VERSION" || true; fi
+  if [[ -n "${MAOLEVE_CAVEMAN_PLUGIN_VERSION:-}" ]]; then require_caveman_plugin "$MAOLEVE_CAVEMAN_PLUGIN_VERSION" || true; fi
 }
 
 install_links() {
@@ -209,8 +209,8 @@ EOF
 
   ln -sfn "$ROOT_DIR/AGENTS.md" "$STATE_DIR/AGENTS.md"
   ln -sfn "$ROOT_DIR/versions.env" "$STATE_DIR/versions.env"
-  ln -sfn "$ROOT_DIR/AGENTS.md" "$HOME/.claude/CLAUDE.md"
-  ln -sfn "$ROOT_DIR/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+  ln -sfn "$ROOT_DIR/templates/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+  ln -sfn "$ROOT_DIR/templates/opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
   ln -sfn "$ROOT_DIR/templates/cursor/maoleve.mdc" "$HOME/.cursor/rules/maoleve.mdc"
   ln -sfn "$ROOT_DIR/templates/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
   ln -sfn "$ROOT_DIR/bin/maoleve" "$HOME/.local/bin/maoleve"
@@ -239,8 +239,6 @@ EOF
 # Copy this to ~/.config/maoleve/env.local and fill the values you use.
 # export OPENAI_API_KEY="..."
 # export ANTHROPIC_API_KEY="..."
-# export CONTEXT7_API_KEY="..."
-# export FIRECRAWL_API_KEY="..."
 # export HEADROOM_PROJECT="Code"
 EOF
 
@@ -251,8 +249,6 @@ EOF
 # Mão leve shell policy.
 # export OPENAI_API_KEY="..."
 # export ANTHROPIC_API_KEY="..."
-# export CONTEXT7_API_KEY="..."
-# export FIRECRAWL_API_KEY="..."
 # export HEADROOM_PROJECT="Code"
 if [ -f "$HOME/.config/maoleve/env.sh" ]; then
   . "$HOME/.config/maoleve/env.sh"
@@ -264,39 +260,9 @@ EOF
 
 write_cursor_mcp() {
   need_dir "$HOME/.cursor"
-  cat >"$HOME/.cursor/mcp.json" <<EOF
+  cat >"$HOME/.cursor/mcp.json" <<'EOF'
 {
-  "mcpServers": {
-    "headroom": {
-      "command": "$HOME/.local/bin/headroom",
-      "args": ["mcp", "serve"]
-    },
-    "serena": {
-      "command": "$HOME/.local/bin/uvx",
-      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "ide"]
-    },
-    "tokensave": {
-      "command": "$HOME/.local/bin/tokensave",
-      "args": ["serve"]
-    },
-    "context7": {
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY:-}"
-      }
-    },
-    "firecrawl": {
-      "command": "npx",
-      "args": ["-y", "firecrawl-mcp"],
-      "env": {
-        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY:-}"
-      }
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    }
-  }
+  "mcpServers": {}
 }
 EOF
 }
@@ -318,31 +284,6 @@ trusted_hash = "sha256:0c98f208c54fd07b84210d0a0182a9fdd8c3c49d99938a50f87391493
 [hooks.state."$HOME/.codex/hooks.json:session_start:0:0"]
 trusted_hash = "sha256:c22e07f85f1edc842b84caef85684c1e77815e408b2b68c600a57f45d1caaee4"
 
-[mcp_servers.serena]
-command = "$HOME/.local/bin/uvx"
-args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "codex"]
-
-[mcp_servers.tokensave]
-command = "$HOME/.local/bin/tokensave"
-args = ["serve"]
-
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-
-[mcp_servers.context7.http_headers]
-CONTEXT7_API_KEY = "${CONTEXT7_API_KEY:-}"
-
-[mcp_servers.firecrawl]
-command = "npx"
-args = ["-y", "firecrawl-mcp"]
-
-[mcp_servers.firecrawl.env]
-FIRECRAWL_API_KEY = "${FIRECRAWL_API_KEY:-}"
-
-[mcp_servers.playwright]
-command = "npx"
-args = ["@playwright/mcp@latest"]
-
 [model_providers.headroom]
 base_url = "http://127.0.0.1:8787/v1"
 name = "OpenAI via Headroom proxy"
@@ -361,43 +302,6 @@ write_opencode_config() {
 {
   "\$schema": "https://opencode.ai/config.json",
   "plugin": ["./plugins/caveman/plugin.js"],
-  "mcp": {
-    "headroom": {
-      "type": "local",
-      "command": ["$HOME/.local/bin/headroom", "mcp", "serve"],
-      "enabled": true
-    },
-    "tokensave": {
-      "type": "local",
-      "command": ["$HOME/.local/bin/tokensave", "serve"]
-    },
-    "serena": {
-      "type": "local",
-      "command": ["$HOME/.local/bin/uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--project-from-cwd", "--context", "agent"],
-      "enabled": true
-    },
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "enabled": true,
-      "headers": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY:-}"
-      }
-    },
-    "firecrawl": {
-      "type": "local",
-      "command": ["npx", "-y", "firecrawl-mcp"],
-      "enabled": true,
-      "environment": {
-        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY:-}"
-      }
-    },
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
-    }
-  },
   "instructions": ["$HOME/.config/opencode/AGENTS.md"]
 }
 EOF
@@ -410,19 +314,22 @@ write_claude_policy() {
 
 - Keep the harness Linux-only and shell-first.
 - Prefer the smallest sufficient tool chain.
-- Use Headroom for context compression and proxying when available.
-- Use RTK for shell output compression when available.
-- Use Caveman for terse model output, compact reviews, and commit text.
-- Use Serena only when symbol-level navigation or memory is needed.
+- Use Headroom for context compression and proxying when selected.
+- Use RTK for shell output compression when selected.
+- Use Caveman for terse model output, compact reviews, and commit text when selected.
+- Use Serena only when selected for symbol-level navigation or memory.
 - Do not run broad tests or broad refactors unless explicitly requested.
 - Start with targeted reads and exact searches before anything larger.
-- Treat `versions.env` as the lock file; refuse drift instead of upgrading blindly.
+- Treat `versions.env` as the lock file; warn on drift instead of upgrading blindly.
 - Overwrite stale local config for this repo; do not preserve irrelevant legacy setup.
 - Keep all user-facing text in English.
 EOF
 }
 
 apply_configs() {
+  printf '%s\n' \
+    "maoleve apply is deprecated and writes minimal configs only (no MCP blast-install)." \
+    "Use docs/prompts/install-<tier>.md for tier-scoped setup." >&2
   install_links
   write_env_files
   write_cursor_mcp
@@ -435,12 +342,14 @@ apply_configs() {
     rtk init --global --codex || true
     rtk init --global --opencode || true
   fi
-  printf '%s\n' "Mão leve configs written."
-  printf '%s\n' "If Claude Code is installed, run the Claude setup commands from README or maoleve claude."
+  printf '%s\n' "Mão leve minimal legacy configs written."
+  printf '%s\n' "For new setups, use docs/prompts/install-<tier>.md instead."
 }
 
 install_optional_tools() {
   source_versions
+  printf '%s\n' \
+    "maoleve tools is deprecated. Install binaries per docs/prompts/install-<tier>.md." >&2
   if ! have uv; then
     printf '%s\n' "Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -460,32 +369,18 @@ install_optional_tools() {
     printf '%s\n' "Installing rtk..."
     curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh
   fi
-
-  if have npx; then
-    npx -y github:JuliusBrussee/caveman -- --only opencode || true
-    npx -y skills add JuliusBrussee/caveman -a codex --yes || true
-    npx -y skills add JuliusBrussee/caveman -a cursor --with-init --yes || true
-  fi
 }
 
 setup_claude() {
+  printf '%s\n' \
+    "maoleve claude is deprecated. Use docs/prompts/install-<tier>.md for Claude Code setup." >&2
   if ! have claude; then
-    printf '%s\n' "Claude Code is not installed. Install it first, then rerun maoleve claude."
+    printf '%s\n' "Claude Code is not installed. Install it first, then use a tier install prompt."
     printf '%s\n' "Suggested: npm install -g @anthropic-ai/claude-code"
     return 0
   fi
-
-  if have headroom; then
-    headroom mcp install --force || true
-  fi
-
-  claude install-plugin JuliusBrussee/caveman-marketplace caveman || true
-  claude mcp add --scope user headroom -- "$HOME/.local/bin/headroom" mcp serve || true
-  claude mcp add --scope user serena -- "$HOME/.local/bin/uvx" --from git+https://github.com/oraios/serena serena start-mcp-server --project-from-cwd --context claude-code || true
-  claude mcp add --scope user tokensave -- "$HOME/.local/bin/tokensave" serve || true
-  claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest || true
-  claude mcp add --scope user firecrawl -- npx -y firecrawl-mcp || true
-  claude mcp add --scope user playwright -- npx @playwright/mcp@latest || true
+  printf '%s\n' "No MCP servers are configured by this legacy command."
+  printf '%s\n' "Copy Caveman from the checkout and follow docs/prompts/install-<tier>.md."
 }
 
 doctor() {
@@ -527,10 +422,7 @@ wrap_agent() {
   case "$agent" in
     codex|opencode|claude)
       if have headroom; then
-        if [[ "$agent" == "codex" ]]; then
-          exec headroom wrap codex --no-mcp "$@"
-        fi
-        exec headroom wrap "$agent" "$@"
+        exec headroom wrap "$agent" --no-mcp "$@"
       fi
       ;;
     cursor)
@@ -572,13 +464,15 @@ print_prompt() {
 
 usage() {
   cat <<'EOF'
+DEPRECATED: use docs/prompts/install-<tier>.md instead. See DEPRECATED.md.
+
 Usage:
   maoleve prereqs
   maoleve versions
   maoleve install
-  maoleve apply
-  maoleve tools
-  maoleve claude
+  maoleve apply          # minimal legacy configs only; no MCP blast-install
+  maoleve tools          # RTK/Headroom/Serena binaries only; no npx skills
+  maoleve claude         # deprecated; no MCP configuration
   maoleve doctor
   maoleve wrap <codex|opencode|claude|cursor|cursor-agent> [args...]
   maoleve setup cursor
@@ -589,6 +483,10 @@ EOF
 main() {
   local cmd="${1:-}"
   shift || true
+
+  if [[ "$cmd" != "" && "$cmd" != "-h" && "$cmd" != "--help" && "$cmd" != "help" ]]; then
+    deprecation_banner
+  fi
 
   case "$cmd" in
     prereqs) show_prereqs ;;
