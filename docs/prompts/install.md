@@ -1,232 +1,51 @@
-# Mão leve one-time install
+# Mão leve install
 
-Copy everything below the line into your coding agent **once** per machine (or when
-repairing the harness). This prepares binaries, vendored skills, and policy
-templates. It does **not** turn on compression layers, proxy, MCP, or always-on
-rules — activate a tier at the start of each chat instead.
+Copy everything below the line into your coding agent **once**. If a previous
+attempt broke your agent, run the sibling prompt `uninstall.md` first, then
+re-run this.
 
 ---
 
-You are the Mão leve setup agent performing a **one-time install**.
+You are the Mão leve setup agent. Perform **one-time install** using the checked
+in script — do not hand-edit agent configs; the script is the only installer.
 
-**Goal:** prepare the token-economy stack on disk so the human can activate a tier
-per chat with `/maoleve-<tier>` or `maoleve-<tier>` (see `docs/token-tiers.md`).
+## Steps
 
-**In scope:** use of an existing checkout (or an explicitly approved managed
-checkout), RTK + Headroom + Serena binaries (pinned to
-`versions.env`), vendored Caveman skill copy, policy templates merged as
-**dormant** Mão leve-managed blocks (per-chat activation only).
+1. **Locate the checkout.** Use the current checkout when it contains
+   `templates/`. Otherwise ask approval and clone into
+   `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`
+   (never `~/maoleve`):
+   <https://github.com/Guilheeeeeeerme/maoleve.git>
+   If a checkout exists, update it without discarding my changes.
+2. **Run the installer** and past its full output:
 
-**Out of scope:** enabling Headroom proxy/wrap in agent config, registering MCP
-servers, `alwaysApply` rules, or starting proxies during install.
+   ```bash
+   bash "<checkout>/scripts/maoleve.sh" install
+   ```
 
-**Idempotent:** safe to re-run. For each component, detect what is already
-installed or merged; **reuse or skip** when versions match `versions.env` and
-dormant policy markers are correct. Install or repair only what is missing or
-broken. Never enable proxy, MCP, or always-on tier rules on a re-run.
+   Optional flags I may pass for the run:
+   - `--all-agents` — mirror skills to every detected agent (default: this session's agent only)
+   - `--hooks codex,cursor-ide` — enable rtk hooks for these too (claude-code
+     and opencode are always on by default — codex/cursor are opt-in because
+     they crashed in testing)
+   - `MAOLEVE_INSTALL_BINARIES=skip` env — never offer to install binaries
+3. **Answer the script's questions** exactly as I respond to you; the script
+   shows its own approval card and consent prompts.
+4. **Report** what happened. If anything failed, quote the exact failing line
+   and offer the `uninstall.md` prompt so I can back out cleanly.
 
-Follow [`docs/supervised-setup.md`](../supervised-setup.md): run **discovery**,
-present the **single approval card** (phase = install), then execute only after
-`approve` or `edit:`. Report installed, reused, skipped, manual, and failed
-items at the end.
+## Hard rules
 
-## First actions
+- Never downgrade binaries. If a version is below `versions.env` the script
+  warns and continues — the upgrade is my call, never an automatic downgrade.
+  Higher-than-floor versions are left untouched.
+- Never enable Headroom proxy/wrap, MCP registration, always-on rules, or
+  `alwaysApply` rules. Those happen per chat through a tier activation, never
+  during install.
+- Never read secret values or helpers like API keys; refer to names only.
 
-1. Run discovery from `docs/supervised-setup.md` (platform, active agent,
-   harness dirs, checkout, binaries, existing Mão leve state).
-2. Present the approval card with defaults: agents = active + detected harnesses;
-   checkout = current checkout when available; otherwise use or clone to
-   `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve` only if approved; config access
-   = structure only.
-3. After approval, set `MAOLEVE_CHECKOUT` to the repo root. Read `PROMPT.md`,
-   `docs/token-tiers.md`, and `versions.env`.
-4. Checkout mutation only after approval:
-   - missing: do not create `~/maoleve`. Ask for an existing checkout path or
-     approval to clone into `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`.
-   - existing: inspect status; update only without discarding user changes
-   Never use `git reset --hard`, `git checkout --`, or destructive cleanup.
+## After install
 
-## Supported agents — install coverage
-
-Configure **each agent the human authorizes**. One agent's permission does not
-extend to another. For every authorized agent, install applies the rows below.
-
-| Agent | Caveman mirror | RTK hooks | Policy merge target | Template |
-| --- | --- | --- | --- | --- |
-| **Codex** | `~/.codex/skills/caveman/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` | `templates/codex/AGENTS.md` |
-| **OpenCode** | `~/.config/opencode/skills/caveman/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` | `templates/opencode/AGENTS.md` |
-| **Claude Code** | `~/.claude/skills/caveman/` | `rtk init --global` | `~/.claude/CLAUDE.md` | `templates/claude/CLAUDE.md` |
-| **Cursor IDE** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
-| **Cursor Agents** | `~/.cursor/skills/caveman/` | `rtk init --global --agent cursor` | project `AGENTS.md` (or path human confirms) | `templates/cursor-agent/AGENTS.md` |
-
-All five tier skills are copied from
-`$MAOLEVE_CHECKOUT/templates/skills/maoleve-<tier>/` into the native skill
-directory of every authorized agent, plus the shared `~/.agents/skills/` path:
-
-| Agent | Tier skill directory |
-| --- | --- |
-| Codex | `~/.codex/skills/maoleve-<tier>/` |
-| OpenCode | `~/.config/opencode/skills/maoleve-<tier>/` |
-| Claude Code | `~/.claude/skills/maoleve-<tier>/` |
-| Cursor IDE / Cursor Agents | `~/.cursor/skills/maoleve-<tier>/` |
-| Shared fallback | `~/.agents/skills/maoleve-<tier>/` |
-
-Shared for all authorized agents:
-
-- `~/.agents/skills/caveman/` — canonical vendored copy (step 1)
-- RTK, Headroom, Serena binaries (steps 2–4) — same versions from `versions.env`
-- Optional non-secret defaults in `~/.config/maoleve/env.sh` (Headroom vars by name only)
-
-Cursor IDE and Cursor Agents are **separate targets** — configure both only when
-both are authorized.
-
-## Configuration merge rules
-
-Use the merge rules in [`docs/supervised-setup.md`](../supervised-setup.md).
-Preserve existing RTK `@RTK.md` references and hooks added by `rtk init`.
-
-## Install steps
-
-Use versions from `versions.env` when installing binaries.
-
-### 1. Vendored skills (do not use `npx skills add`)
-
-Skip if `~/.agents/skills/caveman/SKILL.md` exists and matches the checkout
-(compare checksum or diff); otherwise copy:
-
-```bash
-mkdir -p "$HOME/.agents/skills/caveman"
-cp -a "$MAOLEVE_CHECKOUT/.agents/skills/caveman/." "$HOME/.agents/skills/caveman/"
-```
-
-Mirror into each **authorized** agent skill directory (symlink with `ln -sfn`
-when possible). See the coverage table above for the full per-agent list:
-
-| Agent | Mirror path |
-| --- | --- |
-| Codex | `~/.codex/skills/caveman/` |
-| OpenCode | `~/.config/opencode/skills/caveman/` |
-| Claude Code | `~/.claude/skills/caveman/` |
-| Cursor IDE | `~/.cursor/skills/caveman/` |
-| Cursor Agents | `~/.cursor/skills/caveman/` (shared with Cursor IDE when both authorized) |
-
-Copy the five Mão leve tier skills into the authorized native directories listed
-above. They are slash-only skills (`disable-model-invocation: true`); natural
-language aliases are also recognized by the merged dormant policy. A bare
-`maoleve` selects medium.
-
-### 2. RTK
-
-1. If `rtk --version` succeeds and matches `versions.env`, skip install; else run
-   `"$MAOLEVE_CHECKOUT/scripts/install-rtk.sh"` (tries `master`, then `main`).
-   Warn if installed semver drifts from `MAOLEVE_RTK_VERSION`.
-2. Initialize hooks for each **authorized** agent when hooks are absent (with approval):
-   - **Claude Code:** `rtk init --global`
-   - **Codex:** `rtk init --global --codex`
-   - **OpenCode:** `rtk init --global --opencode`
-   - **Cursor IDE:** `rtk init --global --agent cursor`
-   - **Cursor Agents:** `rtk init --global --agent cursor` (same RTK target as Cursor IDE)
-3. RTK hooks stay installed but the agent uses RTK **only when a tier activation
-   prompt selects it for the current chat**.
-
-### 3. Headroom (binary only — do not wrap or proxy yet)
-
-Skip if `headroom --version` matches `versions.env`; else install:
-
-```bash
-# if uv missing: curl -LsSf https://astral.sh/uv/install.sh | sh
-uv tool install "headroom-ai[all]==<MAOLEVE_HEADROOM_VERSION>"
-```
-
-Optionally merge non-secret defaults into `~/.config/maoleve/env.sh` (create if
-absent). Reference API keys by variable name only — never copy secret values:
-
-```bash
-HEADROOM_MODE=token
-HEADROOM_SAVINGS_PROFILE=coding
-HEADROOM_TOOL_SEARCH=1
-```
-
-Do **not** run `headroom wrap`, set proxy base URLs, or add Headroom MCP during
-install. The human starts proxy/wrap when activating **fast+** tiers (see
-`docs/prompts/activate-*.md`).
-
-### 4. Serena (binary only — do not register MCP yet)
-
-Skip if `serena --version` matches `versions.env`; else:
-
-```bash
-uv tool install -p 3.13 "serena-agent==<MAOLEVE_SERENA_VERSION>"
-```
-
-Do **not** run `claude mcp add`, edit `mcp.json`, or start Serena during install.
-Registration happens when the human activates **high** or **full** (manual step
-in the activation prompt).
-
-### 5. Dormant policy templates
-
-Merge Mão leve-managed policy from `$MAOLEVE_CHECKOUT/templates/<agent>/` into
-each authorized agent's native surface. Templates already say tools apply
-**when selected** for the active chat — do not change them to always-on.
-
-| Agent | Merge target | Template |
-| --- | --- | --- |
-| Codex | `~/.codex/AGENTS.md` | `templates/codex/AGENTS.md` |
-| OpenCode | `~/.config/opencode/AGENTS.md` | `templates/opencode/AGENTS.md` |
-| Claude Code | `~/.claude/CLAUDE.md` | `templates/claude/CLAUDE.md` |
-| Cursor IDE | `~/.cursor/rules/maoleve.mdc` | `templates/cursor/maoleve.mdc` |
-| Cursor Agents | project `AGENTS.md` (confirm path with human) | `templates/cursor-agent/AGENTS.md` |
-
-For OpenCode, ensure `opencode.json` references the merged `AGENTS.md` if the
-runtime requires an `instructions` entry — merge only; do not overwrite unrelated
-MCP or plugin settings.
-
-Tell the human: tier policy takes effect only after pasting an activation prompt
-(`/maoleve-medium`, etc.) at the start of a chat.
-
-### Explicitly skip during install
-
-- Headroom proxy/wrap and Headroom MCP
-- Serena (and any other) MCP registration
-- Enabling `alwaysApply: true` on Cursor rules
-- Non–token-economy MCP servers (Playwright, etc.) unless the human explicitly requests them
-
-## Post-install (this session)
-
-After approval, run and summarize (no secrets):
-
-```text
-Create a concise Mão leve one-time install report.
-
-1. Platform, shell, checkout path, authorized agents.
-2. rtk --version; headroom --version; serena --version (or note skipped)
-3. Confirm ~/.agents/skills/caveman/SKILL.md and agent mirrors.
-4. Confirm Headroom wrap/proxy NOT configured.
-5. Confirm Serena MCP NOT registered (MCP count 0 at idle).
-6. Confirm policy templates merged with alwaysApply false (Cursor) and
-   "when selected" wording.
-7. Compare tool versions to versions.env.
-
-Shape:
-
-Mão leve install report
-Platform:
-Shell:
-Checkout:
-Authorized agents:
-RTK: installed/reused | hooks present for authorized agents
-Headroom: binary installed | proxy/wrap NOT enabled
-Serena: binary installed | MCP NOT registered
-Caveman: vendored copy ok/missing
-Policy templates: merged dormant / skipped
-MCP at idle: 0 (required)
-Next step: new chat → docs/prompts/verify.md, then daily /maoleve-<tier>
-Credentials preserved: yes/no
-Manual actions:
-Failures:
-```
-
-Report installed, reused, skipped, manual, and failed items. English only.
-
-**Next (new chat):** tell the human to paste [`docs/prompts/verify.md`](./verify.md)
-in a fresh session for a full audit and repair pass before daily tier activation.
+Suggested next steps: run the activation prompt
+(`docs/prompts/activate-<tier>.md`) at the start of the next chat — see
+[tier guide](../token-tiers.md).

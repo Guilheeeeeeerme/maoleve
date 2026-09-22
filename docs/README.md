@@ -2,94 +2,65 @@
 
 Mão leve is a supervised, **prompt-only** setup layer for coding agents. Run
 **one-time install** once, then activate a tier at the start of each chat. No
-custom CLI required.
+custom CLI required — installs run through `scripts/maoleve.sh` in the checkout.
 
 Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
-The setup agent identifies the platform, explains its plan, and asks before it
-uses or creates a checkout, inspects or changes configuration, installs
-anything, or reads credentials.
+`versions.env` is the supported-version **floor**: the installer offers missing
+binaries, leaves your newer versions untouched, warns on drift, and never
+downgrades.
 
-For current instructions, this guide, [`docs/token-tiers.md`](token-tiers.md), and
-[`PROMPT.md`](../PROMPT.md) take precedence over older product-planning material.
-`versions.env` is the supported-version baseline: setup warns on semver-breaking
-drift instead of refusing to run or silently upgrading.
-
-## Two-step workflow
+## Workflow
 
 ### 1. One-time install
 
-Paste [`docs/prompts/install.md`](prompts/install.md) into your coding agent once
-per machine (or when repairing). It:
+Paste [`docs/prompts/install.md`](prompts/install.md) once per machine. It
+locates or clones the checkout and runs `scripts/maoleve.sh install`, which:
 
-- Uses the current checkout, or an approved checkout under
-  `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`
-- Installs RTK, Headroom, and Serena binaries (pinned to `versions.env`)
-- Copies vendored Caveman and Mão leve tier skills and merges **dormant** policy templates
-- Does **not** enable proxy, MCP, or always-on rules
+- Detects the running agent and shows one approval card
+- Installs only the binaries you agree to (missing ones; never downgrades)
+- Links skills into the running agent's native skill dir (all agents with
+  `--all-agents`)
+- Merges **dormant**, marked policy blocks; enables rtk hooks where safe
+  (`claude-code`, `opencode` — codex/cursor are opt-in via `--hooks`)
+- Records everything in a manifest so uninstall reverses exactly that
+- Never enables proxy, MCP, or always-on rules
 
-Re-run safely; already-installed components are reused or skipped.
+Re-run safely: existing blocks, links, and hooks are skipped.
 
-### 2. Verify (new chat)
+### 2. Activate a tier per chat
 
-Paste [`docs/prompts/verify.md`](prompts/verify.md) in a **fresh chat** after
-install. It audits RTK hooks, Caveman copy, dormant policies, MCP at idle (0),
-and stray always-on rules — and repairs with approval.
-
-### 3. Per-chat activation
-
-At the start of each chat, paste an activation prompt or use a slash command:
+At the start of each chat paste an activation prompt or slash command:
 
 | Tier | Slash command | Alias | Activation prompt |
 | --- | --- | --- | --- |
-| low | `/maoleve-low` | `maoleve-low`, `start maoleve low`, `maolevelow` | [activate-low.md](prompts/activate-low.md) |
-| fast | `/maoleve-fast` | `maoleve-fast`, `start maoleve fast`, `maolevefast` | [activate-fast.md](prompts/activate-fast.md) |
-| medium (default) | `/maoleve-medium` | `maoleve-medium`, `start maoleve medium`, `maolevemedium`, or bare `maoleve` | [activate-medium.md](prompts/activate-medium.md) |
-| high | `/maoleve-high` | `maoleve-high`, `start maoleve high`, `maolevehigh` | [activate-high.md](prompts/activate-high.md) |
-| full | `/maoleve-full` | `maoleve-full`, `start maoleve full`, `maolevefull` | [activate-full.md](prompts/activate-full.md) |
+| low | `/maoleve-low` | `maoleve-low`, `maolevelow` | [activate-low.md](prompts/activate-low.md) |
+| fast | `/maoleve-fast` | `maoleve-fast`, `maolevefast` | [activate-fast.md](prompts/activate-fast.md) |
+| medium (default) | `/maoleve-medium` | `maoleve-medium`, bare `maoleve` | [activate-medium.md](prompts/activate-medium.md) |
+| high | `/maoleve-high` | `maoleve-high`, `maolevehigh` | [activate-high.md](prompts/activate-high.md) |
+| full | `/maoleve-full` | `maoleve-full`, `maolevefull` | [activate-full.md](prompts/activate-full.md) |
 
-Activation tells the agent which compression layers, proxy, and MCP to use **for
-that chat only**. Manual pre-steps (e.g. `headroom wrap`, starting Serena MCP)
-are documented in the activation prompts.
+Activation tells the agent which layers to use **for that chat only**.
+Pick guidance with pros/cons/caveats and recommended defaults lives in
+[`token-tiers.md`](token-tiers.md).
 
-## Supported agents and install coverage
+## Status, doctor, uninstall
 
-| Agent | Caveman / tier skills | RTK hooks | Dormant policy surface |
-| --- | --- | --- | --- |
-| Codex | `~/.codex/skills/{caveman,maoleve-*}/` | `rtk init --global --codex` | `~/.codex/AGENTS.md` |
-| OpenCode | `~/.config/opencode/skills/{caveman,maoleve-*}/` | `rtk init --global --opencode` | `~/.config/opencode/AGENTS.md` |
-| Claude Code | `~/.claude/skills/{caveman,maoleve-*}/` | `rtk init --global` | `~/.claude/CLAUDE.md` |
-| Cursor IDE | `~/.cursor/skills/{caveman,maoleve-*}/` | `rtk init --global --agent cursor` | `~/.cursor/rules/maoleve.mdc` |
-| Cursor Agents | `~/.cursor/skills/{caveman,maoleve-*}/` | `rtk init --global --agent cursor` | project `AGENTS.md` |
-
-All authorized agents also receive `~/.agents/skills/caveman/` and the five
-`maoleve-*` tier skills plus RTK,
-Headroom, and Serena binaries. See [install.md](prompts/install.md) for merge
-rules and idempotent re-run behavior.
-
-## Supported agents and their native configuration
-
-Mão leve adds a marked, Mão leve-managed layer in the native surface of only the
-agents you authorize. Policy applies **when a tier is activated**, not globally.
-
-| Agent | Native rule or configuration surface |
-| --- | --- |
-| Codex | `AGENTS.md` guidance, with its native configuration kept separate. |
-| OpenCode | `AGENTS.md` guidance plus only selected plugin or MCP entries. |
-| Cursor Agents (`cursor-agent`) | Terminal-facing guidance compatible with Cursor Agents, without assuming Cursor IDE-only features. |
-| Cursor IDE | Cursor rules file (`alwaysApply: false`) with concise project context and shell guidance. |
-| Claude Code | `CLAUDE.md` guidance plus selected hook, MCP, or plugin entries. |
-
-The setup agent first identifies the active agent instead of guessing from a
-directory name or environment variable.
+- [`prompts/status.md`](prompts/status.md) — read-only audit plus a doctor pass
+  for known crash signatures (e.g. dangling rtk hook references in codex/cursor
+  configs, duplicate skill registrations).
+- [`prompts/uninstall.md`](prompts/uninstall.md) — reverses exactly what the
+  manifest recorded, then reports a definitive
+  *"Mão leve fully removed: yes."* verdict. Binaries are kept unless you
+  approve their removal at the end.
 
 ## Token-economy tools (in scope)
 
 | Tool | Tiers (when activated) | Role |
 | --- | --- | --- |
 | RTK | all | Compact shell-command output |
-| Caveman | all (full skill set from medium+) | Concise technical response style; skills copied from repo |
-| Headroom | fast+ | Context compression and model-call proxying |
-| Serena | high, full | Symbol-level code navigation (MCP, dashboard off) |
+| Caveman | all (full skill set from medium+) | Terse technical response style |
+| Headroom | fast+ | Context compression and model-call proxy |
+| Serena | high, full | Symbol-level navigation (MCP, dashboard off) |
 
 Caveman skills are **vendored** from `.agents/skills/caveman*` in the checkout —
 not fetched with `npx skills add`.
@@ -97,7 +68,7 @@ not fetched with `npx skills add`.
 ## Out of scope
 
 Playwright MCP and other non–token-economy MCP are not part of Mão leve tier
-flows unless you explicitly request them outside this harness.
+flows unless you explicitly request them.
 
 ## Complementary configuration, not replacement
 
@@ -106,45 +77,21 @@ not replace your workflow.
 
 - The agent reads existing configuration before proposing an edit.
 - Existing model choices, plugins, rules, commands, hooks, unknown fields,
-  formatting, and ordering remain intact whenever possible.
-- It adds only approved Mão leve entries that are absent. On a later run, it
-  updates only entries already marked as Mão leve-managed.
+  formatting, and ordering remain intact.
+- It adds only approved Mão leve entries that are absent; later runs update only
+  Mão leve-marked entries.
 - When a format cannot be merged safely, the agent pauses for human
   confirmation before any backup-and-rewrite flow.
 
-## Discovery and credentials
-
-Use the **single approval card** in [`supervised-setup.md`](supervised-setup.md).
-Default config access is structure only (no secret values). Credential-bearing
-sources require explicit `edit:` on the card naming each file.
-
-Discovery is not adoption. Finding a component in a harness does not authorize
-using it for a new integration unless it is on the approved agent list.
-
 ## Repair
 
-Re-run [`install.md`](prompts/install.md) to realign binaries and templates.
-Re-run [`verify.md`](prompts/verify.md) in a new chat to audit and fix drift.
-Re-paste an activation prompt to restore tier behavior for a chat.
-
-## Uninstall
-
-To remove a prompt-only install (reverse [`install.md`](prompts/install.md)),
-paste [`uninstall.md`](prompts/uninstall.md) in a new chat. It removes dormant
-policies, vendored Caveman copies, and RTK hooks — idempotent and supervised.
+Anything crashy after install? Run [`prompts/status.md`](prompts/status.md)
+first; its doctor pass pinpoints known causes. Re-running
+[`install.md`](prompts/install.md) realigns binaries and templates. To fully
+back out, use [`prompts/uninstall.md`](prompts/uninstall.md).
 
 ## What completion looks like
 
-**Install:** tools on disk, MCP count 0, policy dormant.
+**Install:** tools on disk, MCP count 0, policy dormant, manifest written.
 
-**Verify:** verification report all pass (or fixes applied with approval).
-
-**Activation:** agent confirms tier for the current chat and follows that stack.
-
-Related repository material:
-
-- [Repository README](../README.md)
-- [Supervised setup flow](supervised-setup.md)
-- [Operational prompt](../PROMPT.md)
-- [Token economy tiers](token-tiers.md)
-- [Version lock](../versions.env)
+**Status:** doctor pass shows no known crash signatures.
