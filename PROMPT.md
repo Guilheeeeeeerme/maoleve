@@ -13,7 +13,8 @@ installed/reused/skipped/manual/failed at the end.
    or approval to clone under `${XDG_DATA_HOME:-$HOME/.local/share}/maoleve`;
    never create `~/maoleve`. Update only after approval; never destructive git
    cleanup.
-   Treat `versions.env` as baseline; warn on semver drift instead of refusing.
+   Treat `versions.env` as a minimum floor: offer missing binaries, leave newer
+   installed versions untouched, warn on drift, and never downgrade.
 4. Read this prompt plus `README.md`, `docs/README.md`, `docs/token-tiers.md`,
    and `versions.env` in the checkout.
 
@@ -25,7 +26,7 @@ Mão leve is **prompt-only**. Setup and tiers are driven by paste-in prompts in
 | Phase | Prompt | When |
 | --- | --- | --- |
 | **One-time install** | `docs/prompts/install.md` | Once per machine — binaries, Caveman copy, dormant policy |
-| **Post-install verify** | `docs/prompts/verify.md` | New chat after install — audit, fix drift, confirm MCP 0 at idle |
+| **Status / doctor** | `docs/prompts/status.md` | Any time — read-only audit and crash-signature doctor pass |
 | **Uninstall** | `docs/prompts/uninstall.md` | Remove prompt-only install artifacts (reverse install.md) |
 | **Per-chat activation** | `docs/prompts/activate-<tier>.md` or `/maoleve-<tier>` | Start of each chat — select tier for **this conversation only** |
 
@@ -38,7 +39,8 @@ requested: Playwright MCP and other non–token-economy MCP.
 Copy Caveman skills from `$CHECKOUT/.agents/skills/caveman*` — never
 `npx skills add`.
 
-**Install** must not enable proxy, MCP, or always-on tier rules. **Activation**
+**Install** must not enable proxy, MCP, or always-on tier rules, and must run
+through `scripts/maoleve.sh` rather than ad-hoc edits. **Activation**
 enables layers for the current chat only; manual pre-steps (proxy start, MCP
 register) may be required — see each `activate-*.md` file.
 
