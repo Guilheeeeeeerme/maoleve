@@ -32,14 +32,29 @@ Tested primarily on Ubuntu Linux; compatible Linux and macOS are best-effort.
 
 ## Start here
 
-1. **Install** — paste [`docs/prompts/install.md`](docs/prompts/install.md)
-   once. It clones/locates the checkout and runs `scripts/maoleve.sh install`,
-   which shows a single approval card and installs only what the agent session
-   agrees to.
-2. **Activate a tier each chat** — paste an activation prompt (or slash
-   command) as the first message. Full pick guide with
-   pros / cons / caveats and recommended tiers:
-   [`docs/token-tiers.md`](docs/token-tiers.md).
+**Install once:** copy this whole block into any supported coding agent. It
+sets up all detected supported agents on your machine.
+
+```text
+Install Mão leve for all detected supported agents on this machine.
+Use the current Mão leve checkout if available; otherwise clone
+https://github.com/Guilheeeeeeerme/maoleve.git into
+${XDG_DATA_HOME:-$HOME/.local/share}/maoleve. If it already exists,
+update it without discarding local changes.
+
+Run bash "<checkout>/scripts/maoleve.sh" install --all-agents,
+replacing <checkout> with the actual path. Use only this installer;
+do not hand-edit agent configs. Show me its approval card and relay
+its consent questions before answering them.
+
+Keep the default hooks and version safeguards. Do not activate a tier,
+enable Headroom proxy/wrap or MCP, or read secrets during installation.
+Report which agents were configured and any failures.
+```
+
+**Activate a tier each chat:** paste an activation prompt (or slash command)
+as the first message. See the [tier guide](docs/token-tiers.md) for tradeoffs
+and recommended tiers.
 
 | Tier | One-liner | Slash command | Activation prompt |
 | --- | --- | --- | --- |
@@ -61,9 +76,10 @@ Aliases without a slash work too: `maoleve-fast`, `start maoleve fast`.
 
 ## What install configures
 
-`scripts/maoleve.sh install` prepares the same stack on disk for your running
-agent: dormant policy blocks (per-chat activation only), skill links, and the
-token-economy binaries that are missing.
+The prompt runs `scripts/maoleve.sh install --all-agents` to prepare dormant
+policy blocks (per-chat activation only), skill links for every detected
+supported agent, and missing token-economy binaries. Without `--all-agents`,
+the installer links skills only for the current session's agent.
 
 | Agent | Skill dir | Dormant policy block | rtk hooks |
 | --- | --- | --- | --- |
