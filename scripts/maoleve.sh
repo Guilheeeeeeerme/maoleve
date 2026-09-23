@@ -16,6 +16,7 @@ END_MARK="# END MAOLEVE"
 TIER_SKILLS=(low fast medium high full)
 HOOK_AUTO_AGENTS=(claude-code opencode)              # hooks on by default
 ALL_AGENTS=(codex opencode claude-code cursor-ide cursor-agent)
+LOGSTRIP_OPT_AGENTS=(codex cursor-ide cursor-agent)  # rtk-unhooked fallback set
 
 # ---------------------------------------------------------------- output
 
@@ -95,7 +96,20 @@ hooks_auto_on() {
   return 1
 }
 
+in_list() { # $1 item, rest list -> 0 when item present
+  local it="$1" x
+  shift
+  for x in "$@"; do
+    [[ "$x" == "$it" ]] && return 0
+  done
+  return 1
+}
+
 agent_installed() { [[ -d "$(agent_dir "$1")" ]]; }
+
+flag_on() { # $1 flag value -> true when y or 1 (default must stay OFF)
+  case "${1:-}" in y|Y|1) return 0 ;; *) return 1 ;; esac
+}
 
 detect_agents() {
   local a
@@ -124,6 +138,9 @@ floor_of() {
     rtk) echo "$MAOLEVE_RTK_VERSION" ;;
     headroom) echo "$MAOLEVE_HEADROOM_VERSION" ;;
     serena) echo "$MAOLEVE_SERENA_VERSION" ;;
+    repomix) echo "${MAOLEVE_REPOMIX_VERSION:-}" ;;
+    logstrip) echo "${MAOLEVE_LOGSTRIP_VERSION:-}" ;;
+    ccusage) echo "${MAOLEVE_CCUSAGE_VERSION:-}" ;;
   esac
 }
 
@@ -229,6 +246,12 @@ install_skills() {
   skilldir="$(agent_skilldir "$key")"
   local srcs=("$REPO_ROOT/.agents/skills/caveman")
   local dests=("$skilldir/caveman")
+  if flag_on "${MAOLEVE_ENABLE_REPOMIX:-}"; then
+    srcs+=("$REPO_ROOT/.agents/skills/repomix") ; dests+=("$skilldir/maoleve-repomix")
+  fi
+  if flag_on "${MAOLEVE_ENABLE_CCUSAGE:-}"; then
+    srcs+=("$REPO_ROOT/templates/skills/maoleve-ccusage") ; dests+=("$skilldir/maoleve-ccusage")
+  fi
   for tier in "${TIER_SKILLS[@]}"; do
     srcs+=("$REPO_ROOT/templates/skills/maoleve-$tier")
     dests+=("$skilldir/maoleve-$tier")
@@ -236,6 +259,10 @@ install_skills() {
   local i
   for i in "${!srcs[@]}"; do
     src="${srcs[i]}" ; dest="${dests[i]}"
+    if [[ "$src" == *"/.agents/skills/repomix" && "$key" == cursor-* && "${MAOLEVE_ALL_AGENTS:-}" != y ]]; then
+      skip "repomix skill for $key needs --all-agents (guard: cursor config stays dormant)"
+      continue
+    fi
     [[ -e "$src" ]] || { warn "missing source: $src"; continue; }
     if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
       skip "$dest already linked"
@@ -316,6 +343,35 @@ if content.strip():
 else:
     p.unlink()
 PY
+}
+
+# ---------------------------------------------------------------- fs safety
+
+safe_rm_rf() { # refuses to rm empty/root-ish or out-of-scope paths (GAP-06 pathcheck)
+  local p="$1"
+  case "$p" in
+    ""|/|/home|"$HOME"|"$MAOLEVE_HOME")
+      fail "refusing unsafe rm -rf: ${p:-<empty>}"
+      return 1
+      ;;
+  esac
+  if [[ -L "$p" ]]; then           # rm -rf on a symlink: remove only the link
+    rm -f "$p"
+    return 0
+  fi
+  rm -rf -- "${p%/}"               # trailing slash would dereference a leading symlink
+}
+
+sweep_stale_locks() { # GAP-06: crashed install can orphan lock/manifest-temp files
+  # probe the lock with flock instead of pgrep -f (pgrep would false-match agents running from this repo)
+  if command -v flock >/dev/null 2>&1 && [[ -f "$MAOLEVE_HOME/.lock" ]]; then
+    exec 9>>"$MAOLEVE_HOME/.lock" || true
+    if ! flock -n 9 2>/dev/null; then
+      warn "maoleve lock held by a live process — not sweeping"
+      return 1
+    fi
+  fi
+  rm -f -- "$MAOLEVE_HOME/.lock" "$MAOLEVE_HOME/.m.tmp"
 }
 
 # ---------------------------------------------------------------- hooks
@@ -416,6 +472,20 @@ cmd_install() {
     esac
   done
 
+  # opt-in adapters — flags default OFF; never force on, no binary install, no network
+  local flagflag flagvar
+  for flagflag in repomix logstrip ccusage; do
+    flagvar="MAOLEVE_ENABLE_${flagflag^^}"
+    if ! flag_on "${!flagvar:-}"; then
+      skip "$flagflag (MAOLEVE_ENABLE_${flagflag^^} not set — default OFF)"
+    elif ! command -v npx >/dev/null 2>&1; then
+      warn "$flagflag: flag=y but npx missing (node >=18 floor) — adapter left dormant"
+    else
+      manifest_action add enabled_flags "$flagflag"
+      ok "$flagflag: opt-in enabled, pinned $(floor_of "$flagflag") — npx wrapper on demand"
+    fi
+  done
+
   # skills
   if [[ "${MAOLEVE_ALL_AGENTS:-}" == "y" ]]; then
     for key in "${agents[@]}"; do install_skills "$key"; done
@@ -447,6 +517,21 @@ cmd_install() {
     done
   fi
 
+  # logstrip pipe fallback (flag-gated; strictly for agents rtk cannot hook)
+  if flag_on "${MAOLEVE_ENABLE_LOGSTRIP:-}"; then
+    local lskey
+    for lskey in "${agents[@]}"; do
+      if hooks_auto_on "$lskey" || has_hook "$lskey"; then
+        skip "logstrip not stacked on $lskey (rtk hook present — no double compression: GAP-05)"
+      elif in_list "$lskey" "${LOGSTRIP_OPT_AGENTS[@]}"; then
+        manifest_action add logstrip_agents "$lskey"
+        ok "logstrip pipe fallback registered: $lskey (tier/policy text only — no hook written)"
+      else
+        skip "logstrip not for $lskey (outside opt-in fallback set)"
+      fi
+    done
+  fi
+
   manifest_set updated_at "$(date -u +%FT%TZ)"
   manifest_set agents "${agents[*]}"
   manifest_set checkout "$REPO_ROOT"
@@ -463,7 +548,7 @@ cmd_install() {
       sk="opt-in (--all-agents)"
     fi
     hk2="$(has_hook "$key" && echo installed || echo default)"
-    ok "$key   policy:$policy2   skills:$sk   hooks:$hk2"
+    ok "$key   policy:$policy2   skills:$sk   hooks:$hk2   opt-in-flag:$(manifest_get enabled_flags || true)"
   done
   info "floor policy: never downgraded; suggested bump on drift only"
   info "activation: at the start of each chat paste /maoleve-<tier>"
@@ -491,6 +576,11 @@ cmd_status() {
       unknown)     warn "$name: version unreadable" ;;
     esac
   done
+
+  echo
+  info "opt-in adapters: MAOLEVE_ENABLE_REPOMIX=${MAOLEVE_ENABLE_REPOMIX:-off}  MAOLEVE_ENABLE_LOGSTRIP=${MAOLEVE_ENABLE_LOGSTRIP:-off}  MAOLEVE_ENABLE_CCUSAGE=${MAOLEVE_ENABLE_CCUSAGE:-off}"
+  info "  pins from versions.env (lock file — repo policy: warn on drift, never auto-upgrade): repomix $(floor_of repomix) · logstrip $(floor_of logstrip) · ccusage $(floor_of ccusage)"
+  info "  on demand only: npx -y repomix@$(floor_of repomix) --stdout --compress --token-budget 4000 | npx -y ccusage@$(floor_of ccusage) daily --offline"
 
   echo
   if [[ -f "$MANIFEST" ]]; then
@@ -552,6 +642,12 @@ cmd_status() {
       hits=$((hits+1))
     fi
   done
+  local lsrecorded
+  lsrecorded="$(manifest_get logstrip_agents)"
+  if [[ -n "$lsrecorded" ]] && ! flag_on "${MAOLEVE_ENABLE_LOGSTRIP:-}"; then
+    warn "manifest records logstrip fallback for: $lsrecorded — but MAOLEVE_ENABLE_LOGSTRIP is off (drift — run 'maoleve.sh uninstall' to clean, never auto-fix)"
+    hits=$((hits+1))
+  fi
   (( hits == 0 )) && ok "no known crash signatures found."
 }
 
@@ -564,20 +660,23 @@ cmd_uninstall() {
 
   if [[ ! -f "$MANIFEST" ]]; then
     warn "no manifest — best-effort sweep of standard Mão leve layout"
-    local key sd tier sp
+    local key sd tier sp opt
     for key in "${ALL_AGENTS[@]}"; do
       remove_policy "$key" || true
       sd="$(agent_skilldir "$key")"
       for tier in "${TIER_SKILLS[@]}"; do
         sp="$sd/maoleve-$tier"
-        if [[ -e "$sp" ]]; then rm -rf "$sp"; ok "removed: $sp"; fi
+        if [[ -e "$sp" ]]; then safe_rm_rf "$sp" && ok "removed: $sp"; fi
+      done
+      for opt in maoleve-repomix maoleve-ccusage; do
+        if [[ -e "$sd/$opt" ]]; then safe_rm_rf "$sd/$opt" && ok "removed: $sd/$opt"; fi
       done
       if [[ -e "$sd/caveman" ]]; then
-        if [[ -L "$sd/caveman" ]]; then rm -f "$sd/caveman"; else rm -rf "$sd/caveman"; fi
-        ok "removed: $sd/caveman"
+        safe_rm_rf "$sd/caveman" && ok "removed: $sd/caveman"
       fi
     done
     info "binaries untouched."
+    info "stale lock sweep: $(sweep_stale_locks)"
     info "Mão leve fully removed: yes (best effort)."
     return 0
   fi
@@ -592,6 +691,13 @@ cmd_uninstall() {
   remove_skills
   for key in "${ALL_AGENTS[@]}"; do remove_policy "$key" || true; done
 
+  # opt-in adapter state: skills already covered above; purge the opt-in keys
+  for key in $(manifest_get logstrip_agents); do
+    info "logstrip fallback for $key was pipe/policy text only — no hook file to strip"
+  done
+  manifest_action clear logstrip_agents
+  manifest_action clear enabled_flags
+
   if ask "Also uninstall rtk / headroom / serena binaries? (other projects may use them)" n; then
     if command -v uv >/dev/null 2>&1; then
       uv tool uninstall headroom-ai 2>/dev/null || true
@@ -600,10 +706,11 @@ cmd_uninstall() {
     info "rtk not auto-removed; upstream uninstall via its own tooling"
   fi
 
+  sweep_stale_locks || true
   rm -f "$MANIFEST"
 
   section "Uninstall report"
-  ok "hooks cleared, skills removed, policy blocks stripped, manifest cleared."
+  ok "hooks cleared, skills removed, policy blocks stripped, opt-in keys purged, stale locks swept, manifest cleared."
   ok "Mão leve fully removed: yes."
 }
 
@@ -625,6 +732,11 @@ Defaults
   rtk hooks: claude-code & opencode on when rtk present
              codex & cursor opt-in via --hooks (observed crash source)
   binaries:  versions.env = floor — install missing, never downgrade, warn on drift
+
+Opt-in adapters (all default OFF; pinned in versions.env; node >=18 / npx)
+  MAOLEVE_ENABLE_REPOMIX    high-tier context packing, token-budget fail-fast
+  MAOLEVE_ENABLE_LOGSTRIP   pipe fallback only for codex/cursor (never on rtk agents)
+  MAOLEVE_ENABLE_CCUSAGE    run-on-demand local usage scan: npx -y ccusage@20.0.24 daily --offline
 EOF
 }
 

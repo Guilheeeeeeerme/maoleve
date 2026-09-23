@@ -14,3 +14,12 @@ enabled on demand when approved and when a proxy URL is not already in use.
 
 Keep dashboard off, use versions from `versions.env`, and never add unrelated
 MCP servers. This is per-chat state.
+
+Opt-in output-filtering fallback (only when `MAOLEVE_ENABLE_LOGSTRIP=y` was
+chosen at install time and only on agents without RTK hook integration — codex,
+cursor-agent, cursor-ide): pipe long shell output through the pinned version once,
+e.g. `cat <command output> | npx -y logstrip@MAOLEVE_LOGSTRIP_VERSION`, substituting the
+pinned literal (e.g. `logstrip@1.12.0`). Never stack it on Claude Code or
+OpenCode, where RTK already filters — double-compression is unmeasured. Honor
+its noise flag: on a pure-noise stream it can return empty output; check it
+against the raw stream before acting on an empty result.
